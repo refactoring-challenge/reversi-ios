@@ -75,6 +75,26 @@ public class CellView: UIView {
             completion?(true)
         }
     }
+    
+    public func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
+        button.addTarget(target, action: action, for: controlEvents)
+    }
+    
+    public func removeTarget(_ target: Any?, action: Selector?, for controlEvents: UIControl.Event) {
+        button.removeTarget(target, action: action, for: controlEvents)
+    }
+    
+    public func actions(forTarget target: Any?, forControlEvent controlEvent: UIControl.Event) -> [String]? {
+        button.actions(forTarget: target, forControlEvent: controlEvent)
+    }
+    
+    public var allTargets: Set<AnyHashable> {
+        button.allTargets
+    }
+    
+    public var allControlEvents: UIControl.Event {
+        button.allControlEvents
+    }
 }
 
 extension Disk {

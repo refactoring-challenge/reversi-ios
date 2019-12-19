@@ -4,16 +4,26 @@ private let lineWidth: CGFloat = 2
 
 public class BoardView: UIView {
     private var cellViews: [CellView] = []
+    private var actions: [CellSelectionAction] = []
     
-    private let width: Int = 8
-    private let height: Int = 8
+    public let width: Int = 8
+    public let height: Int = 8
+    
+    public let xRange: Range<Int>
+    public let yRange: Range<Int>
+    
+    public weak var delegate: BoardViewDelegate?
     
     override public init(frame: CGRect) {
+        xRange = 0 ..< width
+        yRange = 0 ..< height
         super.init(frame: frame)
         setUp()
     }
     
     required public init?(coder: NSCoder) {
+        xRange = 0 ..< width
+        yRange = 0 ..< height
         super.init(coder: coder)
         setUp()
     }
@@ -40,8 +50,8 @@ public class BoardView: UIView {
             cellViews[0].widthAnchor.constraint(equalTo: cellViews[0].heightAnchor),
         ])
         
-        for y in 0 ..< height {
-            for x in 0 ..< width {
+        for y in yRange {
+            for x in xRange {
                 let topNeighborAnchor: NSLayoutYAxisAnchor
                 if let cellView = cellViewAt(x: x, y: y - 1) {
                     topNeighborAnchor = cellView.bottomAnchor
@@ -79,10 +89,19 @@ public class BoardView: UIView {
         setDisk(.dark, atX: width / 2, y: height / 2 - 1, animated: false)
         setDisk(.dark, atX: width / 2 - 1, y: height / 2, animated: false)
         setDisk(.light, atX: width / 2, y: height / 2, animated: false)
+        
+        for y in yRange {
+            for x in xRange {
+                let cellView: CellView = cellViewAt(x: x, y: y)!
+                let action = CellSelectionAction(boardView: self, x: x, y: y)
+                actions.append(action) // To retain the `action`
+                cellView.addTarget(action, action: #selector(action.selectCell), for: .touchUpInside)
+            }
+        }
     }
     
     private func cellViewAt(x: Int, y: Int) -> CellView? {
-        guard (0 ..< width).contains(x) && (0 ..< height).contains(y) else { return nil }
+        guard xRange.contains(x) && yRange.contains(y) else { return nil }
         return cellViews[y * width + x]
     }
     
@@ -95,5 +114,26 @@ public class BoardView: UIView {
             preconditionFailure() // FIXME: Add a message.
         }
         cellView.setDisk(disk, animated: animated, completion: completion)
+    }
+}
+
+public protocol BoardViewDelegate: AnyObject {
+    func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int)
+}
+
+private class CellSelectionAction: NSObject {
+    private weak var boardView: BoardView?
+    let x: Int
+    let y: Int
+    
+    init(boardView: BoardView, x: Int, y: Int) {
+        self.boardView = boardView
+        self.x = x
+        self.y = y
+    }
+    
+    @objc func selectCell() {
+        guard let boardView = boardView else { return }
+        boardView.delegate?.boardView(boardView, didSelectCellAtX: x, y: y)
     }
 }
