@@ -36,27 +36,25 @@ public class CellView: UIView {
                 button.setBackgroundImage(backgroundImage, for: .disabled)
             }
             self.addSubview(button)
-            
-            NSLayoutConstraint.activate([
-                button.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-                button.topAnchor.constraint(equalTo: self.topAnchor),
-                self.trailingAnchor.constraint(equalTo: button.trailingAnchor),
-                self.bottomAnchor.constraint(equalTo: button.bottomAnchor),
-            ])
         }
 
         do { // diskView
             diskView.translatesAutoresizingMaskIntoConstraints = false
             diskView.isHidden = true
             self.addSubview(diskView)
-
-            NSLayoutConstraint.activate([
-                diskView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-                diskView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-                diskView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.9),
-                diskView.heightAnchor.constraint(equalTo: diskView.widthAnchor),
-            ])
         }
+    }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        button.frame = bounds
+        let cellSize = bounds.size
+        let diskDiameter = Swift.min(cellSize.width, cellSize.height) * 0.9
+        diskView.frame = CGRect(
+            origin: CGPoint(x: (cellSize.width - diskDiameter) / 2, y: (cellSize.height - diskDiameter) / 2),
+            size: CGSize(width: diskDiameter, height: diskDiameter)
+        )
     }
     
     public func setDisk(_ disk: Disk?, animated: Bool, completion: ((Bool) -> Void)? = nil) {
