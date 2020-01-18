@@ -12,7 +12,12 @@ class ViewController: UIViewController {
 
 extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
-        boardView.setDisk(.light, atX: x, y: y, animated: true)
+//        boardView.setDisk([Disk.dark, Disk.light, nil].randomElement()!, atX: x, y: y, animated: true)
+        if let disk = boardView.diskAt(x: x, y: y) {
+            boardView.setDisk(Bool.random() ? disk.reversed : nil, atX: x, y: y, animated: true)
+        } else {
+            boardView.setDisk(Bool.random() ? .dark : .light, atX: x, y: y, animated: true)
+        }
     }
 }
 
