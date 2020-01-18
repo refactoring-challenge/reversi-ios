@@ -45,7 +45,7 @@ public class CellView: UIView {
             diskView.translatesAutoresizingMaskIntoConstraints = false
             self.addSubview(diskView)
         }
-        
+
         setNeedsLayout()
     }
     
@@ -58,21 +58,18 @@ public class CellView: UIView {
     
     private func layoutDiskView() {
         let cellSize = bounds.size
+        let diskDiameter = Swift.min(cellSize.width, cellSize.height) * 0.8
         let diskSize: CGSize
-        if _disk == nil {
-            diskSize = .zero
+        if _disk == nil || diskView.disk == _disk {
+            diskSize = CGSize(width: diskDiameter, height: diskDiameter)
         } else {
-            let diskDiameter = Swift.min(cellSize.width, cellSize.height) * 0.8
-            if diskView.disk == _disk {
-                diskSize = CGSize(width: diskDiameter, height: diskDiameter)
-            } else {
-                diskSize = CGSize(width: 0, height: diskDiameter)
-            }
+            diskSize = CGSize(width: 0, height: diskDiameter)
         }
         diskView.frame = CGRect(
             origin: CGPoint(x: (cellSize.width - diskSize.width) / 2, y: (cellSize.height - diskSize.height) / 2),
             size: diskSize
         )
+        diskView.alpha = _disk == nil ? 0.0 : 1.0
     }
     
     public func setDisk(_ disk: Disk?, animated: Bool, completion: ((Bool) -> Void)? = nil) {
