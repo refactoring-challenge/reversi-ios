@@ -162,6 +162,7 @@
                         <outlet property="darkPlayerControl" destination="Nf5-NH-Aql" id="eBA-Hv-Lo9"/>
                         <outlet property="lightCountLabel" destination="IMh-5o-Uqc" id="skh-2Z-BV5"/>
                         <outlet property="lightPlayerControl" destination="q90-VO-j8m" id="Hdb-Yn-yWZ"/>
+                        <outlet property="messageDiskSizeConstraint" destination="gHu-Ly-73K" id="52y-fo-Ths"/>
                         <outlet property="messageDiskView" destination="xhS-zB-FaD" id="Cel-dc-EWk"/>
                         <outlet property="messageLabel" destination="nHv-pJ-hrU" id="bqV-9P-ADo"/>
                     </connections>

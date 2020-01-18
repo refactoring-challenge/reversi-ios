@@ -85,10 +85,7 @@ public class BoardView: UIView {
             }
         }
         
-        setDisk(.light, atX: width / 2 - 1, y: height / 2 - 1, animated: false)
-        setDisk(.dark, atX: width / 2, y: height / 2 - 1, animated: false)
-        setDisk(.dark, atX: width / 2 - 1, y: height / 2, animated: false)
-        setDisk(.light, atX: width / 2, y: height / 2, animated: false)
+        reset()
         
         for y in yRange {
             for x in xRange {
@@ -98,6 +95,19 @@ public class BoardView: UIView {
                 cellView.addTarget(action, action: #selector(action.selectCell), for: .touchUpInside)
             }
         }
+    }
+    
+    func reset() {
+        for y in  yRange {
+            for x in xRange {
+                setDisk(nil, atX: x, y: y, animated: false)
+            }
+        }
+        
+        setDisk(.light, atX: width / 2 - 1, y: height / 2 - 1, animated: false)
+        setDisk(.dark, atX: width / 2, y: height / 2 - 1, animated: false)
+        setDisk(.dark, atX: width / 2 - 1, y: height / 2, animated: false)
+        setDisk(.light, atX: width / 2, y: height / 2, animated: false)
     }
     
     private func cellViewAt(x: Int, y: Int) -> CellView? {
