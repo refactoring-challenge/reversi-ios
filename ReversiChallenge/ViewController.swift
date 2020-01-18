@@ -2,11 +2,24 @@ import UIKit
 
 class ViewController: UIViewController {
     @IBOutlet private var boardView: BoardView!
+    
+    @IBOutlet private var messageDiskView: DiskView!
+    @IBOutlet private var messageLabel: UILabel!
+    
+    @IBOutlet private var darkPlayerControl: UISegmentedControl!
+    @IBOutlet private var darkCountLabel: UILabel!
+    
+    @IBOutlet private var lightPlayerControl: UISegmentedControl!
+    @IBOutlet private var lightCountLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         boardView.delegate = self
+    }
+    
+    @IBAction func pressRestButton(_ sender: UIButton) {
+        print("The reset button is pressed.")
     }
 }
 
