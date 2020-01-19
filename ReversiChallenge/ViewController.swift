@@ -25,7 +25,7 @@ class ViewController: UIViewController {
         boardView.delegate = self
         messageDiskSize = messageDiskSizeConstraint.constant
         
-        startNewGame()
+        newGame()
     }
 }
 
@@ -165,7 +165,7 @@ extension ViewController {
 // MARK: Game management
 
 extension ViewController {
-    func startNewGame() {
+    func newGame() {
         boardView.reset()
         turn = .dark
         
@@ -306,7 +306,7 @@ extension ViewController {
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in })
         alertController.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
             guard let self = self else { return }
-            self.startNewGame()
+            self.newGame()
         })
         present(alertController, animated: true)
     }
