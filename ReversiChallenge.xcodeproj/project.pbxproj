@@ -66,6 +66,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D636B3A123D43203007F370F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D642BDDB23AA137C00396732 /* BoardView.swift */,
+				D642BDD523AA0B3900396732 /* CellView.swift */,
+				D636B39E23D35043007F370F /* DiskView.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		D636B3A423D432D3007F370F /* DataTypes */ = {
+			isa = PBXGroup;
+			children = (
+				D642BDD723AA0B5700396732 /* Disk.swift */,
+			);
+			name = DataTypes;
+			sourceTree = "<group>";
+		};
 		D642BDA723A9FE4500396732 = {
 			isa = PBXGroup;
 			children = (
@@ -94,10 +112,8 @@
 				D642BDBC23A9FE4700396732 /* Assets.xcassets */,
 				D642BDBE23A9FE4700396732 /* LaunchScreen.storyboard */,
 				D642BDC123A9FE4700396732 /* Info.plist */,
-				D642BDDB23AA137C00396732 /* BoardView.swift */,
-				D642BDD523AA0B3900396732 /* CellView.swift */,
-				D636B39E23D35043007F370F /* DiskView.swift */,
-				D642BDD723AA0B5700396732 /* Disk.swift */,
+				D636B3A123D43203007F370F /* Views */,
+				D636B3A423D432D3007F370F /* DataTypes */,
 			);
 			path = ReversiChallenge;
 			sourceTree = "<group>";
