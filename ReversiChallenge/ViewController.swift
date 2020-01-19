@@ -181,14 +181,15 @@ extension ViewController {
         guard var turn = self.turn else { return }
 
         turn.flip()
-        self.turn = turn
-        updateMessageViews()
         
         if coordinatesToPlaceDisk(turn).isEmpty {
             if coordinatesToPlaceDisk(turn.flipped).isEmpty {
                 self.turn = nil
                 updateMessageViews()
             } else {
+                self.turn = turn
+                updateMessageViews()
+                
                 let alertController = UIAlertController(
                     title: "Pass",
                     message: "Cannot place a disk.",
@@ -200,6 +201,9 @@ extension ViewController {
                 present(alertController, animated: true)
             }
         } else {
+            self.turn = turn
+            updateMessageViews()
+            
             let playerControl: UISegmentedControl
             switch turn {
             case .dark:
