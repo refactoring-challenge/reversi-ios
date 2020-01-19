@@ -51,7 +51,7 @@ extension Disk {
         }
     }
     
-    init(name: String) {
+    fileprivate init(name: String) {
         switch name {
         case Disk.dark.name:
             self = .dark

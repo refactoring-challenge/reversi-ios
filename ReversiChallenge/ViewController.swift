@@ -6,7 +6,7 @@ class ViewController: UIViewController {
     @IBOutlet private var messageDiskView: DiskView!
     @IBOutlet private var messageLabel: UILabel!
     @IBOutlet private var messageDiskSizeConstraint: NSLayoutConstraint!
-    private var messageDiskSize: CGFloat!
+    private var messageDiskSize: CGFloat! // to store the size designated in the storyboard
     
     @IBOutlet private var darkPlayerControl: UISegmentedControl!
     @IBOutlet private var darkCountLabel: UILabel!
