@@ -43,6 +43,9 @@
                                             <segment title="Manual"/>
                                             <segment title="Computer"/>
                                         </segments>
+                                        <connections>
+                                            <action selector="changePlayerControlSegment:" destination="BYZ-38-t0r" eventType="valueChanged" id="9el-1b-nyF"/>
+                                        </connections>
                                     </segmentedControl>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IMh-5o-Uqc">
                                         <rect key="frame" x="0.0" y="1" width="15" height="29"/>
@@ -97,7 +100,7 @@
                                 <rect key="frame" x="187.5" y="832" width="39" height="30"/>
                                 <state key="normal" title="Reset"/>
                                 <connections>
-                                    <action selector="pressRestButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mad-K8-Vag"/>
+                                    <action selector="pressResetButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mad-K8-Vag"/>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mdv-qG-dMQ" userLabel="Dark View">
@@ -120,6 +123,9 @@
                                             <segment title="Manual"/>
                                             <segment title="Computer"/>
                                         </segments>
+                                        <connections>
+                                            <action selector="changePlayerControlSegment:" destination="BYZ-38-t0r" eventType="valueChanged" id="f7K-Cm-17Z"/>
+                                        </connections>
                                     </segmentedControl>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NGE-KP-oHh">
                                         <rect key="frame" x="219" y="1" width="15" height="29"/>
@@ -165,6 +171,7 @@
                         <outlet property="messageDiskSizeConstraint" destination="gHu-Ly-73K" id="52y-fo-Ths"/>
                         <outlet property="messageDiskView" destination="xhS-zB-FaD" id="Cel-dc-EWk"/>
                         <outlet property="messageLabel" destination="nHv-pJ-hrU" id="bqV-9P-ADo"/>
+                        <outlet property="resetButton" destination="3cI-5a-D7h" id="PFf-md-5xb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
