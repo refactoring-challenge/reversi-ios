@@ -219,6 +219,16 @@ extension ViewController {
         }
     }
     
+    func winner() -> Disk? {
+        let darkCount = count(of: .dark)
+        let lightCount = count(of: .light)
+        if darkCount == lightCount {
+            return nil
+        } else {
+            return darkCount > lightCount ? .dark : .light
+        }
+    }
+    
     func playTurnOfComputer() {
         guard let turn = self.turn else { preconditionFailure() }
         let (x, y) = coordinatesToPlaceDisk(turn).randomElement()!
@@ -243,16 +253,13 @@ extension ViewController {
             messageDiskView.disk = side
             messageLabel.text = "'s turn"
         case .none:
-            let darkCount = count(of: .dark)
-            let lightCount = count(of: .light)
-            if darkCount == lightCount {
-                messageDiskSizeConstraint.constant = 0
-                messageLabel.text = "Draw"
-            } else {
-                let winner: Disk = darkCount > lightCount ? .dark : .light
+            if let winner = self.winner() {
                 messageDiskSizeConstraint.constant = messageDiskSize
                 messageDiskView.disk = winner
                 messageLabel.text = " won"
+            } else {
+                messageDiskSizeConstraint.constant = 0
+                messageLabel.text = "Draw"
             }
         }
     }
