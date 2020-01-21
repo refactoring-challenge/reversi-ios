@@ -46,6 +46,16 @@ extension ViewController {
         return count
     }
     
+    func sideWithMoreDisks() -> Disk? {
+        let darkCount = count(of: .dark)
+        let lightCount = count(of: .light)
+        if darkCount == lightCount {
+            return nil
+        } else {
+            return darkCount > lightCount ? .dark : .light
+        }
+    }
+    
     func flippedDiskCoordinatesByPlacingDisk(_ disk: Disk, atX x: Int, y: Int) -> [(Int, Int)] {
         let directions = [
             (x: -1, y: -1),
@@ -223,16 +233,6 @@ extension ViewController {
         }
     }
     
-    func winner() -> Disk? {
-        let darkCount = count(of: .dark)
-        let lightCount = count(of: .light)
-        if darkCount == lightCount {
-            return nil
-        } else {
-            return darkCount > lightCount ? .dark : .light
-        }
-    }
-    
     func playTurnOfComputer() {
         guard let turn = self.turn else { preconditionFailure() }
         let (x, y) = coordinatesToPlaceDisk(turn).randomElement()!
@@ -257,7 +257,7 @@ extension ViewController {
             messageDiskView.disk = side
             messageLabel.text = "'s turn"
         case .none:
-            if let winner = self.winner() {
+            if let winner = self.sideWithMoreDisks() {
                 messageDiskSizeConstraint.constant = messageDiskSize
                 messageDiskView.disk = winner
                 messageLabel.text = " won"
