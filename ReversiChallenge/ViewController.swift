@@ -19,7 +19,9 @@ class ViewController: UIViewController {
     @IBOutlet private var resetButton: UIButton!
     
     private var turn: Disk? = .dark // `nil` if the current game is over
-    private var isAnimating: Bool = false
+    
+    private var animationCanceller: Canceller?
+    private var isAnimating: Bool { animationCanceller != nil }
     
     private var darkPlayerCanceller: Canceller?
     private var lightPlayerCanceller: Canceller?
@@ -133,13 +135,21 @@ extension ViewController {
         }
         
         if isAnimated {
-            isAnimating = true
-            updateResetButton()
+            var isCancelled = false
+            let cleanUp: () -> Void = { [weak self] in
+                self?.animationCanceller = nil
+            }
+            animationCanceller = Canceller {
+                isCancelled = true
+                cleanUp()
+            }
+            
             animateSettingDisks(at: [(x, y)] + diskCoordinates, to: disk) { [weak self] finished in
                 guard let self = self else { return }
+                if isCancelled { return }
+                cleanUp()
+                
                 completion?(finished)
-                self.isAnimating = false
-                self.updateResetButton()
                 self.updateCountLabels()
             }
         } else {
@@ -163,8 +173,10 @@ extension ViewController {
             return
         }
         
+        let animationCanceller = self.animationCanceller!
         boardView.setDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
             guard let self = self else { return }
+            if animationCanceller.isCancelled { return }
             if finished {
                 self.animateSettingDisks(at: coordinates.dropFirst(), to: disk, completion: completion)
             } else {
@@ -181,6 +193,15 @@ extension ViewController {
 
 extension ViewController {
     func newGame() {
+        animationCanceller?.cancel()
+        animationCanceller = nil
+        
+        darkPlayerCanceller?.cancel()
+        darkPlayerCanceller = nil
+        
+        lightPlayerCanceller?.cancel()
+        lightPlayerCanceller = nil
+        
         boardView.reset()
         turn = .dark
         
@@ -250,19 +271,31 @@ extension ViewController {
         playerActivityIndicator?.startAnimating()
         
         var isCancelled = false
+        let cleanUp: () -> Void = { [weak self] in
+            guard let self = self else { return }
+            playerActivityIndicator?.stopAnimating()
+            switch turn {
+            case .dark:
+                self.darkPlayerCanceller = nil
+            case .light:
+                self.lightPlayerCanceller = nil
+            }
+        }
+        let canceller = Canceller {
+            isCancelled = true
+            cleanUp()
+        }
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             guard let self = self else { return }
             if isCancelled { return }
-            playerActivityIndicator?.stopAnimating()
+            cleanUp()
+            
             try! self.placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
                 self?.nextTurn()
             }
         }
         
-        let canceller = Canceller {
-            isCancelled = true
-            playerActivityIndicator?.stopAnimating()
-        }
         switch turn {
         case .dark:
             darkPlayerCanceller = canceller
@@ -295,25 +328,6 @@ extension ViewController {
                 messageDiskSizeConstraint.constant = 0
                 messageLabel.text = "Tied"
             }
-        }
-    }
-    
-    func updateResetButton() {
-        if isAnimating {
-            resetButton.isEnabled = false
-            return
-        }
-        
-        guard let turn = turn else {
-            resetButton.isEnabled = true
-            return
-        }
-        
-        switch Player(rawValue: playerControl(of: turn).selectedSegmentIndex)! {
-        case .manual:
-            resetButton.isEnabled = true
-        case .computer:
-            resetButton.isEnabled = false
         }
     }
     
@@ -368,7 +382,6 @@ extension ViewController {
             }
         }
         
-        updateResetButton()
         if !isAnimating, side == turn, case .computer = Player(rawValue: sender.selectedSegmentIndex)! {
             playTurnOfComputer()
         }
@@ -401,6 +414,7 @@ extension ViewController {
 }
 
 struct Canceller {
+    private(set) var isCancelled: Bool = false
     private let body: () -> Void
     
     init(_ body: @escaping () -> Void) {
@@ -408,6 +422,7 @@ struct Canceller {
     }
     
     func cancel() {
+        if isCancelled { return }
         body()
     }
 }
