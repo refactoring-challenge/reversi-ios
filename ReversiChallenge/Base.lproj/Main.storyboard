@@ -183,7 +183,6 @@
                         <outlet property="messageDiskSizeConstraint" destination="gHu-Ly-73K" id="52y-fo-Ths"/>
                         <outlet property="messageDiskView" destination="xhS-zB-FaD" id="Cel-dc-EWk"/>
                         <outlet property="messageLabel" destination="nHv-pJ-hrU" id="bqV-9P-ADo"/>
-                        <outlet property="resetButton" destination="3cI-5a-D7h" id="PFf-md-5xb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

@@ -16,8 +16,6 @@ class ViewController: UIViewController {
     @IBOutlet private var lightCountLabel: UILabel!
     @IBOutlet private var lightPlayerActivityIndicator: UIActivityIndicatorView!
     
-    @IBOutlet private var resetButton: UIButton!
-    
     private var turn: Disk? = .dark // `nil` if the current game is over
     
     private var animationCanceller: Canceller?
