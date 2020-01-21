@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     
     @IBOutlet private var resetButton: UIButton!
     
-    private var turn: Disk? = .dark
+    private var turn: Disk? = .dark // `nil` if the current game is over
     private var isAnimating: Bool = false
 
     override func viewDidLoad() {
