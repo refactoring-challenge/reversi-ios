@@ -10,9 +10,11 @@ class ViewController: UIViewController {
     
     @IBOutlet private var darkPlayerControl: UISegmentedControl!
     @IBOutlet private var darkCountLabel: UILabel!
-    
+    @IBOutlet private var darkPlayerActivityIndicator: UIActivityIndicatorView!
+
     @IBOutlet private var lightPlayerControl: UISegmentedControl!
     @IBOutlet private var lightCountLabel: UILabel!
+    @IBOutlet private var lightPlayerActivityIndicator: UIActivityIndicatorView!
     
     @IBOutlet private var resetButton: UIButton!
     
@@ -238,16 +240,29 @@ extension ViewController {
         guard let turn = self.turn else { preconditionFailure() }
         let (x, y) = coordinatesToPlaceDisk(turn).randomElement()!
         
+        weak var playerActivityIndicator: UIActivityIndicatorView?
+        switch turn {
+        case .dark:
+            playerActivityIndicator = darkPlayerActivityIndicator
+        case .light:
+            playerActivityIndicator = lightPlayerActivityIndicator
+        }
+        playerActivityIndicator?.startAnimating()
+        
         var isCancelled = false
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             guard let self = self else { return }
             if isCancelled { return }
+            playerActivityIndicator?.stopAnimating()
             try! self.placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
                 self?.nextTurn()
             }
         }
         
-        let canceller = Canceller { isCancelled = true }
+        let canceller = Canceller {
+            isCancelled = true
+            playerActivityIndicator?.stopAnimating()
+        }
         switch turn {
         case .dark:
             darkPlayerCanceller = canceller

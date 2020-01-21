@@ -23,48 +23,6 @@
                                     <constraint firstAttribute="width" secondItem="zq8-hK-TyQ" secondAttribute="height" multiplier="1:1" id="2W1-wd-IFi"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cFq-Qi-tPm" userLabel="Light View">
-                                <rect key="frame" x="160" y="655" width="234" height="31"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="090-uk-vsm" customClass="DiskView" customModule="ReversiChallenge" customModuleProvider="target">
-                                        <rect key="frame" x="208" y="2.5" width="26" height="26"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" secondItem="090-uk-vsm" secondAttribute="height" multiplier="1:1" id="9YY-aS-UEg"/>
-                                            <constraint firstAttribute="height" constant="26" id="txz-Ui-bDn"/>
-                                        </constraints>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="name" value="light"/>
-                                        </userDefinedRuntimeAttributes>
-                                    </view>
-                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="q90-VO-j8m">
-                                        <rect key="frame" x="31" y="0.0" width="161" height="32"/>
-                                        <segments>
-                                            <segment title="Manual"/>
-                                            <segment title="Computer"/>
-                                        </segments>
-                                        <connections>
-                                            <action selector="changePlayerControlSegment:" destination="BYZ-38-t0r" eventType="valueChanged" id="9el-1b-nyF"/>
-                                        </connections>
-                                    </segmentedControl>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IMh-5o-Uqc">
-                                        <rect key="frame" x="0.0" y="1" width="15" height="29"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="q90-VO-j8m" secondAttribute="bottom" id="2Mt-zM-Sz5"/>
-                                    <constraint firstItem="090-uk-vsm" firstAttribute="centerY" secondItem="cFq-Qi-tPm" secondAttribute="centerY" id="MAy-i3-2dK"/>
-                                    <constraint firstItem="IMh-5o-Uqc" firstAttribute="centerY" secondItem="cFq-Qi-tPm" secondAttribute="centerY" id="OVw-Qw-oOM"/>
-                                    <constraint firstItem="090-uk-vsm" firstAttribute="leading" secondItem="q90-VO-j8m" secondAttribute="trailing" constant="16" id="Zdk-7Y-S5g"/>
-                                    <constraint firstItem="IMh-5o-Uqc" firstAttribute="leading" secondItem="cFq-Qi-tPm" secondAttribute="leading" id="g9x-Gh-MiW"/>
-                                    <constraint firstItem="q90-VO-j8m" firstAttribute="top" secondItem="cFq-Qi-tPm" secondAttribute="top" id="qpK-ge-Nbd"/>
-                                    <constraint firstItem="q90-VO-j8m" firstAttribute="leading" secondItem="IMh-5o-Uqc" secondAttribute="trailing" constant="16" id="sd4-ii-KPq"/>
-                                    <constraint firstAttribute="trailing" secondItem="090-uk-vsm" secondAttribute="trailing" id="skQ-ot-DYa"/>
-                                </constraints>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NzD-77-9Io" userLabel="Message View">
                                 <rect key="frame" x="149" y="44" width="116.5" height="38.5"/>
                                 <subviews>
@@ -104,7 +62,7 @@
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mdv-qG-dMQ" userLabel="Dark View">
-                                <rect key="frame" x="20" y="210" width="234" height="31"/>
+                                <rect key="frame" x="20" y="210" width="270" height="31"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hug-Cn-gDb" customClass="DiskView" customModule="ReversiChallenge" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="2.5" width="26" height="26"/>
@@ -133,16 +91,68 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="VTM-mY-aFg">
+                                        <rect key="frame" x="250" y="5.5" width="20" height="20"/>
+                                    </activityIndicatorView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="hug-Cn-gDb" firstAttribute="leading" secondItem="Mdv-qG-dMQ" secondAttribute="leading" id="2Ah-Hy-lK7"/>
-                                    <constraint firstAttribute="trailing" secondItem="NGE-KP-oHh" secondAttribute="trailing" id="43D-3V-kvX"/>
                                     <constraint firstItem="hug-Cn-gDb" firstAttribute="centerY" secondItem="Mdv-qG-dMQ" secondAttribute="centerY" id="BHG-c9-hXE"/>
                                     <constraint firstItem="NGE-KP-oHh" firstAttribute="centerY" secondItem="Mdv-qG-dMQ" secondAttribute="centerY" id="EK7-kh-WNj"/>
                                     <constraint firstItem="Nf5-NH-Aql" firstAttribute="leading" secondItem="hug-Cn-gDb" secondAttribute="trailing" constant="16" id="EX3-om-6xt"/>
+                                    <constraint firstAttribute="trailing" secondItem="VTM-mY-aFg" secondAttribute="trailing" id="ITY-t4-r0S"/>
+                                    <constraint firstItem="VTM-mY-aFg" firstAttribute="leading" secondItem="NGE-KP-oHh" secondAttribute="trailing" constant="16" id="VUI-sJ-L3q"/>
                                     <constraint firstItem="Nf5-NH-Aql" firstAttribute="top" secondItem="Mdv-qG-dMQ" secondAttribute="top" id="ar0-Yp-Ucg"/>
                                     <constraint firstAttribute="bottom" secondItem="Nf5-NH-Aql" secondAttribute="bottom" id="hga-5c-gAo"/>
+                                    <constraint firstItem="VTM-mY-aFg" firstAttribute="centerY" secondItem="Mdv-qG-dMQ" secondAttribute="centerY" id="tns-NN-RhZ"/>
                                     <constraint firstItem="NGE-KP-oHh" firstAttribute="leading" secondItem="Nf5-NH-Aql" secondAttribute="trailing" constant="16" id="ylY-AL-M7J"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cFq-Qi-tPm" userLabel="Light View">
+                                <rect key="frame" x="124" y="655" width="270" height="31"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="090-uk-vsm" customClass="DiskView" customModule="ReversiChallenge" customModuleProvider="target">
+                                        <rect key="frame" x="244" y="2.5" width="26" height="26"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="090-uk-vsm" secondAttribute="height" multiplier="1:1" id="9YY-aS-UEg"/>
+                                            <constraint firstAttribute="height" constant="26" id="txz-Ui-bDn"/>
+                                        </constraints>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="string" keyPath="name" value="light"/>
+                                        </userDefinedRuntimeAttributes>
+                                    </view>
+                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="q90-VO-j8m">
+                                        <rect key="frame" x="67" y="0.0" width="161" height="32"/>
+                                        <segments>
+                                            <segment title="Manual"/>
+                                            <segment title="Computer"/>
+                                        </segments>
+                                        <connections>
+                                            <action selector="changePlayerControlSegment:" destination="BYZ-38-t0r" eventType="valueChanged" id="9el-1b-nyF"/>
+                                        </connections>
+                                    </segmentedControl>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IMh-5o-Uqc">
+                                        <rect key="frame" x="36" y="1" width="15" height="29"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="ufC-w0-Xwz">
+                                        <rect key="frame" x="0.0" y="5.5" width="20" height="20"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="IMh-5o-Uqc" firstAttribute="leading" secondItem="ufC-w0-Xwz" secondAttribute="trailing" constant="16" id="1de-dD-lDb"/>
+                                    <constraint firstAttribute="bottom" secondItem="q90-VO-j8m" secondAttribute="bottom" id="2Mt-zM-Sz5"/>
+                                    <constraint firstItem="ufC-w0-Xwz" firstAttribute="centerY" secondItem="cFq-Qi-tPm" secondAttribute="centerY" id="2fD-Ph-4lB"/>
+                                    <constraint firstItem="ufC-w0-Xwz" firstAttribute="leading" secondItem="cFq-Qi-tPm" secondAttribute="leading" id="5Ek-Rw-daB"/>
+                                    <constraint firstItem="090-uk-vsm" firstAttribute="centerY" secondItem="cFq-Qi-tPm" secondAttribute="centerY" id="MAy-i3-2dK"/>
+                                    <constraint firstItem="IMh-5o-Uqc" firstAttribute="centerY" secondItem="cFq-Qi-tPm" secondAttribute="centerY" id="OVw-Qw-oOM"/>
+                                    <constraint firstItem="090-uk-vsm" firstAttribute="leading" secondItem="q90-VO-j8m" secondAttribute="trailing" constant="16" id="Zdk-7Y-S5g"/>
+                                    <constraint firstItem="q90-VO-j8m" firstAttribute="top" secondItem="cFq-Qi-tPm" secondAttribute="top" id="qpK-ge-Nbd"/>
+                                    <constraint firstItem="q90-VO-j8m" firstAttribute="leading" secondItem="IMh-5o-Uqc" secondAttribute="trailing" constant="16" id="sd4-ii-KPq"/>
+                                    <constraint firstAttribute="trailing" secondItem="090-uk-vsm" secondAttribute="trailing" id="skQ-ot-DYa"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -165,8 +175,10 @@
                     <connections>
                         <outlet property="boardView" destination="zq8-hK-TyQ" id="7Tx-KA-DlY"/>
                         <outlet property="darkCountLabel" destination="NGE-KP-oHh" id="Eoo-M8-gKu"/>
+                        <outlet property="darkPlayerActivityIndicator" destination="VTM-mY-aFg" id="6wM-xL-ZDN"/>
                         <outlet property="darkPlayerControl" destination="Nf5-NH-Aql" id="eBA-Hv-Lo9"/>
                         <outlet property="lightCountLabel" destination="IMh-5o-Uqc" id="skh-2Z-BV5"/>
+                        <outlet property="lightPlayerActivityIndicator" destination="ufC-w0-Xwz" id="85E-kH-p9g"/>
                         <outlet property="lightPlayerControl" destination="q90-VO-j8m" id="Hdb-Yn-yWZ"/>
                         <outlet property="messageDiskSizeConstraint" destination="gHu-Ly-73K" id="52y-fo-Ths"/>
                         <outlet property="messageDiskView" destination="xhS-zB-FaD" id="Cel-dc-EWk"/>
