@@ -263,7 +263,7 @@ extension ViewController {
                 messageLabel.text = " won"
             } else {
                 messageDiskSizeConstraint.constant = 0
-                messageLabel.text = "Draw"
+                messageLabel.text = "Tied"
             }
         }
     }
