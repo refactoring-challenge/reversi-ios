@@ -18,6 +18,9 @@ class ViewController: UIViewController {
     
     private var turn: Disk? = .dark // `nil` if the current game is over
     private var isAnimating: Bool = false
+    
+    private var darkPlayerCanceller: Canceller?
+    private var lightPlayerCanceller: Canceller?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -226,9 +229,7 @@ extension ViewController {
             case .manual:
                 break
             case .computer:
-                DispatchQueue.main.async { [weak self] in
-                    self?.playTurnOfComputer()
-                }
+                playTurnOfComputer()
             }
         }
     }
@@ -236,8 +237,22 @@ extension ViewController {
     func playTurnOfComputer() {
         guard let turn = self.turn else { preconditionFailure() }
         let (x, y) = coordinatesToPlaceDisk(turn).randomElement()!
-        try! placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
-            self?.nextTurn()
+        
+        var isCancelled = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            guard let self = self else { return }
+            if isCancelled { return }
+            try! self.placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
+                self?.nextTurn()
+            }
+        }
+        
+        let canceller = Canceller { isCancelled = true }
+        switch turn {
+        case .dark:
+            darkPlayerCanceller = canceller
+        case .light:
+            lightPlayerCanceller = canceller
         }
     }
 }
@@ -324,6 +339,20 @@ extension ViewController {
     
     @IBAction func changePlayerControlSegment(_ sender: UISegmentedControl) {
         let side = self.side(of: sender)
+        
+        switch side {
+        case .dark:
+            if let canceller = darkPlayerCanceller {
+                canceller.cancel()
+                darkPlayerCanceller = nil
+            }
+        case .light:
+            if let canceller = lightPlayerCanceller {
+                canceller.cancel()
+                lightPlayerCanceller = nil
+            }
+        }
+        
         updateResetButton()
         if !isAnimating, side == turn, case .computer = Player(rawValue: sender.selectedSegmentIndex)! {
             playTurnOfComputer()
@@ -353,6 +382,18 @@ extension ViewController {
     enum Player: Int {
         case manual = 0
         case computer = 1
+    }
+}
+
+struct Canceller {
+    private let body: () -> Void
+    
+    init(_ body: @escaping () -> Void) {
+        self.body = body
+    }
+    
+    func cancel() {
+        body()
     }
 }
 
