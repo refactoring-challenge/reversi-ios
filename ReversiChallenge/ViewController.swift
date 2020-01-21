@@ -200,6 +200,9 @@ extension ViewController {
         lightPlayerCanceller?.cancel()
         lightPlayerCanceller = nil
         
+        darkPlayerControl.selectedSegmentIndex = 0
+        lightPlayerControl.selectedSegmentIndex = 0
+        
         boardView.reset()
         turn = .dark
         
