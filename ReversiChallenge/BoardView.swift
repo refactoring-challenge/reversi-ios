@@ -97,7 +97,7 @@ public class BoardView: UIView {
         }
     }
     
-    func reset() {
+    public func reset() {
         for y in  yRange {
             for x in xRange {
                 setDisk(nil, atX: x, y: y, animated: false)
@@ -115,11 +115,11 @@ public class BoardView: UIView {
         return cellViews[y * width + x]
     }
     
-    func diskAt(x: Int, y: Int) -> Disk? {
+    public func diskAt(x: Int, y: Int) -> Disk? {
         cellViewAt(x: x, y: y)?.disk
     }
     
-    func setDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+    public func setDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
         guard let cellView = cellViewAt(x: x, y: y) else {
             preconditionFailure() // FIXME: Add a message.
         }
