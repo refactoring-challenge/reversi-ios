@@ -16,13 +16,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zq8-hK-TyQ" customClass="BoardView" customModule="ReversiChallenge" customModuleProvider="target">
-                                <rect key="frame" x="20" y="261" width="374" height="374"/>
-                                <color key="backgroundColor" name="CellColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="zq8-hK-TyQ" secondAttribute="height" multiplier="1:1" id="2W1-wd-IFi"/>
-                                </constraints>
-                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NzD-77-9Io" userLabel="Message View">
                                 <rect key="frame" x="149" y="44" width="116.5" height="38.5"/>
                                 <subviews>
@@ -54,13 +47,13 @@
                                     <constraint firstAttribute="bottom" secondItem="nHv-pJ-hrU" secondAttribute="bottom" id="yhL-NA-i1w"/>
                                 </constraints>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3cI-5a-D7h">
-                                <rect key="frame" x="187.5" y="832" width="39" height="30"/>
-                                <state key="normal" title="Reset"/>
-                                <connections>
-                                    <action selector="pressResetButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mad-K8-Vag"/>
-                                </connections>
-                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zq8-hK-TyQ" customClass="BoardView" customModule="ReversiChallenge" customModuleProvider="target">
+                                <rect key="frame" x="20" y="261" width="374" height="374"/>
+                                <color key="backgroundColor" name="CellColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="zq8-hK-TyQ" secondAttribute="height" multiplier="1:1" id="2W1-wd-IFi"/>
+                                </constraints>
+                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mdv-qG-dMQ" userLabel="Dark View">
                                 <rect key="frame" x="20" y="210" width="270" height="31"/>
                                 <subviews>
@@ -155,19 +148,31 @@
                                     <constraint firstAttribute="trailing" secondItem="090-uk-vsm" secondAttribute="trailing" id="skQ-ot-DYa"/>
                                 </constraints>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3cI-5a-D7h">
+                                <rect key="frame" x="187.5" y="832" width="39" height="30"/>
+                                <state key="normal" title="Reset"/>
+                                <connections>
+                                    <action selector="pressResetButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mad-K8-Vag"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="3cI-5a-D7h" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="7v4-Ux-uYI"/>
+                            <constraint firstItem="zq8-hK-TyQ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" priority="248" constant="20" id="8IT-m3-eRu"/>
                             <constraint firstItem="cFq-Qi-tPm" firstAttribute="trailing" secondItem="zq8-hK-TyQ" secondAttribute="trailing" id="9Ga-qE-FSN"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="zq8-hK-TyQ" secondAttribute="trailing" constant="20" id="B3y-RH-8Td"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="zq8-hK-TyQ" secondAttribute="trailing" priority="248" constant="20" id="B3y-RH-8Td"/>
+                            <constraint firstItem="Mdv-qG-dMQ" firstAttribute="top" secondItem="NzD-77-9Io" secondAttribute="bottom" priority="249" constant="20" id="L2I-cF-EiO"/>
+                            <constraint firstItem="zq8-hK-TyQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="R56-ii-fQB"/>
                             <constraint firstItem="NzD-77-9Io" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="Ril-8y-qZH"/>
                             <constraint firstItem="3cI-5a-D7h" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="Tx4-qc-Xsh"/>
                             <constraint firstItem="cFq-Qi-tPm" firstAttribute="top" secondItem="zq8-hK-TyQ" secondAttribute="bottom" constant="20" id="UGU-RW-1UV"/>
                             <constraint firstItem="zq8-hK-TyQ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="d8F-0a-dsi"/>
                             <constraint firstItem="NzD-77-9Io" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="dnc-Nc-SiM"/>
-                            <constraint firstItem="zq8-hK-TyQ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="fPq-24-ejI"/>
+                            <constraint firstItem="zq8-hK-TyQ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="fPq-24-ejI"/>
+                            <constraint firstItem="3cI-5a-D7h" firstAttribute="top" secondItem="cFq-Qi-tPm" secondAttribute="bottom" priority="249" constant="20" id="nA8-Im-kbz"/>
                             <constraint firstItem="zq8-hK-TyQ" firstAttribute="top" secondItem="Mdv-qG-dMQ" secondAttribute="bottom" constant="20" id="qCt-ST-SZO"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="zq8-hK-TyQ" secondAttribute="trailing" constant="20" id="tiL-HG-p92"/>
                             <constraint firstItem="zq8-hK-TyQ" firstAttribute="leading" secondItem="Mdv-qG-dMQ" secondAttribute="leading" id="wL9-TF-dBg"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
