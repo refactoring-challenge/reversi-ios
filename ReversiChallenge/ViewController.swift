@@ -30,7 +30,11 @@ class ViewController: UIViewController {
         boardView.delegate = self
         messageDiskSize = messageDiskSizeConstraint.constant
         
-        newGame()
+        do {
+            try load()
+        } catch _ {
+            newGame()
+        }
     }
 }
 
@@ -148,6 +152,7 @@ extension ViewController {
                 cleanUp()
                 
                 completion?(finished)
+                try? self.save()
                 self.updateCountLabels()
             }
         } else {
@@ -158,6 +163,7 @@ extension ViewController {
                     self.boardView.setDisk(disk, atX: x, y: y, animated: false)
                 }
                 completion?(true)
+                try? self.save()
                 self.updateCountLabels()
             }
         }
@@ -190,7 +196,7 @@ extension ViewController {
 // MARK: Game management
 
 extension ViewController {
-    func newGame() {
+    func newGame(_ initializer: ((inout /*turn:*/ Disk?, BoardView) -> ())? = nil) {
         animationCanceller?.cancel()
         animationCanceller = nil
         
@@ -203,11 +209,17 @@ extension ViewController {
         darkPlayerControl.selectedSegmentIndex = 0
         lightPlayerControl.selectedSegmentIndex = 0
         
-        boardView.reset()
-        turn = .dark
+        if let resetBoardView = initializer {
+            resetBoardView(&turn, boardView)
+        } else {
+            boardView.reset()
+            turn = .dark
+        }
         
         updateMessageViews()
         updateCountLabels()
+        
+        try? save()
 
         if case .computer = Player(rawValue: darkPlayerControl.selectedSegmentIndex)! {
             playTurnOfComputer()
@@ -395,13 +407,78 @@ extension ViewController: BoardViewDelegate {
         let playerControl = self.playerControl(of: turn)
         if isAnimating { return }
         guard case .manual = Player(rawValue: playerControl.selectedSegmentIndex)! else { return }
-        do {
-            try placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
-                self?.nextTurn()
-            }
-        } catch _ {
-            // Do nothing
+        // try? because doing nothing when an error occurs
+        try? placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
+            self?.nextTurn()
         }
+    }
+}
+
+// MARK: Save and Load
+
+extension ViewController {
+    private var path: String {
+        (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
+    }
+    
+    func save() throws {
+        var output: String = turn.symbol + "\n"
+        
+        for y in boardView.yRange {
+            for x in boardView.xRange {
+                output += boardView.diskAt(x: x, y: y).symbol
+            }
+            output += "\n"
+        }
+        
+        do {
+            try output.write(toFile: path, atomically: true, encoding: .utf8)
+        } catch let error {
+            throw FileIOError.read(path: path, cause: error)
+        }
+    }
+    
+    func load() throws {
+        let input = try String(contentsOfFile: path, encoding: .utf8)
+        
+        var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
+        
+        let turn: Disk?
+        do {
+            guard let line = lines.popFirst() else {
+                throw FileIOError.read(path: path, cause: nil)
+            }
+            turn = Optional<Disk>(symbol: line).flatMap { $0 }
+        }
+        
+        guard lines.count == boardView.height else {
+            throw FileIOError.read(path: path, cause: nil)
+        }
+        var disks: [Disk?] = []
+        while let line = lines.popFirst() {
+            let row: [Disk?] = line.map { character in Disk?(symbol: "\(character)").flatMap { $0 } }
+            guard row.count == boardView.width else {
+                throw FileIOError.read(path: path, cause: nil)
+            }
+            disks.append(contentsOf: row)
+        }
+
+        newGame { outTurn, boardView in
+            outTurn = turn
+            
+            var i = 0
+            for y in boardView.yRange {
+                for x in boardView.xRange {
+                    boardView.setDisk(disks[i], atX: x, y: y, animated: false)
+                    i += 1
+                }
+            }
+        }
+    }
+    
+    enum FileIOError: Error {
+        case write(path: String, cause: Error?)
+        case read(path: String, cause: Error?)
     }
 }
 
@@ -432,4 +509,32 @@ struct DiskPlacementError: Error {
     let disk: Disk
     let x: Int
     let y: Int
+}
+
+// MARK: File-private extensions
+
+extension Optional where Wrapped == Disk {
+    fileprivate init?<S: StringProtocol>(symbol: S) {
+        switch symbol {
+        case "x":
+            self = .some(.dark)
+        case "o":
+            self = .some(.light)
+        case "-":
+            self = .none
+        default:
+            return nil
+        }
+    }
+    
+    fileprivate var symbol: String {
+        switch self {
+        case .some(.dark):
+            return "x"
+        case .some(.light):
+            return "o"
+        case .none:
+            return "-"
+        }
+    }
 }
