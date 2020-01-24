@@ -491,7 +491,7 @@ extension ViewController {
     }
 }
 
-struct Canceller {
+final class Canceller {
     private(set) var isCancelled: Bool = false
     private let body: () -> Void
     
