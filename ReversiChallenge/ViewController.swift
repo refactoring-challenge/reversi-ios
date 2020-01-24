@@ -501,6 +501,7 @@ final class Canceller {
     
     func cancel() {
         if isCancelled { return }
+        isCancelled = true
         body()
     }
 }
