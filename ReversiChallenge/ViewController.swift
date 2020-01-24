@@ -137,20 +137,16 @@ extension ViewController {
         }
         
         if isAnimated {
-            var isCancelled = false
             let cleanUp: () -> Void = { [weak self] in
                 self?.animationCanceller = nil
             }
-            animationCanceller = Canceller {
-                isCancelled = true
-                cleanUp()
-            }
-            
+            animationCanceller = Canceller(cleanUp)
             animateSettingDisks(at: [(x, y)] + diskCoordinates, to: disk) { [weak self] finished in
                 guard let self = self else { return }
-                if isCancelled { return }
+                guard let canceller = self.animationCanceller else { return }
+                if canceller.isCancelled { return }
                 cleanUp()
-                
+
                 completion?(finished)
                 try? self.save()
                 self.updateCountLabels()
@@ -283,7 +279,6 @@ extension ViewController {
         }
         playerActivityIndicator?.startAnimating()
         
-        var isCancelled = false
         let cleanUp: () -> Void = { [weak self] in
             guard let self = self else { return }
             playerActivityIndicator?.stopAnimating()
@@ -294,14 +289,10 @@ extension ViewController {
                 self.lightPlayerCanceller = nil
             }
         }
-        let canceller = Canceller {
-            isCancelled = true
-            cleanUp()
-        }
-        
+        let canceller = Canceller(cleanUp)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             guard let self = self else { return }
-            if isCancelled { return }
+            if canceller.isCancelled { return }
             cleanUp()
             
             try! self.placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
@@ -386,12 +377,10 @@ extension ViewController {
         case .dark:
             if let canceller = darkPlayerCanceller {
                 canceller.cancel()
-                darkPlayerCanceller = nil
             }
         case .light:
             if let canceller = lightPlayerCanceller {
                 canceller.cancel()
-                lightPlayerCanceller = nil
             }
         }
         
@@ -493,16 +482,16 @@ extension ViewController {
 
 final class Canceller {
     private(set) var isCancelled: Bool = false
-    private let body: () -> Void
+    private let body: (() -> Void)?
     
-    init(_ body: @escaping () -> Void) {
+    init(_ body: (() -> Void)?) {
         self.body = body
     }
     
     func cancel() {
         if isCancelled { return }
         isCancelled = true
-        body()
+        body?()
     }
 }
 
