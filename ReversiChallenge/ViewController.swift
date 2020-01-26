@@ -216,10 +216,6 @@ extension ViewController {
         updateCountLabels()
         
         try? save()
-
-        if case .computer = Player(rawValue: darkPlayerControl.selectedSegmentIndex)! {
-            playTurnOfComputer()
-        }
     }
     
     func nextTurn() {
