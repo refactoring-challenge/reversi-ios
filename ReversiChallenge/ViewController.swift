@@ -205,8 +205,8 @@ extension ViewController {
         darkPlayerControl.selectedSegmentIndex = 0
         lightPlayerControl.selectedSegmentIndex = 0
         
-        if let resetBoardView = initializer {
-            resetBoardView(&turn, boardView)
+        if let initializer = initializer {
+            initializer(&turn, boardView)
         } else {
             boardView.reset()
             turn = .dark
