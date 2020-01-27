@@ -192,7 +192,12 @@ extension ViewController {
 // MARK: Game management
 
 extension ViewController {
-    func newGame(_ initializer: ((inout /*turn:*/ Disk?, BoardView) -> ())? = nil) {
+    func newGame(_ initializer: ((
+        /*turn:*/ inout Disk?,
+        /*darkPlayer:*/ inout Player,
+        /*lightPlayer:*/ inout Player,
+        BoardView) -> ()
+    )? = nil) {
         animationCanceller?.cancel()
         animationCanceller = nil
         
@@ -202,20 +207,32 @@ extension ViewController {
         lightPlayerCanceller?.cancel()
         lightPlayerCanceller = nil
         
-        darkPlayerControl.selectedSegmentIndex = 0
-        lightPlayerControl.selectedSegmentIndex = 0
-        
         if let initializer = initializer {
-            initializer(&turn, boardView)
+            var darkPlayer: Player = .manual
+            var lightPlayer: Player = .manual
+            initializer(&turn, &darkPlayer, &lightPlayer, boardView)
+            
+            darkPlayerControl.selectedSegmentIndex = darkPlayer.rawValue
+            lightPlayerControl.selectedSegmentIndex = lightPlayer.rawValue
         } else {
             boardView.reset()
             turn = .dark
+            
+            darkPlayerControl.selectedSegmentIndex = 0
+            lightPlayerControl.selectedSegmentIndex = 0
         }
         
         updateMessageViews()
         updateCountLabels()
         
         try? save()
+        
+        if
+            let turn = self.turn,
+            case .computer = Player(rawValue: playerControl(of: turn).selectedSegmentIndex)!
+        {
+            playTurnOfComputer()
+        }
     }
     
     func nextTurn() {
@@ -407,7 +424,11 @@ extension ViewController {
     }
     
     func save() throws {
-        var output: String = turn.symbol + "\n"
+        var output: String = ""
+        output += turn.symbol
+        output += darkPlayerControl.selectedSegmentIndex.description
+        output += lightPlayerControl.selectedSegmentIndex.description
+        output += "\n"
         
         for y in boardView.yRange {
             for x in boardView.xRange {
@@ -429,11 +450,44 @@ extension ViewController {
         var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
         
         let turn: Disk?
+        let darkPlayer: Player
+        let lightPlayer: Player
         do {
-            guard let line = lines.popFirst() else {
+            guard var line = lines.popFirst() else {
                 throw FileIOError.read(path: path, cause: nil)
             }
-            turn = Optional<Disk>(symbol: line).flatMap { $0 }
+            
+            do { // turn
+                guard
+                    let diskSymbol = line.popFirst(),
+                    let disk = Optional<Disk>(symbol: diskSymbol.description)
+                else {
+                    throw FileIOError.read(path: path, cause: nil)
+                }
+                turn = disk
+            }
+            
+            do { // darkPlayer
+                guard
+                    let playerSymbol = line.popFirst(),
+                    let playerNumber = Int(playerSymbol.description),
+                    let player = Player(rawValue: playerNumber)
+                else {
+                    throw FileIOError.read(path: path, cause: nil)
+                }
+                darkPlayer = player
+            }
+            
+            do { // lightPlayer
+                guard
+                    let playerSymbol = line.popFirst(),
+                    let playerNumber = Int(playerSymbol.description),
+                    let player = Player(rawValue: playerNumber)
+                else {
+                    throw FileIOError.read(path: path, cause: nil)
+                }
+                lightPlayer = player
+            }
         }
         
         guard lines.count == boardView.height else {
@@ -448,8 +502,10 @@ extension ViewController {
             disks.append(contentsOf: row)
         }
 
-        newGame { outTurn, boardView in
+        newGame { outTurn, outDarkPlayer, outLightPlayer, boardView in
             outTurn = turn
+            outDarkPlayer = darkPlayer
+            outLightPlayer = lightPlayer
             
             var i = 0
             for y in boardView.yRange {
