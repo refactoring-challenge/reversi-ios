@@ -23,6 +23,8 @@ class ViewController: UIViewController {
     
     private var darkPlayerCanceller: Canceller?
     private var lightPlayerCanceller: Canceller?
+    
+    private var hasBeenStarted: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +37,14 @@ class ViewController: UIViewController {
         } catch _ {
             newGame()
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if hasBeenStarted { return }
+        hasBeenStarted = true
+        waitForPlayer()
     }
 }
 
@@ -226,11 +236,14 @@ extension ViewController {
         updateCountLabels()
         
         try? save()
-        
-        if
-            let turn = self.turn,
-            case .computer = Player(rawValue: playerControl(of: turn).selectedSegmentIndex)!
-        {
+    }
+    
+    func waitForPlayer() {
+        guard let turn = self.turn else { return }
+        switch Player(rawValue: playerControl(of: turn).selectedSegmentIndex)! {
+        case .manual:
+            break
+        case .computer:
             playTurnOfComputer()
         }
     }
@@ -261,21 +274,7 @@ extension ViewController {
         } else {
             self.turn = turn
             updateMessageViews()
-            
-            let playerControl: UISegmentedControl
-            switch turn {
-            case .dark:
-                playerControl = darkPlayerControl
-            case .light:
-                playerControl = lightPlayerControl
-            }
-            
-            switch Player(rawValue: playerControl.selectedSegmentIndex)! {
-            case .manual:
-                break
-            case .computer:
-                playTurnOfComputer()
-            }
+            waitForPlayer()
         }
     }
     
@@ -379,6 +378,7 @@ extension ViewController {
         alertController.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
             guard let self = self else { return }
             self.newGame()
+            self.waitForPlayer()
         })
         present(alertController, animated: true)
     }
