@@ -1,7 +1,9 @@
-public enum Disk: Equatable {
+public enum Disk {
     case dark
     case light
 }
+
+extension Disk: Hashable {}
 
 extension Disk {
     public var flipped: Disk {
