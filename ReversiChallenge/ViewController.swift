@@ -24,8 +24,6 @@ class ViewController: UIViewController {
     private var darkPlayerCanceller: Canceller?
     private var lightPlayerCanceller: Canceller?
     
-    private var hasBeenStarted: Bool = false
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,11 +37,13 @@ class ViewController: UIViewController {
         }
     }
     
+    private var viewHasAppeared: Bool = false
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if hasBeenStarted { return }
-        hasBeenStarted = true
+        if viewHasAppeared { return }
+        viewHasAppeared = true
         waitForPlayer()
     }
 }
