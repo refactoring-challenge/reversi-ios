@@ -33,7 +33,6 @@ class ViewController: UIViewController {
     }
     
     private var viewHasAppeared: Bool = false
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
