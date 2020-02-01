@@ -120,12 +120,12 @@ extension ViewController {
         !flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y).isEmpty
     }
     
-    func coordinatesToPlaceDisk(_ disk: Disk) -> [(x: Int, y: Int)] {
+    func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
         var coordinates: [(Int, Int)] = []
         
         for y in boardView.yRange {
             for x in boardView.xRange {
-                if canPlaceDisk(disk, atX: x, y: y) {
+                if canPlaceDisk(side, atX: x, y: y) {
                     coordinates.append((x, y))
                 }
             }
@@ -251,8 +251,8 @@ extension ViewController {
 
         turn.flip()
         
-        if coordinatesToPlaceDisk(turn).isEmpty {
-            if coordinatesToPlaceDisk(turn.flipped).isEmpty {
+        if validMoves(for: turn).isEmpty {
+            if validMoves(for: turn.flipped).isEmpty {
                 self.turn = nil
                 updateMessageViews()
             } else {
@@ -278,7 +278,7 @@ extension ViewController {
     
     func playTurnOfComputer() {
         guard let turn = self.turn else { preconditionFailure() }
-        let (x, y) = coordinatesToPlaceDisk(turn).randomElement()!
+        let (x, y) = validMoves(for: turn).randomElement()!
 
         playerActivityIndicator(of: turn).startAnimating()
         
