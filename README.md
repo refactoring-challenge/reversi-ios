@@ -57,7 +57,7 @@ _Fat View Controller_ は iOS アプリ開発におけるアンチパターン�
 
 | リポジトリ | 作者 | アーキテクチャパターン | フレームワーク | UI | 備考 |
 |:--|:--|:--|:--|:--|:--|
-| [koher/reversi-challenge-ios](https://github.com/koher/reversi-challenge-ios) | @koher | Fat View Controller | - | UIKit | オリジナル課題 |
+| [koher/reversi-challenge-ios](https://github.com/koher/reversi-challenge-ios) | @koher | Fat View Controller | - | UIKit | 本リポジトリ |
 
 ## License
 
