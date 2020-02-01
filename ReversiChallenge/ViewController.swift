@@ -200,7 +200,7 @@ extension ViewController {
     func newGame(_ initializer: ((
         /*turn:*/ inout Disk?,
         /*players:*/ inout [Player],
-        BoardView) -> ()
+        BoardView) -> Void
     )? = nil) {
         animationCanceller?.cancel()
         animationCanceller = nil
