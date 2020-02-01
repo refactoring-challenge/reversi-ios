@@ -21,8 +21,7 @@ class ViewController: UIViewController {
     private var animationCanceller: Canceller?
     private var isAnimating: Bool { animationCanceller != nil }
     
-    private var darkPlayerCanceller: Canceller?
-    private var lightPlayerCanceller: Canceller?
+    private var playerCancellers: [Disk: Canceller] = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -211,11 +210,10 @@ extension ViewController {
         animationCanceller?.cancel()
         animationCanceller = nil
         
-        darkPlayerCanceller?.cancel()
-        darkPlayerCanceller = nil
-        
-        lightPlayerCanceller?.cancel()
-        lightPlayerCanceller = nil
+        for side in Disk.sides {
+            playerCancellers[side]?.cancel()
+            playerCancellers.removeValue(forKey: side)
+        }
         
         if let initializer = initializer {
             var darkPlayer: Player = .manual
@@ -294,12 +292,7 @@ extension ViewController {
         let cleanUp: () -> Void = { [weak self] in
             guard let self = self else { return }
             playerActivityIndicator?.stopAnimating()
-            switch turn {
-            case .dark:
-                self.darkPlayerCanceller = nil
-            case .light:
-                self.lightPlayerCanceller = nil
-            }
+            self.playerCancellers[turn] = nil
         }
         let canceller = Canceller(cleanUp)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
@@ -312,12 +305,7 @@ extension ViewController {
             }
         }
         
-        switch turn {
-        case .dark:
-            darkPlayerCanceller = canceller
-        case .light:
-            lightPlayerCanceller = canceller
-        }
+        playerCancellers[turn] = canceller
     }
 }
 
@@ -386,15 +374,8 @@ extension ViewController {
     @IBAction func changePlayerControlSegment(_ sender: UISegmentedControl) {
         let side = self.side(of: sender)
         
-        switch side {
-        case .dark:
-            if let canceller = darkPlayerCanceller {
-                canceller.cancel()
-            }
-        case .light:
-            if let canceller = lightPlayerCanceller {
-                canceller.cancel()
-            }
+        if let canceller = playerCancellers[side] {
+            canceller.cancel()
         }
         
         if !isAnimating, side == turn, case .computer = Player(rawValue: sender.selectedSegmentIndex)! {
