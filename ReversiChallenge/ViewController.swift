@@ -8,13 +8,9 @@ class ViewController: UIViewController {
     @IBOutlet private var messageDiskSizeConstraint: NSLayoutConstraint!
     private var messageDiskSize: CGFloat! // to store the size designated in the storyboard
     
-    @IBOutlet private var darkPlayerControl: UISegmentedControl!
-    @IBOutlet private var darkCountLabel: UILabel!
-    @IBOutlet private var darkPlayerActivityIndicator: UIActivityIndicatorView!
-
-    @IBOutlet private var lightPlayerControl: UISegmentedControl!
-    @IBOutlet private var lightCountLabel: UILabel!
-    @IBOutlet private var lightPlayerActivityIndicator: UIActivityIndicatorView!
+    @IBOutlet private var playerControls: [UISegmentedControl]!
+    @IBOutlet private var countLabels: [UILabel]!
+    @IBOutlet private var playerActivityIndicators: [UIActivityIndicatorView]!
     
     private var turn: Disk? = .dark // `nil` if the current game is over
     
@@ -220,14 +216,15 @@ extension ViewController {
             var lightPlayer: Player = .manual
             initializer(&turn, &darkPlayer, &lightPlayer, boardView)
             
-            darkPlayerControl.selectedSegmentIndex = darkPlayer.rawValue
-            lightPlayerControl.selectedSegmentIndex = lightPlayer.rawValue
+            playerControls[Disk.dark.index].selectedSegmentIndex = darkPlayer.rawValue
+            playerControls[Disk.light.index].selectedSegmentIndex = lightPlayer.rawValue
         } else {
             boardView.reset()
             turn = .dark
             
-            darkPlayerControl.selectedSegmentIndex = 0
-            lightPlayerControl.selectedSegmentIndex = 0
+            for playerControl in playerControls {
+                playerControl.selectedSegmentIndex = Player.manual.rawValue
+            }
         }
         
         updateMessageViews()
@@ -238,7 +235,7 @@ extension ViewController {
     
     func waitForPlayer() {
         guard let turn = self.turn else { return }
-        switch Player(rawValue: playerControl(of: turn).selectedSegmentIndex)! {
+        switch Player(rawValue: playerControls[turn.index].selectedSegmentIndex)! {
         case .manual:
             break
         case .computer:
@@ -280,11 +277,11 @@ extension ViewController {
         guard let turn = self.turn else { preconditionFailure() }
         let (x, y) = validMoves(for: turn).randomElement()!
 
-        playerActivityIndicator(of: turn).startAnimating()
+        playerActivityIndicators[turn.index].startAnimating()
         
         let cleanUp: () -> Void = { [weak self] in
             guard let self = self else { return }
-            self.playerActivityIndicator(of: turn).stopAnimating()
+            self.playerActivityIndicators[turn.index].stopAnimating()
             self.playerCancellers[turn] = nil
         }
         let canceller = Canceller(cleanUp)
@@ -306,8 +303,9 @@ extension ViewController {
 
 extension ViewController {
     func updateCountLabels() {
-        darkCountLabel.text = "\(count(of: .dark))"
-        lightCountLabel.text = "\(count(of: .light))"
+        for side in Disk.sides {
+            countLabels[side.index].text = "\(count(of: side))"
+        }
     }
     
     func updateMessageViews() {
@@ -325,30 +323,6 @@ extension ViewController {
                 messageDiskSizeConstraint.constant = 0
                 messageLabel.text = "Tied"
             }
-        }
-    }
-    
-    func playerControl(of side: Disk) -> UISegmentedControl {
-        switch side {
-        case .dark: return darkPlayerControl
-        case .light: return lightPlayerControl
-        }
-    }
-    
-    func side(of playerControl: UISegmentedControl) -> Disk {
-        if playerControl === darkPlayerControl {
-            return .dark
-        } else if playerControl === lightPlayerControl {
-            return .light
-        } else {
-            preconditionFailure()
-        }
-    }
-    
-    func playerActivityIndicator(of side: Disk) -> UIActivityIndicatorView {
-        switch side {
-        case .dark: return darkPlayerActivityIndicator
-        case .light: return lightPlayerActivityIndicator
         }
     }
 }
@@ -372,7 +346,7 @@ extension ViewController {
     }
     
     @IBAction func changePlayerControlSegment(_ sender: UISegmentedControl) {
-        let side = self.side(of: sender)
+        let side: Disk = Disk(index: playerControls.firstIndex(of: sender)!)
         
         if let canceller = playerCancellers[side] {
             canceller.cancel()
@@ -387,7 +361,7 @@ extension ViewController {
 extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
         guard let turn = turn else { return }
-        let playerControl = self.playerControl(of: turn)
+        let playerControl = playerControls[turn.index]
         if isAnimating { return }
         guard case .manual = Player(rawValue: playerControl.selectedSegmentIndex)! else { return }
         // try? because doing nothing when an error occurs
@@ -407,8 +381,9 @@ extension ViewController {
     func save() throws {
         var output: String = ""
         output += turn.symbol
-        output += darkPlayerControl.selectedSegmentIndex.description
-        output += lightPlayerControl.selectedSegmentIndex.description
+        for side in Disk.sides {
+            output += playerControls[side.index].selectedSegmentIndex.description
+        }
         output += "\n"
         
         for y in boardView.yRange {
@@ -535,6 +510,25 @@ struct DiskPlacementError: Error {
 }
 
 // MARK: File-private extensions
+
+extension Disk {
+    init(index: Int) {
+        for side in Disk.sides {
+            if index == side.index {
+                self = side
+                return
+            }
+        }
+        preconditionFailure("Illegal index: \(index)")
+    }
+    
+    var index: Int {
+        switch self {
+        case .dark: return 0
+        case .light: return 1
+        }
+    }
+}
 
 extension Optional where Wrapped == Disk {
     fileprivate init?<S: StringProtocol>(symbol: S) {

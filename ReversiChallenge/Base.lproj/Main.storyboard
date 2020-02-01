@@ -179,15 +179,15 @@
                     </view>
                     <connections>
                         <outlet property="boardView" destination="zq8-hK-TyQ" id="7Tx-KA-DlY"/>
-                        <outlet property="darkCountLabel" destination="NGE-KP-oHh" id="Eoo-M8-gKu"/>
-                        <outlet property="darkPlayerActivityIndicator" destination="VTM-mY-aFg" id="6wM-xL-ZDN"/>
-                        <outlet property="darkPlayerControl" destination="Nf5-NH-Aql" id="eBA-Hv-Lo9"/>
-                        <outlet property="lightCountLabel" destination="IMh-5o-Uqc" id="skh-2Z-BV5"/>
-                        <outlet property="lightPlayerActivityIndicator" destination="ufC-w0-Xwz" id="85E-kH-p9g"/>
-                        <outlet property="lightPlayerControl" destination="q90-VO-j8m" id="Hdb-Yn-yWZ"/>
                         <outlet property="messageDiskSizeConstraint" destination="gHu-Ly-73K" id="52y-fo-Ths"/>
                         <outlet property="messageDiskView" destination="xhS-zB-FaD" id="Cel-dc-EWk"/>
                         <outlet property="messageLabel" destination="nHv-pJ-hrU" id="bqV-9P-ADo"/>
+                        <outletCollection property="countLabels" destination="NGE-KP-oHh" collectionClass="NSMutableArray" id="aJN-mC-RHo"/>
+                        <outletCollection property="countLabels" destination="IMh-5o-Uqc" collectionClass="NSMutableArray" id="XJm-Mh-BhF"/>
+                        <outletCollection property="playerActivityIndicators" destination="VTM-mY-aFg" collectionClass="NSMutableArray" id="Ale-OR-NEC"/>
+                        <outletCollection property="playerActivityIndicators" destination="ufC-w0-Xwz" collectionClass="NSMutableArray" id="jdu-St-za6"/>
+                        <outletCollection property="playerControls" destination="Nf5-NH-Aql" collectionClass="NSMutableArray" id="Ck1-BI-rSv"/>
+                        <outletCollection property="playerControls" destination="q90-VO-j8m" collectionClass="NSMutableArray" id="RQh-tl-TQr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
