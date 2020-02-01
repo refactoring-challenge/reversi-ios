@@ -279,19 +279,12 @@ extension ViewController {
     func playTurnOfComputer() {
         guard let turn = self.turn else { preconditionFailure() }
         let (x, y) = coordinatesToPlaceDisk(turn).randomElement()!
-        
-        weak var playerActivityIndicator: UIActivityIndicatorView?
-        switch turn {
-        case .dark:
-            playerActivityIndicator = darkPlayerActivityIndicator
-        case .light:
-            playerActivityIndicator = lightPlayerActivityIndicator
-        }
-        playerActivityIndicator?.startAnimating()
+
+        playerActivityIndicator(of: turn).startAnimating()
         
         let cleanUp: () -> Void = { [weak self] in
             guard let self = self else { return }
-            playerActivityIndicator?.stopAnimating()
+            self.playerActivityIndicator(of: turn).stopAnimating()
             self.playerCancellers[turn] = nil
         }
         let canceller = Canceller(cleanUp)
@@ -349,6 +342,13 @@ extension ViewController {
             return .light
         } else {
             preconditionFailure()
+        }
+    }
+    
+    func playerActivityIndicator(of side: Disk) -> UIActivityIndicatorView {
+        switch side {
+        case .dark: return darkPlayerActivityIndicator
+        case .light: return lightPlayerActivityIndicator
         }
     }
 }
