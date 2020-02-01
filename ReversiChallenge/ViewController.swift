@@ -199,8 +199,7 @@ extension ViewController {
 extension ViewController {
     func newGame(_ initializer: ((
         /*turn:*/ inout Disk?,
-        /*darkPlayer:*/ inout Player,
-        /*lightPlayer:*/ inout Player,
+        /*players:*/ inout [Player],
         BoardView) -> ()
     )? = nil) {
         animationCanceller?.cancel()
@@ -212,12 +211,11 @@ extension ViewController {
         }
         
         if let initializer = initializer {
-            var darkPlayer: Player = .manual
-            var lightPlayer: Player = .manual
-            initializer(&turn, &darkPlayer, &lightPlayer, boardView)
-            
-            playerControls[Disk.dark.index].selectedSegmentIndex = darkPlayer.rawValue
-            playerControls[Disk.light.index].selectedSegmentIndex = lightPlayer.rawValue
+            var players: [Player] = [.manual, .manual]
+            initializer(&turn, &players, boardView)
+            for (playerControl, player) in zip(playerControls, players) {
+                playerControl.selectedSegmentIndex = player.rawValue
+            }
         } else {
             boardView.reset()
             turn = .dark
@@ -406,8 +404,7 @@ extension ViewController {
         var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
         
         let turn: Disk?
-        let darkPlayer: Player
-        let lightPlayer: Player
+        var players: [Player] = []
         do {
             guard var line = lines.popFirst() else {
                 throw FileIOError.read(path: path, cause: nil)
@@ -423,7 +420,8 @@ extension ViewController {
                 turn = disk
             }
             
-            do { // darkPlayer
+            // players
+            for _ in Disk.sides {
                 guard
                     let playerSymbol = line.popFirst(),
                     let playerNumber = Int(playerSymbol.description),
@@ -431,18 +429,7 @@ extension ViewController {
                 else {
                     throw FileIOError.read(path: path, cause: nil)
                 }
-                darkPlayer = player
-            }
-            
-            do { // lightPlayer
-                guard
-                    let playerSymbol = line.popFirst(),
-                    let playerNumber = Int(playerSymbol.description),
-                    let player = Player(rawValue: playerNumber)
-                else {
-                    throw FileIOError.read(path: path, cause: nil)
-                }
-                lightPlayer = player
+                players.append(player)
             }
         }
         
@@ -458,10 +445,9 @@ extension ViewController {
             disks.append(contentsOf: row)
         }
 
-        newGame { outTurn, outDarkPlayer, outLightPlayer, boardView in
+        newGame { outTurn, outPlayers, boardView in
             outTurn = turn
-            outDarkPlayer = darkPlayer
-            outLightPlayer = lightPlayer
+            outPlayers = players
             
             var i = 0
             for y in boardView.yRange {
