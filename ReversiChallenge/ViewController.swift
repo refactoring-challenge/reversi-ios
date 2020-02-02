@@ -196,34 +196,14 @@ extension ViewController {
 // MARK: Game management
 
 extension ViewController {
-    func newGame(_ initializer: ((
-        /*turn:*/ inout Disk?,
-        /*players:*/ inout [Player],
-        BoardView) -> Void
-    )? = nil) {
-        animationCanceller?.cancel()
-        animationCanceller = nil
+    func newGame() {
+        boardView.reset()
+        turn = .dark
         
-        for side in Disk.sides {
-            playerCancellers[side]?.cancel()
-            playerCancellers.removeValue(forKey: side)
+        for playerControl in playerControls {
+            playerControl.selectedSegmentIndex = Player.manual.rawValue
         }
-        
-        if let initializer = initializer {
-            var players: [Player] = [.manual, .manual]
-            initializer(&turn, &players, boardView)
-            for (playerControl, player) in zip(playerControls, players) {
-                playerControl.selectedSegmentIndex = player.rawValue
-            }
-        } else {
-            boardView.reset()
-            turn = .dark
-            
-            for playerControl in playerControls {
-                playerControl.selectedSegmentIndex = Player.manual.rawValue
-            }
-        }
-        
+
         updateMessageViews()
         updateCountLabels()
         
@@ -336,6 +316,15 @@ extension ViewController {
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in })
         alertController.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
             guard let self = self else { return }
+            
+            self.animationCanceller?.cancel()
+            self.animationCanceller = nil
+            
+            for side in Disk.sides {
+                self.playerCancellers[side]?.cancel()
+                self.playerCancellers.removeValue(forKey: side)
+            }
+            
             self.newGame()
             self.waitForPlayer()
         })
@@ -399,63 +388,59 @@ extension ViewController {
     
     func load() throws {
         let input = try String(contentsOfFile: path, encoding: .utf8)
-        
         var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
         
-        let turn: Disk?
-        var players: [Player] = []
-        do {
-            guard var line = lines.popFirst() else {
-                throw FileIOError.read(path: path, cause: nil)
-            }
-            
-            do { // turn
-                guard
-                    let diskSymbol = line.popFirst(),
-                    let disk = Optional<Disk>(symbol: diskSymbol.description)
-                else {
-                    throw FileIOError.read(path: path, cause: nil)
-                }
-                turn = disk
-            }
-            
-            // players
-            for _ in Disk.sides {
-                guard
-                    let playerSymbol = line.popFirst(),
-                    let playerNumber = Int(playerSymbol.description),
-                    let player = Player(rawValue: playerNumber)
-                else {
-                    throw FileIOError.read(path: path, cause: nil)
-                }
-                players.append(player)
-            }
-        }
-        
-        guard lines.count == boardView.height else {
+        guard var line = lines.popFirst() else {
             throw FileIOError.read(path: path, cause: nil)
         }
-        var disks: [Disk?] = []
-        while let line = lines.popFirst() {
-            let row: [Disk?] = line.map { character in Disk?(symbol: "\(character)").flatMap { $0 } }
-            guard row.count == boardView.width else {
+        
+        do { // turn
+            guard
+                let diskSymbol = line.popFirst(),
+                let disk = Optional<Disk>(symbol: diskSymbol.description)
+            else {
                 throw FileIOError.read(path: path, cause: nil)
             }
-            disks.append(contentsOf: row)
+            turn = disk
         }
 
-        newGame { outTurn, outPlayers, boardView in
-            outTurn = turn
-            outPlayers = players
+        // players
+        for side in Disk.sides {
+            guard
+                let playerSymbol = line.popFirst(),
+                let playerNumber = Int(playerSymbol.description),
+                let player = Player(rawValue: playerNumber)
+            else {
+                throw FileIOError.read(path: path, cause: nil)
+            }
+            playerControls[side.index].selectedSegmentIndex = player.rawValue
+        }
+
+        do { // board
+            guard lines.count == boardView.height else {
+                throw FileIOError.read(path: path, cause: nil)
+            }
             
-            var i = 0
-            for y in boardView.yRange {
-                for x in boardView.xRange {
-                    boardView.setDisk(disks[i], atX: x, y: y, animated: false)
-                    i += 1
+            var y = 0
+            while let line = lines.popFirst() {
+                var x = 0
+                for character in line {
+                    let disk = Disk?(symbol: "\(character)").flatMap { $0 }
+                    boardView.setDisk(disk, atX: x, y: y, animated: false)
+                    x += 1
                 }
+                guard x == boardView.width else {
+                    throw FileIOError.read(path: path, cause: nil)
+                }
+                y += 1
+            }
+            guard y == boardView.height else {
+                throw FileIOError.read(path: path, cause: nil)
             }
         }
+
+        updateMessageViews()
+        updateCountLabels()
     }
     
     enum FileIOError: Error {
