@@ -26,7 +26,7 @@ class ViewController: UIViewController {
         messageDiskSize = messageDiskSizeConstraint.constant
         
         do {
-            try load()
+            try loadGame()
         } catch _ {
             newGame()
         }
@@ -152,7 +152,7 @@ extension ViewController {
                 cleanUp()
 
                 completion?(finished)
-                try? self.save()
+                try? self.saveGame()
                 self.updateCountLabels()
             }
         } else {
@@ -163,7 +163,7 @@ extension ViewController {
                     self.boardView.setDisk(disk, atX: x, y: y, animated: false)
                 }
                 completion?(true)
-                try? self.save()
+                try? self.saveGame()
                 self.updateCountLabels()
             }
         }
@@ -207,7 +207,7 @@ extension ViewController {
         updateMessageViews()
         updateCountLabels()
         
-        try? save()
+        try? saveGame()
     }
     
     func waitForPlayer() {
@@ -364,7 +364,7 @@ extension ViewController {
         (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
     }
     
-    func save() throws {
+    func saveGame() throws {
         var output: String = ""
         output += turn.symbol
         for side in Disk.sides {
@@ -386,7 +386,7 @@ extension ViewController {
         }
     }
     
-    func load() throws {
+    func loadGame() throws {
         let input = try String(contentsOfFile: path, encoding: .utf8)
         var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
         
