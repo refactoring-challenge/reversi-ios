@@ -304,7 +304,7 @@ extension ViewController {
     }
 }
 
-// MARK: Interactions
+// MARK: Inputs
 
 extension ViewController {
     @IBAction func pressResetButton(_ sender: UIButton) {
@@ -347,9 +347,8 @@ extension ViewController {
 extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
         guard let turn = turn else { return }
-        let playerControl = playerControls[turn.index]
         if isAnimating { return }
-        guard case .manual = Player(rawValue: playerControl.selectedSegmentIndex)! else { return }
+        guard case .manual = Player(rawValue: playerControls[turn.index].selectedSegmentIndex)! else { return }
         // try? because doing nothing when an error occurs
         try? placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
             self?.nextTurn()
