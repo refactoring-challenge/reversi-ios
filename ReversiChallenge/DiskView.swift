@@ -1,11 +1,11 @@
 import UIKit
 
-class DiskView: UIView {
-    var disk: Disk = .dark {
+public class DiskView: UIView {
+    public var disk: Disk = .dark {
         didSet { setNeedsDisplay() }
     }
     
-    @IBInspectable var name: String {
+    @IBInspectable public var name: String {
         get { disk.name }
         set { disk = .init(name: newValue) }
     }
@@ -25,7 +25,7 @@ class DiskView: UIView {
         isUserInteractionEnabled = false
     }
 
-    override func draw(_ rect: CGRect) {
+    override public func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
         context.setFillColor(disk.cgColor)
         context.fillEllipse(in: bounds)
