@@ -1,58 +1,5 @@
 import UIKit
 
-class ReversiState {
-    var turn: Disk? = .dark // `nil` if the current game is over
-    var isGameOver: Bool {
-        turn == nil
-    }
-    func newGame() {
-        turn = .dark
-    }
-
-    func nextTurn() -> Disk? {
-        guard var turn = turn else { return nil }
-        turn.flip()
-        self.turn = turn
-        return turn
-    }
-
-    func gameover() {
-        turn = nil
-    }
-
-    ///////////////////////////////////////////////
-
-    enum FileIOError: Error {
-        case write(path: String, cause: Error?)
-        case read(path: String, cause: Error?)
-    }
-
-    private var path: String {
-        (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
-    }
-
-    func loadGame() throws -> (Substring, ArraySlice<Substring>) {
-        let input = try String(contentsOfFile: path, encoding: .utf8)
-        var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
-
-        guard var line = lines.popFirst() else {
-            throw FileIOError.read(path: path, cause: nil)
-        }
-
-        do { // turn
-            guard
-                let diskSymbol = line.popFirst(),
-                let disk = Optional<Disk>(symbol: diskSymbol.description)
-            else {
-                throw FileIOError.read(path: path, cause: nil)
-            }
-            turn = disk
-        }
-
-        return (line, lines)
-    }
-}
-
 class ViewController: UIViewController {
     @IBOutlet private var boardView: BoardView!
     
@@ -251,22 +198,15 @@ extension ViewController {
 extension ViewController {
     func newGame() {
         boardView.reset()
-
         reversiState.newGame()
-
-        for playerControl in playerControls {
-            playerControl.selectedSegmentIndex = Player.manual.rawValue
-        }
-
+        updatePlayerControls(reversiState)
         updateMessageViews()
         updateCountLabels()
-        
         try? saveGame()
     }
     
     func waitForPlayer() {
-        guard let turn = reversiState.turn else { return }
-        switch Player(rawValue: playerControls[turn.index].selectedSegmentIndex)! {
+        switch reversiState.playerThisTurn {
         case .manual:
             break
         case .computer:
@@ -330,6 +270,12 @@ extension ViewController {
 // MARK: Views
 
 extension ViewController {
+    func updatePlayerControls(_ reversiState: ReversiState) {
+        for side in Disk.sides {
+            playerControls[side.index].selectedSegmentIndex = reversiState.player(at: side.index).rawValue
+        }
+    }
+
     func updateCountLabels() {
         for side in Disk.sides {
             countLabels[side.index].text = "\(count(of: side))"
@@ -343,7 +289,7 @@ extension ViewController {
             messageDiskView.disk = side
             messageLabel.text = "'s turn"
         case .none:
-            if let winner = self.sideWithMoreDisks() {
+            if let winner = sideWithMoreDisks() {
                 messageDiskSizeConstraint.constant = messageDiskSize
                 messageDiskView.disk = winner
                 messageLabel.text = " won"
@@ -384,14 +330,17 @@ extension ViewController {
     
     @IBAction func changePlayerControlSegment(_ sender: UISegmentedControl) {
         let side: Disk = Disk(index: playerControls.firstIndex(of: sender)!)
-        
+        let player = sender.convertToPlayer
+
+        reversiState.setPlayer(player: player, at: side.index)
+
         try? saveGame()
         
         if let canceller = playerCancellers[side] {
             canceller.cancel()
         }
         
-        if !isAnimating, side == reversiState.turn, case .computer = Player(rawValue: sender.selectedSegmentIndex)! {
+        if !isAnimating && reversiState.canPlayTurnOfComputer(at: side) {
             playTurnOfComputer()
         }
     }
@@ -401,7 +350,7 @@ extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
         guard let turn = reversiState.turn else { return }
         if isAnimating { return }
-        guard case .manual = Player(rawValue: playerControls[turn.index].selectedSegmentIndex)! else { return }
+        guard case .manual = reversiState.playerThisTurn else { return }
         // try? because doing nothing when an error occurs
         try? placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
             self?.nextTurn()
@@ -412,46 +361,25 @@ extension ViewController: BoardViewDelegate {
 // MARK: Save and Load
 
 extension ViewController {
-    private var path: String {
-        (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
-    }
-    
     func saveGame() throws {
-        var output: String = ""
-        output += reversiState.turn.symbol
-        for side in Disk.sides {
-            output += playerControls[side.index].selectedSegmentIndex.description
-        }
-        output += "\n"
-        
+        var output: String = reversiState.saveGame()
         for y in boardView.yRange {
             for x in boardView.xRange {
                 output += boardView.diskAt(x: x, y: y).symbol
             }
             output += "\n"
         }
-        
-        do {
-            try output.write(toFile: path, atomically: true, encoding: .utf8)
-        } catch let error {
-            throw FileIOError.read(path: path, cause: error)
-        }
-    }
+        try reversiState.saveGameToFile(output: output)
+     }
     
     func loadGame() throws {
-        var (line, lines) = try reversiState.loadGame()
-
-        // players
-        for side in Disk.sides {
-            guard
-                let playerSymbol = line.popFirst(),
-                let playerNumber = Int(playerSymbol.description),
-                let player = Player(rawValue: playerNumber)
-            else {
-                throw FileIOError.read(path: path, cause: nil)
-            }
-            playerControls[side.index].selectedSegmentIndex = player.rawValue
+        var path: String {
+            (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
         }
+
+        var lines = try reversiState.loadGame()
+
+        updatePlayerControls(reversiState)
 
         do { // board
             guard lines.count == boardView.height else {
@@ -488,13 +416,6 @@ extension ViewController {
 
 // MARK: Additional types
 
-extension ViewController {
-    enum Player: Int {
-        case manual = 0
-        case computer = 1
-    }
-}
-
 final class Canceller {
     private(set) var isCancelled: Bool = false
     private let body: (() -> Void)?
@@ -516,49 +437,12 @@ struct DiskPlacementError: Error {
     let y: Int
 }
 
-// MARK: File-private extensions
-
-extension Disk {
-    init(index: Int) {
-        for side in Disk.sides {
-            if index == side.index {
-                self = side
-                return
-            }
-        }
-        preconditionFailure("Illegal index: \(index)")
-    }
-    
-    var index: Int {
-        switch self {
-        case .dark: return 0
-        case .light: return 1
-        }
-    }
-}
-
-extension Optional where Wrapped == Disk {
-    fileprivate init?<S: StringProtocol>(symbol: S) {
-        switch symbol {
-        case "x":
-            self = .some(.dark)
-        case "o":
-            self = .some(.light)
-        case "-":
-            self = .none
-        default:
-            return nil
-        }
-    }
-    
-    fileprivate var symbol: String {
-        switch self {
-        case .some(.dark):
-            return "x"
-        case .some(.light):
-            return "o"
-        case .none:
-            return "-"
+extension UISegmentedControl {
+    fileprivate var convertToPlayer: Player {
+        switch selectedSegmentIndex {
+        case 0: return .manual
+        case 1: return .computer
+        default: preconditionFailure()
         }
     }
 }
