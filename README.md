@@ -1,6 +1,6 @@
-# Reversi Challenge iOS （仮）
+# リファクタリング・チャレンジ （リバーシ） - iOS版
 
-Reversi Challenge iOS は、 _Fat View Controller_ として実装された[リバーシ](https://en.wikipedia.org/wiki/Reversi)アプリをリファクタリングし、どれだけクリーンな設計とコードを実現できるかというコンペティションです（ジャッジが優劣を判定するわけではなく、設計の技を競い合うのが目的です）。
+"リファクタリング・チャレンジ （リバーシ） - iOS版" は、 _Fat View Controller_ として実装された[リバーシ](https://en.wikipedia.org/wiki/Reversi)アプリをリファクタリングし、どれだけクリーンな設計とコードを実現できるかというコンペティションです（ジャッジが優劣を判定するわけではなく、設計の技を競い合うのが目的です）。
 
 ![アプリのスクリーンショット](img/screenshot.png)
 
