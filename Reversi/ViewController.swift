@@ -12,13 +12,9 @@ class ViewController: UIViewController {
     @IBOutlet private var countLabels: [UILabel]!
     @IBOutlet private var playerActivityIndicators: [UIActivityIndicatorView]!
 
-    private var reversiState = ReversiState()
+    private var animationState: AnimationState = .init()
+    private var reversiState: ReversiState = .init()
 
-    private var animationCanceller: Canceller?
-    private var isAnimating: Bool { animationCanceller != nil }
-    
-    private var playerCancellers: [Disk: Canceller] = [:]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -141,15 +137,11 @@ extension ViewController {
         }
         
         if isAnimated {
-            let cleanUp: () -> Void = { [weak self] in
-                self?.animationCanceller = nil
-            }
-            animationCanceller = Canceller(cleanUp)
+            animationState.createAnimationCanceller()
             animateSettingDisks(at: [(x, y)] + diskCoordinates, to: disk) { [weak self] finished in
                 guard let self = self else { return }
-                guard let canceller = self.animationCanceller else { return }
-                if canceller.isCancelled { return }
-                cleanUp()
+                if self.animationState.isCancelled { return }
+                self.animationState.cancel()
 
                 completion?(finished)
                 try? self.saveGame()
@@ -177,10 +169,9 @@ extension ViewController {
             return
         }
         
-        let animationCanceller = self.animationCanceller!
         boardView.setDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
             guard let self = self else { return }
-            if animationCanceller.isCancelled { return }
+            if self.animationState.isCancelled { return }
             if finished {
                 self.animateSettingDisks(at: coordinates.dropFirst(), to: disk, completion: completion)
             } else {
@@ -247,23 +238,19 @@ extension ViewController {
 
         playerActivityIndicators[turn.index].startAnimating()
         
-        let cleanUp: () -> Void = { [weak self] in
-            guard let self = self else { return }
-            self.playerActivityIndicators[turn.index].stopAnimating()
-            self.playerCancellers[turn] = nil
+        let cleanUp: AnimationState.CleanUp = { [weak self] in
+            self?.playerActivityIndicators[turn.index].stopAnimating()
         }
-        let canceller = Canceller(cleanUp)
+        let canceller = animationState.createAnimationCanceller(at: turn, cleanUp: cleanUp)
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
             guard let self = self else { return }
             if canceller.isCancelled { return }
-            cleanUp()
-            
+            canceller.cancel()
+
             try! self.placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
                 self?.nextTurn()
             }
         }
-        
-        playerCancellers[turn] = canceller
     }
 }
 
@@ -313,15 +300,7 @@ extension ViewController {
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in })
         alertController.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
             guard let self = self else { return }
-            
-            self.animationCanceller?.cancel()
-            self.animationCanceller = nil
-            
-            for side in Disk.sides {
-                self.playerCancellers[side]?.cancel()
-                self.playerCancellers.removeValue(forKey: side)
-            }
-            
+            self.animationState.cancelAll()
             self.newGame()
             self.waitForPlayer()
         })
@@ -331,16 +310,10 @@ extension ViewController {
     @IBAction func changePlayerControlSegment(_ sender: UISegmentedControl) {
         let side: Disk = Disk(index: playerControls.firstIndex(of: sender)!)
         let player = sender.convertToPlayer
-
         reversiState.setPlayer(player: player, at: side.index)
-
         try? saveGame()
-        
-        if let canceller = playerCancellers[side] {
-            canceller.cancel()
-        }
-        
-        if !isAnimating && reversiState.canPlayTurnOfComputer(at: side) {
+        animationState.cancel(at: side)
+        if !animationState.isAnimating && reversiState.canPlayTurnOfComputer(at: side) {
             playTurnOfComputer()
         }
     }
@@ -349,7 +322,7 @@ extension ViewController {
 extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
         guard let turn = reversiState.turn else { return }
-        if isAnimating { return }
+        if animationState.isAnimating { return }
         guard case .manual = reversiState.playerThisTurn else { return }
         // try? because doing nothing when an error occurs
         try? placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
@@ -415,21 +388,6 @@ extension ViewController {
 }
 
 // MARK: Additional types
-
-final class Canceller {
-    private(set) var isCancelled: Bool = false
-    private let body: (() -> Void)?
-    
-    init(_ body: (() -> Void)?) {
-        self.body = body
-    }
-    
-    func cancel() {
-        if isCancelled { return }
-        isCancelled = true
-        body?()
-    }
-}
 
 struct DiskPlacementError: Error {
     let disk: Disk
