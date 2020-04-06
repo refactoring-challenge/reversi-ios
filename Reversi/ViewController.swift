@@ -1,5 +1,58 @@
 import UIKit
 
+class ReversiState {
+    var turn: Disk? = .dark // `nil` if the current game is over
+    var isGameOver: Bool {
+        turn == nil
+    }
+    func newGame() {
+        turn = .dark
+    }
+
+    func nextTurn() -> Disk? {
+        guard var turn = turn else { return nil }
+        turn.flip()
+        self.turn = turn
+        return turn
+    }
+
+    func gameover() {
+        turn = nil
+    }
+
+    ///////////////////////////////////////////////
+
+    enum FileIOError: Error {
+        case write(path: String, cause: Error?)
+        case read(path: String, cause: Error?)
+    }
+
+    private var path: String {
+        (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
+    }
+
+    func loadGame() throws -> (Substring, ArraySlice<Substring>) {
+        let input = try String(contentsOfFile: path, encoding: .utf8)
+        var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
+
+        guard var line = lines.popFirst() else {
+            throw FileIOError.read(path: path, cause: nil)
+        }
+
+        do { // turn
+            guard
+                let diskSymbol = line.popFirst(),
+                let disk = Optional<Disk>(symbol: diskSymbol.description)
+            else {
+                throw FileIOError.read(path: path, cause: nil)
+            }
+            turn = disk
+        }
+
+        return (line, lines)
+    }
+}
+
 class ViewController: UIViewController {
     @IBOutlet private var boardView: BoardView!
     
@@ -11,9 +64,9 @@ class ViewController: UIViewController {
     @IBOutlet private var playerControls: [UISegmentedControl]!
     @IBOutlet private var countLabels: [UILabel]!
     @IBOutlet private var playerActivityIndicators: [UIActivityIndicatorView]!
-    
-    private var turn: Disk? = .dark // `nil` if the current game is over
-    
+
+    private var reversiState = ReversiState()
+
     private var animationCanceller: Canceller?
     private var isAnimating: Bool { animationCanceller != nil }
     
@@ -198,8 +251,9 @@ extension ViewController {
 extension ViewController {
     func newGame() {
         boardView.reset()
-        turn = .dark
-        
+
+        reversiState.newGame()
+
         for playerControl in playerControls {
             playerControl.selectedSegmentIndex = Player.manual.rawValue
         }
@@ -211,7 +265,7 @@ extension ViewController {
     }
     
     func waitForPlayer() {
-        guard let turn = self.turn else { return }
+        guard let turn = reversiState.turn else { return }
         switch Player(rawValue: playerControls[turn.index].selectedSegmentIndex)! {
         case .manual:
             break
@@ -221,16 +275,14 @@ extension ViewController {
     }
     
     func nextTurn() {
-        guard var turn = self.turn else { return }
+        guard !reversiState.isGameOver else { return }
+        guard let turn = reversiState.nextTurn() else { return }
 
-        turn.flip()
-        
         if validMoves(for: turn).isEmpty {
             if validMoves(for: turn.flipped).isEmpty {
-                self.turn = nil
+                reversiState.gameover()
                 updateMessageViews()
             } else {
-                self.turn = turn
                 updateMessageViews()
                 
                 let alertController = UIAlertController(
@@ -244,14 +296,13 @@ extension ViewController {
                 present(alertController, animated: true)
             }
         } else {
-            self.turn = turn
             updateMessageViews()
             waitForPlayer()
         }
     }
     
     func playTurnOfComputer() {
-        guard let turn = self.turn else { preconditionFailure() }
+        guard let turn = reversiState.turn else { preconditionFailure() }
         let (x, y) = validMoves(for: turn).randomElement()!
 
         playerActivityIndicators[turn.index].startAnimating()
@@ -286,7 +337,7 @@ extension ViewController {
     }
     
     func updateMessageViews() {
-        switch turn {
+        switch reversiState.turn {
         case .some(let side):
             messageDiskSizeConstraint.constant = messageDiskSize
             messageDiskView.disk = side
@@ -340,7 +391,7 @@ extension ViewController {
             canceller.cancel()
         }
         
-        if !isAnimating, side == turn, case .computer = Player(rawValue: sender.selectedSegmentIndex)! {
+        if !isAnimating, side == reversiState.turn, case .computer = Player(rawValue: sender.selectedSegmentIndex)! {
             playTurnOfComputer()
         }
     }
@@ -348,7 +399,7 @@ extension ViewController {
 
 extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
-        guard let turn = turn else { return }
+        guard let turn = reversiState.turn else { return }
         if isAnimating { return }
         guard case .manual = Player(rawValue: playerControls[turn.index].selectedSegmentIndex)! else { return }
         // try? because doing nothing when an error occurs
@@ -367,7 +418,7 @@ extension ViewController {
     
     func saveGame() throws {
         var output: String = ""
-        output += turn.symbol
+        output += reversiState.turn.symbol
         for side in Disk.sides {
             output += playerControls[side.index].selectedSegmentIndex.description
         }
@@ -388,22 +439,7 @@ extension ViewController {
     }
     
     func loadGame() throws {
-        let input = try String(contentsOfFile: path, encoding: .utf8)
-        var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
-        
-        guard var line = lines.popFirst() else {
-            throw FileIOError.read(path: path, cause: nil)
-        }
-        
-        do { // turn
-            guard
-                let diskSymbol = line.popFirst(),
-                let disk = Optional<Disk>(symbol: diskSymbol.description)
-            else {
-                throw FileIOError.read(path: path, cause: nil)
-            }
-            turn = disk
-        }
+        var (line, lines) = try reversiState.loadGame()
 
         // players
         for side in Disk.sides {
