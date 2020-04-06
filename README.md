@@ -1,6 +1,6 @@
-# Reversi Challenge iOS （仮）
+# リファクタリング・チャレンジ （リバーシ） - iOS版
 
-Reversi Challenge iOS は、 _Fat View Controller_ として実装された[リバーシ](https://en.wikipedia.org/wiki/Reversi)アプリをリファクタリングし、どれだけクリーンな設計とコードを実現できるかというコンペティションです（ジャッジが優劣を判定するわけではなく、設計の技を競い合うのが目的です）。
+"リファクタリング・チャレンジ （リバーシ） - iOS版" は、 _Fat View Controller_ として実装された[リバーシ](https://en.wikipedia.org/wiki/Reversi)アプリをリファクタリングし、どれだけクリーンな設計とコードを実現できるかというコンペティションです（ジャッジが優劣を判定するわけではなく、設計の技を競い合うのが目的です）。
 
 ![アプリのスクリーンショット](img/screenshot.png)
 
@@ -35,7 +35,7 @@ _Fat View Controller_ は iOS アプリ開発におけるアンチパターン�
 
 ## チャレンジのしかた
 
-本リポジトリを clone し、 Xcode で ReversiChallenge.xcodeproj を開いて下さい。本アプリは _Fat View Controller_ として実装されており、一部のビューコンポーネントや基本的なデータ型を除いて、すべてのコードが [ViewController.swift](ReversiChallenge/ViewController.swift) に書かれています。この `ViewController` クラスに書かれたコードをリファクタリングするのがチャレンジの内容です。
+本リポジトリを clone し、 Xcode で Reversi.xcodeproj を開いて下さい。本アプリは _Fat View Controller_ として実装されており、一部のビューコンポーネントや基本的なデータ型を除いて、すべてのコードが [ViewController.swift](Reversi/ViewController.swift) に書かれています。この `ViewController` クラスに書かれたコードをリファクタリングするのがチャレンジの内容です。
 
 リファクタリングなので、 **アプリの挙動が変化しないようにして下さい** 。挙動を維持したまま、どれだけコードをクリーンにできるかというチャレンジです。なお、リファクタリングというタームは、ここでは挙動を変更せずにコードを変更するという意味で使っています。通常リファクタリングに求められるような段階的な修正を期待しているわけではありません。仕様を理解した上で理想的な設計を考え、ほぼスクラッチで再実装するような大胆な変更も問題ありません。もちろん、通常のリファクタリングと同じように、段階的に修正を行っても構いません。
 
@@ -244,7 +244,7 @@ x-------
 
 | リポジトリ | 作者 | アーキテクチャパターン | フレームワーク | UI | 備考 |
 |:--|:--|:--|:--|:--|:--|
-| [koher/reversi-challenge-ios](https://github.com/koher/reversi-challenge-ios) | [@koher](https://github.com/koher) | Fat View Controller | - | UIKit | 本リポジトリ |
+| [koher/refactoring-challenge-reversi-ios](https://github.com/koher/refactoring-challenge-reversi-ios) | [@koher](https://github.com/koher) | Fat View Controller | - | UIKit | 本リポジトリ |
 
 ## License
 
