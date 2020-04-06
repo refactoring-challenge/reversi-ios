@@ -244,7 +244,7 @@ x-------
 
 | リポジトリ | 作者 | アーキテクチャパターン | フレームワーク | UI | 備考 |
 |:--|:--|:--|:--|:--|:--|
-| [koher/reversi-challenge-ios](https://github.com/koher/reversi-challenge-ios) | [@koher](https://github.com/koher) | Fat View Controller | - | UIKit | 本リポジトリ |
+| [koher/refactoring-challenge-reversi-ios](https://github.com/koher/refactoring-challenge-reversi-ios) | [@koher](https://github.com/koher) | Fat View Controller | - | UIKit | 本リポジトリ |
 
 ## License
 
