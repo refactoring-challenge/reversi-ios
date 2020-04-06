@@ -1,7 +1,7 @@
 import XCTest
-@testable import ReversiChallenge
+@testable import Reversi
 
-class ReversiChallengeTests: XCTestCase {
+class ReversiTests: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
