@@ -2,37 +2,36 @@ import UIKit
 
 class ViewController: UIViewController {
     @IBOutlet private var boardView: BoardView!
-    
     @IBOutlet private var messageDiskView: DiskView!
     @IBOutlet private var messageLabel: UILabel!
     @IBOutlet private var messageDiskSizeConstraint: NSLayoutConstraint!
-    private var messageDiskSize: CGFloat! // to store the size designated in the storyboard
-    
     @IBOutlet private var playerControls: [UISegmentedControl]!
     @IBOutlet private var countLabels: [UILabel]!
     @IBOutlet private var playerActivityIndicators: [UIActivityIndicatorView]!
-
+    private var messageDiskSize: CGFloat! // to store the size designated in the storyboard
     private var animationState: AnimationState = .init()
     private var reversiState: ReversiState = .init()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         boardView.delegate = self
         messageDiskSize = messageDiskSizeConstraint.constant
-        boardView.setUp(with: reversiState.boardState)
+        boardView.setUp(with: reversiState.boardState.constant)
 
         do {
             try loadGame()
         } catch _ {
-            newGame()
+            do {
+                try newGame()
+            } catch _ {
+
+            }
         }
     }
     
     private var viewHasAppeared: Bool = false
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
         if viewHasAppeared { return }
         viewHasAppeared = true
         waitForPlayer()
@@ -42,73 +41,13 @@ class ViewController: UIViewController {
 // MARK: Reversi logics
 
 extension ViewController {
-    private func flippedDiskCoordinatesByPlacingDisk(_ disk: Disk, atX x: Int, y: Int) -> [(Int, Int)] {
-        let directions = [
-            (x: -1, y: -1),
-            (x:  0, y: -1),
-            (x:  1, y: -1),
-            (x:  1, y:  0),
-            (x:  1, y:  1),
-            (x:  0, y:  1),
-            (x: -1, y:  0),
-            (x: -1, y:  1),
-        ]
-        
-        guard reversiState.boardState.diskAt(x: x, y: y) == nil else {
-            return []
-        }
-        
-        var diskCoordinates: [(Int, Int)] = []
-        
-        for direction in directions {
-            var x = x
-            var y = y
-            
-            var diskCoordinatesInLine: [(Int, Int)] = []
-            flipping: while true {
-                x += direction.x
-                y += direction.y
-                
-                switch (disk, reversiState.boardState.diskAt(x: x, y: y)) { // Uses tuples to make patterns exhaustive
-                case (.dark, .some(.dark)), (.light, .some(.light)):
-                    diskCoordinates.append(contentsOf: diskCoordinatesInLine)
-                    break flipping
-                case (.dark, .some(.light)), (.light, .some(.dark)):
-                    diskCoordinatesInLine.append((x, y))
-                case (_, .none):
-                    break flipping
-                }
-            }
-        }
-        
-        return diskCoordinates
-    }
-    
-    func canPlaceDisk(_ disk: Disk, atX x: Int, y: Int) -> Bool {
-        !flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y).isEmpty
-    }
-    
-    func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
-        var coordinates: [(Int, Int)] = []
-        
-        for y in reversiState.boardState.yRange {
-            for x in reversiState.boardState.xRange {
-                if canPlaceDisk(side, atX: x, y: y) {
-                    coordinates.append((x, y))
-                }
-            }
-        }
-        
-        return coordinates
-    }
-
     /// - Parameter completion: A closure to be executed when the animation sequence ends.
     ///     This closure has no return value and takes a single Boolean argument that indicates
     ///     whether or not the animations actually finished before the completion handler was called.
     ///     If `animated` is `false`,  this closure is performed at the beginning of the next run loop cycle. This parameter may be `nil`.
     /// - Throws: `DiskPlacementError` if the `disk` cannot be placed at (`x`, `y`).
     func placeDisk(_ disk: Disk, atX x: Int, y: Int, animated isAnimated: Bool, completion: ((Bool) -> Void)? = nil) throws {
-        let diskCoordinates = flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
+        let diskCoordinates = reversiState.flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
         if diskCoordinates.isEmpty {
             throw DiskPlacementError(disk: disk, x: x, y: y)
         }
@@ -127,9 +66,9 @@ extension ViewController {
         } else {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.setDisk(disk, atX: x, y: y, animated: false)
+                self.updateDisk(disk, atX: x, y: y, animated: false)
                 for (x, y) in diskCoordinates {
-                    self.setDisk(disk, atX: x, y: y, animated: false)
+                    self.updateDisk(disk, atX: x, y: y, animated: false)
                 }
                 completion?(true)
                 try? self.saveGame()
@@ -146,14 +85,14 @@ extension ViewController {
             return
         }
 
-        setDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
+        updateDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
             guard let self = self else { return }
             if self.animationState.isCancelled { return }
             if finished {
                 self.animateSettingDisks(at: coordinates.dropFirst(), to: disk, completion: completion)
             } else {
                 for (x, y) in coordinates {
-                    self.setDisk(disk, atX: x, y: y, animated: false)
+                    self.updateDisk(disk, atX: x, y: y, animated: false)
                 }
                 completion(false)
             }
@@ -164,30 +103,32 @@ extension ViewController {
 // MARK: Game management
 
 extension ViewController {
-    func newGame() {
-        boardView.reset(with: reversiState.boardState)
-        reversiState.newGame()
+    func saveGame() throws {
+        try reversiState.saveGame()
+    }
+
+    func loadGame() throws {
+        try reversiState.loadGame()
+        updateBoard()
         updatePlayerControls(reversiState)
         updateMessageViews()
         updateCountLabels()
-        try? saveGame()
     }
-    
-    func waitForPlayer() {
-        switch reversiState.playerThisTurn {
-        case .manual:
-            break
-        case .computer:
-            playTurnOfComputer()
-        }
+
+    func newGame() throws {
+        try reversiState.newGame()
+        updateBoard()
+        updatePlayerControls(reversiState)
+        updateMessageViews()
+        updateCountLabels()
     }
-    
+
     func nextTurn() {
         guard !reversiState.isGameOver else { return }
         guard let turn = reversiState.nextTurn() else { return }
 
-        if validMoves(for: turn).isEmpty {
-            if validMoves(for: turn.flipped).isEmpty {
+        if reversiState.validMoves(for: turn).isEmpty {
+            if reversiState.validMoves(for: turn.flipped).isEmpty {
                 reversiState.gameover()
                 updateMessageViews()
             } else {
@@ -208,10 +149,19 @@ extension ViewController {
             waitForPlayer()
         }
     }
+
+    func waitForPlayer() {
+        switch reversiState.playerThisTurn {
+        case .manual:
+            break
+        case .computer:
+            playTurnOfComputer()
+        }
+    }
     
     func playTurnOfComputer() {
         guard let turn = reversiState.turn else { preconditionFailure() }
-        let (x, y) = validMoves(for: turn).randomElement()!
+        let (x, y) = reversiState.validMoves(for: turn).randomElement()!
 
         playerActivityIndicators[turn.index].startAnimating()
         
@@ -234,14 +184,28 @@ extension ViewController {
 // MARK: Views
 
 extension ViewController {
-    func setDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
-        guard let index = reversiState.boardState.convertPositionToIndex(x: x, y: y) else {
+    /* Board */
+    func updateDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+        guard let index = reversiState.boardState.constant.convertPositionToIndex(x: x, y: y) else {
             preconditionFailure()
         }
         reversiState.boardState.setDisk(disk, atX: x, y: y)
-        boardView.setDisk(disk, at: index, animated: animated, completion: completion)
+        boardView.updateDisk(disk, at: index, animated: animated, completion: completion)
     }
 
+    func updateBoard() {
+        let boardState = reversiState.boardState
+        let constant = boardState.constant
+        for y in constant.yRange {
+            for x in constant.xRange {
+                let disk = boardState.diskAt(x: x, y: y)
+                let index = constant.convertPositionToIndex(x: x, y: y)!
+                boardView.updateDisk(disk, at: index, animated: false)
+            }
+        }
+    }
+
+    /* Game */
     func updatePlayerControls(_ reversiState: ReversiState) {
         for side in Disk.sides {
             playerControls[side.index].selectedSegmentIndex = reversiState.player(at: side.index).rawValue
@@ -286,8 +250,12 @@ extension ViewController {
         alertController.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
             guard let self = self else { return }
             self.animationState.cancelAll()
-            self.newGame()
-            self.waitForPlayer()
+            do {
+                try self.newGame()
+                self.waitForPlayer()
+            } catch _ {
+
+            }
         })
         present(alertController, animated: true)
     }
@@ -313,24 +281,6 @@ extension ViewController: BoardViewDelegate {
         try? placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
             self?.nextTurn()
         }
-    }
-}
-
-// MARK: Save and Load
-
-extension ViewController {
-    func saveGame() throws {
-        try reversiState.saveGame()
-    }
-
-    func loadGame() throws {
-        let results = try reversiState.loadGame()
-        results.forEach {
-            setDisk($0.disk, atX: $0.x, y: $0.y, animated: false)
-        }
-        updatePlayerControls(reversiState)
-        updateMessageViews()
-        updateCountLabels()
     }
 }
 

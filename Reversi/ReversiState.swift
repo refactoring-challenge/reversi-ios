@@ -34,15 +34,77 @@ class ReversiState {
 
     var turn: Disk? = .dark // `nil` if the current game is over
 
+    /* Reversi logics */
+    func canPlaceDisk(_ disk: Disk, atX x: Int, y: Int) -> Bool {
+        !flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y).isEmpty
+    }
+
+    func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
+        var coordinates: [(Int, Int)] = []
+        for y in boardState.constant.yRange {
+            for x in boardState.constant.xRange {
+                if canPlaceDisk(side, atX: x, y: y) {
+                    coordinates.append((x, y))
+                }
+            }
+        }
+        return coordinates
+    }
+
+    func flippedDiskCoordinatesByPlacingDisk(_ disk: Disk, atX x: Int, y: Int) -> [(Int, Int)] {
+        let directions = [
+            (x: -1, y: -1),
+            (x:  0, y: -1),
+            (x:  1, y: -1),
+            (x:  1, y:  0),
+            (x:  1, y:  1),
+            (x:  0, y:  1),
+            (x: -1, y:  0),
+            (x: -1, y:  1),
+        ]
+
+        guard boardState.diskAt(x: x, y: y) == nil else {
+            return []
+        }
+
+        var diskCoordinates: [(Int, Int)] = []
+
+        for direction in directions {
+            var x = x
+            var y = y
+
+            var diskCoordinatesInLine: [(Int, Int)] = []
+            flipping: while true {
+                x += direction.x
+                y += direction.y
+
+                switch (disk, boardState.diskAt(x: x, y: y)) { // Uses tuples to make patterns exhaustive
+                case (.dark, .some(.dark)), (.light, .some(.light)):
+                    diskCoordinates.append(contentsOf: diskCoordinatesInLine)
+                    break flipping
+                case (.dark, .some(.light)), (.light, .some(.dark)):
+                    diskCoordinatesInLine.append((x, y))
+                case (_, .none):
+                    break flipping
+                }
+            }
+        }
+
+        return diskCoordinates
+    }
+
     /* Game life cycle */
     var isGameOver: Bool {
         turn == nil
     }
 
-    func newGame() {
+    func newGame() throws {
+        boardState.reset()
         turn = .dark
         player1 = .manual
         player2 = .manual
+
+        try? saveGame()
     }
 
     func nextTurn() -> Disk? {
@@ -83,8 +145,8 @@ class ReversiState {
         }
         output += "\n"
 
-        for y in boardState.yRange {
-            for x in boardState.xRange {
+        for y in boardState.constant.yRange {
+            for x in boardState.constant.xRange {
                 output += boardState.diskAt(x: x, y: y).symbol
             }
             output += "\n"
@@ -97,7 +159,9 @@ class ReversiState {
         }
     }
 
-    func loadGame() throws -> [(disk: Disk?, x: Int, y: Int)] {
+    func loadGame() throws {
+        boardState.reset()
+        
         let input = try String(contentsOfFile: path, encoding: .utf8)
         var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
 
@@ -129,7 +193,7 @@ class ReversiState {
 
         var results: [(disk: Disk?, x: Int, y: Int)] = []
         do { // board
-            guard lines.count == boardState.height else {
+            guard lines.count == boardState.constant.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
 
@@ -141,16 +205,19 @@ class ReversiState {
                     results.append((disk: disk, x: x, y: y))
                     x += 1
                 }
-                guard x == boardState.width else {
+                guard x == boardState.constant.width else {
                     throw FileIOError.read(path: path, cause: nil)
                 }
                 y += 1
             }
-            guard y == boardState.height else {
+            guard y == boardState.constant.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
         }
-        return results
+
+        results.forEach {
+            boardState.setDisk($0.disk, atX: $0.x, y: $0.y)
+        }
     }
 }
 

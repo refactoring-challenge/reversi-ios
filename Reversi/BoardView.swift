@@ -7,10 +7,10 @@ public class BoardView: UIView {
     private var actions: [CellSelectionAction] = []
     weak var delegate: BoardViewDelegate?
     
-    func setUp(with boardState: BoardState) {
-        self.backgroundColor = UIColor(named: "DarkColor")!
+    func setUp(with constant: BoardState.Constant) {
+        backgroundColor = UIColor(named: "DarkColor")!
         
-        let cellViews: [CellView] = (0 ..< boardState.width * boardState.height).map { _ in
+        let cellViews: [CellView] = (0 ..< constant.squaresCount).map { _ in
             let cellView = CellView()
             cellView.translatesAutoresizingMaskIntoConstraints = false
             return cellView
@@ -29,46 +29,44 @@ public class BoardView: UIView {
             cellViews[0].widthAnchor.constraint(equalTo: cellViews[0].heightAnchor),
         ])
         
-        for y in boardState.yRange {
-            for x in boardState.xRange {
+        for y in constant.yRange {
+            for x in constant.xRange {
                 let topNeighborAnchor: NSLayoutYAxisAnchor
-                if let index = boardState.convertPositionToIndex(x: x, y: y - 1) {
+                if let index = constant.convertPositionToIndex(x: x, y: y - 1) {
                     topNeighborAnchor = cellViews[index].bottomAnchor
                 } else {
                     topNeighborAnchor = topAnchor
                 }
                 
                 let leftNeighborAnchor: NSLayoutXAxisAnchor
-                if let index = boardState.convertPositionToIndex(x: x - 1, y: y) {
+                if let index = constant.convertPositionToIndex(x: x - 1, y: y) {
                     leftNeighborAnchor = cellViews[index].rightAnchor
                 } else {
                     leftNeighborAnchor = leftAnchor
                 }
                 
-                let cellView = cellViews[boardState.convertPositionToIndex(x: x, y: y)!]
+                let cellView = cellViews[constant.convertPositionToIndex(x: x, y: y)!]
                 NSLayoutConstraint.activate([
                     cellView.topAnchor.constraint(equalTo: topNeighborAnchor, constant: lineWidth),
                     cellView.leftAnchor.constraint(equalTo: leftNeighborAnchor, constant: lineWidth),
                 ])
                 
-                if y == boardState.height - 1 {
+                if y == constant.height - 1 {
                     NSLayoutConstraint.activate([
                         bottomAnchor.constraint(equalTo: cellView.bottomAnchor, constant: lineWidth),
                     ])
                 }
-                if x == boardState.width - 1 {
+                if x == constant.width - 1 {
                     NSLayoutConstraint.activate([
                         rightAnchor.constraint(equalTo: cellView.rightAnchor, constant: lineWidth),
                     ])
                 }
             }
         }
-        
-        reset(with: boardState)
-        
-        for y in boardState.yRange {
-            for x in boardState.xRange {
-                let index = boardState.convertPositionToIndex(x: x, y: y)!
+       
+        for y in constant.yRange {
+            for x in constant.xRange {
+                let index = constant.convertPositionToIndex(x: x, y: y)!
                 let cellView: CellView = cellViews[index]
                 let action = CellSelectionAction(boardView: self, x: x, y: y)
                 actions.append(action) // To retain the `action`
@@ -77,18 +75,7 @@ public class BoardView: UIView {
         }
     }
 
-    func reset(with boardState: BoardState) {
-        boardState.reset()
-        for y in boardState.yRange {
-            for x in boardState.xRange {
-                let disk = boardState.diskAt(x: x, y: y)
-                let index = boardState.convertPositionToIndex(x: x, y: y)!
-                setDisk(disk, at: index, animated: false)
-            }
-        }
-    }
-
-    func setDisk(_ disk: Disk?, at index: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+    func updateDisk(_ disk: Disk?, at index: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
         cellViews[index].setDisk(disk, animated: animated, completion: completion)
     }
 }
