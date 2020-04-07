@@ -20,7 +20,8 @@ class ViewController: UIViewController {
         
         boardView.delegate = self
         messageDiskSize = messageDiskSizeConstraint.constant
-        
+        boardView.setUp(with: reversiState.boardState)
+
         do {
             try loadGame()
         } catch _ {
@@ -41,30 +42,6 @@ class ViewController: UIViewController {
 // MARK: Reversi logics
 
 extension ViewController {
-    func count(of disk: Disk) -> Int {
-        var count = 0
-        
-        for y in boardView.yRange {
-            for x in boardView.xRange {
-                if boardView.diskAt(x: x, y: y) == disk {
-                    count +=  1
-                }
-            }
-        }
-        
-        return count
-    }
-    
-    func sideWithMoreDisks() -> Disk? {
-        let darkCount = count(of: .dark)
-        let lightCount = count(of: .light)
-        if darkCount == lightCount {
-            return nil
-        } else {
-            return darkCount > lightCount ? .dark : .light
-        }
-    }
-    
     private func flippedDiskCoordinatesByPlacingDisk(_ disk: Disk, atX x: Int, y: Int) -> [(Int, Int)] {
         let directions = [
             (x: -1, y: -1),
@@ -77,7 +54,7 @@ extension ViewController {
             (x: -1, y:  1),
         ]
         
-        guard boardView.diskAt(x: x, y: y) == nil else {
+        guard reversiState.boardState.diskAt(x: x, y: y) == nil else {
             return []
         }
         
@@ -92,7 +69,7 @@ extension ViewController {
                 x += direction.x
                 y += direction.y
                 
-                switch (disk, boardView.diskAt(x: x, y: y)) { // Uses tuples to make patterns exhaustive
+                switch (disk, reversiState.boardState.diskAt(x: x, y: y)) { // Uses tuples to make patterns exhaustive
                 case (.dark, .some(.dark)), (.light, .some(.light)):
                     diskCoordinates.append(contentsOf: diskCoordinatesInLine)
                     break flipping
@@ -114,8 +91,8 @@ extension ViewController {
     func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
         var coordinates: [(Int, Int)] = []
         
-        for y in boardView.yRange {
-            for x in boardView.xRange {
+        for y in reversiState.boardState.yRange {
+            for x in reversiState.boardState.xRange {
                 if canPlaceDisk(side, atX: x, y: y) {
                     coordinates.append((x, y))
                 }
@@ -150,9 +127,9 @@ extension ViewController {
         } else {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.boardView.setDisk(disk, atX: x, y: y, animated: false)
+                self.setDisk(disk, atX: x, y: y, animated: false)
                 for (x, y) in diskCoordinates {
-                    self.boardView.setDisk(disk, atX: x, y: y, animated: false)
+                    self.setDisk(disk, atX: x, y: y, animated: false)
                 }
                 completion?(true)
                 try? self.saveGame()
@@ -168,15 +145,15 @@ extension ViewController {
             completion(true)
             return
         }
-        
-        boardView.setDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
+
+        setDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
             guard let self = self else { return }
             if self.animationState.isCancelled { return }
             if finished {
                 self.animateSettingDisks(at: coordinates.dropFirst(), to: disk, completion: completion)
             } else {
                 for (x, y) in coordinates {
-                    self.boardView.setDisk(disk, atX: x, y: y, animated: false)
+                    self.setDisk(disk, atX: x, y: y, animated: false)
                 }
                 completion(false)
             }
@@ -188,7 +165,7 @@ extension ViewController {
 
 extension ViewController {
     func newGame() {
-        boardView.reset()
+        boardView.reset(with: reversiState.boardState)
         reversiState.newGame()
         updatePlayerControls(reversiState)
         updateMessageViews()
@@ -257,6 +234,14 @@ extension ViewController {
 // MARK: Views
 
 extension ViewController {
+    func setDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+        guard let index = reversiState.boardState.convertPositionToIndex(x: x, y: y) else {
+            preconditionFailure()
+        }
+        reversiState.boardState.setDisk(disk, atX: x, y: y)
+        boardView.setDisk(disk, at: index, animated: animated, completion: completion)
+    }
+
     func updatePlayerControls(_ reversiState: ReversiState) {
         for side in Disk.sides {
             playerControls[side.index].selectedSegmentIndex = reversiState.player(at: side.index).rawValue
@@ -265,7 +250,7 @@ extension ViewController {
 
     func updateCountLabels() {
         for side in Disk.sides {
-            countLabels[side.index].text = "\(count(of: side))"
+            countLabels[side.index].text = "\(reversiState.boardState.count(of: side))"
         }
     }
     
@@ -276,7 +261,7 @@ extension ViewController {
             messageDiskView.disk = side
             messageLabel.text = "'s turn"
         case .none:
-            if let winner = sideWithMoreDisks() {
+            if let winner = reversiState.boardState.sideWithMoreDisks() {
                 messageDiskSizeConstraint.constant = messageDiskSize
                 messageDiskView.disk = winner
                 messageLabel.text = " won"
@@ -335,55 +320,17 @@ extension ViewController: BoardViewDelegate {
 
 extension ViewController {
     func saveGame() throws {
-        var output: String = reversiState.saveGame()
-        for y in boardView.yRange {
-            for x in boardView.xRange {
-                output += boardView.diskAt(x: x, y: y).symbol
-            }
-            output += "\n"
-        }
-        try reversiState.saveGameToFile(output: output)
-     }
-    
+        try reversiState.saveGame()
+    }
+
     func loadGame() throws {
-        var path: String {
-            (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
+        let results = try reversiState.loadGame()
+        results.forEach {
+            setDisk($0.disk, atX: $0.x, y: $0.y, animated: false)
         }
-
-        var lines = try reversiState.loadGame()
-
         updatePlayerControls(reversiState)
-
-        do { // board
-            guard lines.count == boardView.height else {
-                throw FileIOError.read(path: path, cause: nil)
-            }
-            
-            var y = 0
-            while let line = lines.popFirst() {
-                var x = 0
-                for character in line {
-                    let disk = Disk?(symbol: "\(character)").flatMap { $0 }
-                    boardView.setDisk(disk, atX: x, y: y, animated: false)
-                    x += 1
-                }
-                guard x == boardView.width else {
-                    throw FileIOError.read(path: path, cause: nil)
-                }
-                y += 1
-            }
-            guard y == boardView.height else {
-                throw FileIOError.read(path: path, cause: nil)
-            }
-        }
-
         updateMessageViews()
         updateCountLabels()
-    }
-    
-    enum FileIOError: Error {
-        case write(path: String, cause: Error?)
-        case read(path: String, cause: Error?)
     }
 }
 
@@ -396,7 +343,7 @@ struct DiskPlacementError: Error {
 }
 
 extension UISegmentedControl {
-    fileprivate var convertToPlayer: Player {
+    fileprivate var convertToPlayer: ReversiState.Player {
         switch selectedSegmentIndex {
         case 0: return .manual
         case 1: return .computer

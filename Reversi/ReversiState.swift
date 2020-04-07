@@ -1,11 +1,13 @@
 import Foundation
 
-enum Player: Int {
-    case manual = 0
-    case computer = 1
-}
-
 class ReversiState {
+    enum Player: Int {
+        case manual = 0
+        case computer = 1
+    }
+
+    var boardState: BoardState = .init()
+
     /* Player */
     var player1: Player = .manual
     var player2: Player = .manual
@@ -72,7 +74,7 @@ class ReversiState {
         (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
     }
 
-    func saveGame() -> String {
+    func saveGame() throws {
         var output: String = ""
         output += turn.symbol
 
@@ -80,10 +82,14 @@ class ReversiState {
             output += player(at: side.index).rawValue.description
         }
         output += "\n"
-        return output
-    }
 
-    func saveGameToFile(output: String) throws {
+        for y in boardState.yRange {
+            for x in boardState.xRange {
+                output += boardState.diskAt(x: x, y: y).symbol
+            }
+            output += "\n"
+        }
+
         do {
             try output.write(toFile: path, atomically: true, encoding: .utf8)
         } catch let error {
@@ -91,7 +97,7 @@ class ReversiState {
         }
     }
 
-    func loadGame() throws -> ArraySlice<Substring> {
+    func loadGame() throws -> [(disk: Disk?, x: Int, y: Int)] {
         let input = try String(contentsOfFile: path, encoding: .utf8)
         var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
 
@@ -121,7 +127,30 @@ class ReversiState {
             setPlayer(player: player, at: side.index)
         }
 
-        return lines
+        var results: [(disk: Disk?, x: Int, y: Int)] = []
+        do { // board
+            guard lines.count == boardState.height else {
+                throw FileIOError.read(path: path, cause: nil)
+            }
+
+            var y = 0
+            while let line = lines.popFirst() {
+                var x = 0
+                for character in line {
+                    let disk = Disk?(symbol: "\(character)").flatMap { $0 }
+                    results.append((disk: disk, x: x, y: y))
+                    x += 1
+                }
+                guard x == boardState.width else {
+                    throw FileIOError.read(path: path, cause: nil)
+                }
+                y += 1
+            }
+            guard y == boardState.height else {
+                throw FileIOError.read(path: path, cause: nil)
+            }
+        }
+        return results
     }
 }
 

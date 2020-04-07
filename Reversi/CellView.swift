@@ -2,22 +2,22 @@ import UIKit
 
 private let animationDuration: TimeInterval = 0.25
 
-public class CellView: UIView {
+class CellView: UIView {
     private let button: UIButton = UIButton()
     private let diskView: DiskView = DiskView()
     
     private var _disk: Disk?
-    public var disk: Disk? {
+    var disk: Disk? {
         get { _disk }
         set { setDisk(newValue, animated: true) }
     }
     
-    override public init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         setUp()
     }
     
-    required public init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         super.init(coder: coder)
         setUp()
     }
@@ -48,7 +48,7 @@ public class CellView: UIView {
         setNeedsLayout()
     }
     
-    public override func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         
         button.frame = bounds
@@ -71,7 +71,7 @@ public class CellView: UIView {
         diskView.alpha = _disk == nil ? 0.0 : 1.0
     }
     
-    public func setDisk(_ disk: Disk?, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+    func setDisk(_ disk: Disk?, animated: Bool, completion: ((Bool) -> Void)? = nil) {
         let diskBefore: Disk? = _disk
         _disk = disk
         let diskAfter: Disk? = _disk
@@ -117,23 +117,23 @@ public class CellView: UIView {
         }
     }
     
-    public func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
+    func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
         button.addTarget(target, action: action, for: controlEvents)
     }
     
-    public func removeTarget(_ target: Any?, action: Selector?, for controlEvents: UIControl.Event) {
+    func removeTarget(_ target: Any?, action: Selector?, for controlEvents: UIControl.Event) {
         button.removeTarget(target, action: action, for: controlEvents)
     }
     
-    public func actions(forTarget target: Any?, forControlEvent controlEvent: UIControl.Event) -> [String]? {
+    func actions(forTarget target: Any?, forControlEvent controlEvent: UIControl.Event) -> [String]? {
         button.actions(forTarget: target, forControlEvent: controlEvent)
     }
     
-    public var allTargets: Set<AnyHashable> {
+    var allTargets: Set<AnyHashable> {
         button.allTargets
     }
     
-    public var allControlEvents: UIControl.Event {
+    var allControlEvents: UIControl.Event {
         button.allControlEvents
     }
 }
