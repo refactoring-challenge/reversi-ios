@@ -16,7 +16,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         boardView.delegate = self
         messageDiskSize = messageDiskSizeConstraint.constant
-        boardView.setUp(with: reversiState.boardState.constant)
+        boardView.setUp(with: reversiState.constant)
 
         do {
             try loadGame()
@@ -186,7 +186,7 @@ extension ViewController {
 extension ViewController {
     /* Board */
     func updateDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
-        guard let index = reversiState.boardState.constant.convertPositionToIndex(x: x, y: y) else {
+        guard let index = reversiState.constant.convertPositionToIndex(x: x, y: y) else {
             preconditionFailure()
         }
         reversiState.boardState.setDisk(disk, atX: x, y: y)
@@ -195,7 +195,7 @@ extension ViewController {
 
     func updateBoard() {
         let boardState = reversiState.boardState
-        let constant = boardState.constant
+        let constant = reversiState.constant
         for y in constant.yRange {
             for x in constant.xRange {
                 let disk = boardState.diskAt(x: x, y: y)

@@ -33,6 +33,7 @@ private class PlayersState {
 
 class ReversiState {
     let boardState: BoardState = .init()
+    var constant: BoardState.Constant { boardState.constant }
     private let playersState: PlayersState = .init()
     private let repository: Repository
 
@@ -63,8 +64,8 @@ class ReversiState {
 
     func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
         var coordinates: [(Int, Int)] = []
-        for y in boardState.constant.yRange {
-            for x in boardState.constant.xRange {
+        for y in constant.yRange {
+            for x in constant.xRange {
                 if canPlaceDisk(side, atX: x, y: y) {
                     coordinates.append((x, y))
                 }
@@ -165,8 +166,8 @@ class ReversiState {
         }
         output += "\n"
 
-        for y in boardState.constant.yRange {
-            for x in boardState.constant.xRange {
+        for y in constant.yRange {
+            for x in constant.xRange {
                 output += boardState.diskAt(x: x, y: y).symbol
             }
             output += "\n"
@@ -213,7 +214,7 @@ class ReversiState {
 
         var results: [(disk: Disk?, x: Int, y: Int)] = []
         do { // board
-            guard lines.count == boardState.constant.height else {
+            guard lines.count == constant.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
 
@@ -225,12 +226,12 @@ class ReversiState {
                     results.append((disk: disk, x: x, y: y))
                     x += 1
                 }
-                guard x == boardState.constant.width else {
+                guard x == constant.width else {
                     throw FileIOError.read(path: path, cause: nil)
                 }
                 y += 1
             }
-            guard y == boardState.constant.height else {
+            guard y == constant.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
         }
@@ -242,7 +243,7 @@ class ReversiState {
 }
 
 extension Optional where Wrapped == Disk {
-    init?<S: StringProtocol>(symbol: S) {
+    fileprivate init?<S: StringProtocol>(symbol: S) {
         switch symbol {
         case "x":
             self = .some(.dark)
@@ -255,7 +256,7 @@ extension Optional where Wrapped == Disk {
         }
     }
 
-    var symbol: String {
+    fileprivate var symbol: String {
         switch self {
         case .some(.dark):
             return "x"
