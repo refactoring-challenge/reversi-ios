@@ -25,7 +25,7 @@ private class PlayersState {
         }
     }
 
-    func newGame() {
+    func reset() {
         player1 = .manual
         player2 = .manual
     }
@@ -34,6 +34,11 @@ private class PlayersState {
 class ReversiState {
     let boardState: BoardState = .init()
     private let playersState: PlayersState = .init()
+    private let repository: Repository
+
+    init(repository: Repository = RepositoryImpl()) {
+        self.repository = repository
+    }
 
     /* Players */
     var playerThisTurn: Player {
@@ -117,8 +122,8 @@ class ReversiState {
 
     func newGame() throws {
         boardState.reset()
+        playersState.reset()
         turn = .dark
-        playersState.newGame()
         try? saveGame()
     }
 
@@ -151,7 +156,7 @@ class ReversiState {
         (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
     }
 
-    func saveGame() throws {
+    private func createSaveData() -> String {
         var output: String = ""
         output += turn.symbol
 
@@ -166,19 +171,19 @@ class ReversiState {
             }
             output += "\n"
         }
+        return output
+    }
 
-        do {
-            try output.write(toFile: path, atomically: true, encoding: .utf8)
-        } catch let error {
-            throw FileIOError.read(path: path, cause: error)
-        }
+    func saveGame() throws {
+        let data = createSaveData()
+        try repository.saveData(path: path, data: data)
     }
 
     func loadGame() throws {
         boardState.reset()
-        
-        let input = try String(contentsOfFile: path, encoding: .utf8)
-        var lines: ArraySlice<Substring> = input.split(separator: "\n")[...]
+        playersState.reset()
+
+        var lines: ArraySlice<Substring> = try repository.loadData(path: path)
 
         guard var line = lines.popFirst() else {
             throw FileIOError.read(path: path, cause: nil)
