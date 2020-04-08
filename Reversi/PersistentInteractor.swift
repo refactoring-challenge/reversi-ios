@@ -42,7 +42,7 @@ class PersistentInteractorImpl: PersistentInteractor {
         output += turn.symbol
 
         for side in Disk.sides {
-            output += playersState.player(at: side.index).rawValue.description
+            output += playersState.player(at: side).rawValue.description
         }
         output += "\n"
 

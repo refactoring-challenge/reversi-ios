@@ -207,7 +207,7 @@ extension ViewController {
     /* Game */
     func updatePlayerControls(_ reversiState: ReversiState) {
         for side in Disk.sides {
-            playerControls[side.index].selectedSegmentIndex = reversiState.player(at: side.index).rawValue
+            playerControls[side.index].selectedSegmentIndex = reversiState.player(at: side).rawValue
         }
     }
 
@@ -262,7 +262,7 @@ extension ViewController {
     @IBAction func changePlayerControlSegment(_ sender: UISegmentedControl) {
         let side: Disk = Disk(index: playerControls.firstIndex(of: sender)!)
         let player = sender.convertToPlayer
-        reversiState.setPlayer(player: player, at: side.index)
+        reversiState.setPlayer(player: player, at: side)
         try? saveGame()
         animationState.cancel(at: side)
         if !animationState.isAnimating && reversiState.canPlayTurnOfComputer(at: side) {
