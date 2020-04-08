@@ -124,7 +124,6 @@ extension ViewController {
     }
 
     func nextTurn() {
-        guard !reversiState.isGameOver else { return }
         guard let turn = reversiState.nextTurn() else { return }
 
         if reversiState.validMoves(for: turn).isEmpty {
@@ -151,7 +150,7 @@ extension ViewController {
     }
 
     func waitForPlayer() {
-        switch reversiState.playerThisTurn {
+        switch reversiState.currentPlayer {
         case .manual:
             break
         case .computer:
@@ -160,7 +159,7 @@ extension ViewController {
     }
     
     func playTurnOfComputer() {
-        guard let turn = reversiState.turn else { preconditionFailure() }
+        guard let turn = reversiState.currentTurn else { preconditionFailure() }
         let (x, y) = reversiState.validMoves(for: turn).randomElement()!
 
         playerActivityIndicators[turn.index].startAnimating()
@@ -219,7 +218,7 @@ extension ViewController {
     }
     
     func updateMessageViews() {
-        switch reversiState.turn {
+        switch reversiState.currentTurn {
         case .some(let side):
             messageDiskSizeConstraint.constant = messageDiskSize
             messageDiskView.disk = side
@@ -274,9 +273,9 @@ extension ViewController {
 
 extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
-        guard let turn = reversiState.turn else { return }
+        guard let turn = reversiState.currentTurn else { return }
         if animationState.isAnimating { return }
-        guard case .manual = reversiState.playerThisTurn else { return }
+        guard case .manual = reversiState.currentPlayer else { return }
         // try? because doing nothing when an error occurs
         try? placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
             self?.nextTurn()
