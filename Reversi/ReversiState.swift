@@ -5,7 +5,7 @@ enum Player: Int {
     case computer = 1
 }
 
-private class PlayersState {
+class PlayersState {
     private var player1: Player = .manual
     private var player2: Player = .manual
 
@@ -35,10 +35,10 @@ class ReversiState {
     let boardState: BoardState = .init()
     var constant: BoardState.Constant { boardState.constant }
     private let playersState: PlayersState = .init()
-    private let repository: Repository
+    private let persistentInteractor: PersistentInteractor
 
-    init(repository: Repository = RepositoryImpl()) {
-        self.repository = repository
+    init(persistentInteractor: PersistentInteractor = PersistentInteractorImpl()) {
+        self.persistentInteractor = persistentInteractor
     }
 
     /* Players */
@@ -148,122 +148,21 @@ class ReversiState {
     }
 
     /* Save and Load */
-    private enum FileIOError: Error {
-        case write(path: String, cause: Error?)
-        case read(path: String, cause: Error?)
-    }
-
-    private var path: String {
-        (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
-    }
-
-    private func createSaveData() -> String {
-        var output: String = ""
-        output += turn.symbol
-
-        for side in Disk.sides {
-            output += playersState.player(at: side.index).rawValue.description
-        }
-        output += "\n"
-
-        for y in constant.yRange {
-            for x in constant.xRange {
-                output += boardState.diskAt(x: x, y: y).symbol
-            }
-            output += "\n"
-        }
-        return output
-    }
-
     func saveGame() throws {
-        let data = createSaveData()
-        try repository.saveData(path: path, data: data)
+        try persistentInteractor.saveGame(turn: turn, playersState: playersState, boardState: boardState)
     }
 
     func loadGame() throws {
         boardState.reset()
         playersState.reset()
 
-        var lines: ArraySlice<Substring> = try repository.loadData(path: path)
-
-        guard var line = lines.popFirst() else {
-            throw FileIOError.read(path: path, cause: nil)
+        let loadData = try persistentInteractor.loadGame(constant: constant)
+        turn = loadData.turn
+        loadData.players.enumerated().forEach {
+            playersState.setPlayer(player: $0.element, at: $0.offset)
         }
-
-        do { // turn
-            guard
-                let diskSymbol = line.popFirst(),
-                let disk = Optional<Disk>(symbol: diskSymbol.description)
-            else {
-                throw FileIOError.read(path: path, cause: nil)
-            }
-            turn = disk
-        }
-
-        // players
-        for side in Disk.sides {
-            guard
-                let playerSymbol = line.popFirst(),
-                let playerNumber = Int(playerSymbol.description),
-                let player = Player(rawValue: playerNumber)
-            else {
-                throw FileIOError.read(path: path, cause: nil)
-            }
-            playersState.setPlayer(player: player, at: side.index)
-        }
-
-        var results: [(disk: Disk?, x: Int, y: Int)] = []
-        do { // board
-            guard lines.count == constant.height else {
-                throw FileIOError.read(path: path, cause: nil)
-            }
-
-            var y = 0
-            while let line = lines.popFirst() {
-                var x = 0
-                for character in line {
-                    let disk = Disk?(symbol: "\(character)").flatMap { $0 }
-                    results.append((disk: disk, x: x, y: y))
-                    x += 1
-                }
-                guard x == constant.width else {
-                    throw FileIOError.read(path: path, cause: nil)
-                }
-                y += 1
-            }
-            guard y == constant.height else {
-                throw FileIOError.read(path: path, cause: nil)
-            }
-        }
-
-        results.forEach {
+        loadData.squares.forEach {
             boardState.setDisk($0.disk, atX: $0.x, y: $0.y)
-        }
-    }
-}
-
-extension Optional where Wrapped == Disk {
-    fileprivate init?<S: StringProtocol>(symbol: S) {
-        switch symbol {
-        case "x":
-            self = .some(.dark)
-        case "o":
-            self = .some(.light)
-        case "-":
-            self = .none
-        default:
-            return nil
-        }
-    }
-
-    fileprivate var symbol: String {
-        switch self {
-        case .some(.dark):
-            return "x"
-        case .some(.light):
-            return "o"
-        case .none:
-            return "-"
         }
     }
 }
