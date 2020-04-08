@@ -293,7 +293,7 @@ struct DiskPlacementError: Error {
 }
 
 extension UISegmentedControl {
-    fileprivate var convertToPlayer: ReversiState.Player {
+    fileprivate var convertToPlayer: Player {
         switch selectedSegmentIndex {
         case 0: return .manual
         case 1: return .computer

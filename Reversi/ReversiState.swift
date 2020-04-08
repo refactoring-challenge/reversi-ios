@@ -1,16 +1,13 @@
 import Foundation
 
-class ReversiState {
-    enum Player: Int {
-        case manual = 0
-        case computer = 1
-    }
+enum Player: Int {
+    case manual = 0
+    case computer = 1
+}
 
-    var boardState: BoardState = .init()
-
-    /* Player */
-    var player1: Player = .manual
-    var player2: Player = .manual
+private class PlayersState {
+    private var player1: Player = .manual
+    private var player2: Player = .manual
 
     func setPlayer(player: Player, at index: Int) {
         switch index {
@@ -27,14 +24,34 @@ class ReversiState {
         default: preconditionFailure()
         }
     }
+
+    func newGame() {
+        player1 = .manual
+        player2 = .manual
+    }
+}
+
+class ReversiState {
+    let boardState: BoardState = .init()
+    private let playersState: PlayersState = .init()
+
+    /* Players */
     var playerThisTurn: Player {
         guard let turn = turn else { preconditionFailure() }
-        return player(at: turn.index)
+        return playersState.player(at: turn.index)
     }
 
-    var turn: Disk? = .dark // `nil` if the current game is over
+    func player(at index: Int) -> Player {
+        playersState.player(at: index)
+    }
+
+    func setPlayer(player: Player, at index: Int) {
+        playersState.setPlayer(player: player, at: index)
+    }
 
     /* Reversi logics */
+    private(set) var turn: Disk? = .dark // `nil` if the current game is over
+
     func canPlaceDisk(_ disk: Disk, atX x: Int, y: Int) -> Bool {
         !flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y).isEmpty
     }
@@ -101,9 +118,7 @@ class ReversiState {
     func newGame() throws {
         boardState.reset()
         turn = .dark
-        player1 = .manual
-        player2 = .manual
-
+        playersState.newGame()
         try? saveGame()
     }
 
@@ -119,7 +134,7 @@ class ReversiState {
     }
 
     func canPlayTurnOfComputer(at side: Disk) -> Bool {
-        if side == turn, case .computer = player(at: side.index) {
+        if side == turn, case .computer = playersState.player(at: side.index) {
             return true
         } else {
             return false
@@ -127,7 +142,7 @@ class ReversiState {
     }
 
     /* Save and Load */
-    enum FileIOError: Error {
+    private enum FileIOError: Error {
         case write(path: String, cause: Error?)
         case read(path: String, cause: Error?)
     }
@@ -141,7 +156,7 @@ class ReversiState {
         output += turn.symbol
 
         for side in Disk.sides {
-            output += player(at: side.index).rawValue.description
+            output += playersState.player(at: side.index).rawValue.description
         }
         output += "\n"
 
@@ -188,7 +203,7 @@ class ReversiState {
             else {
                 throw FileIOError.read(path: path, cause: nil)
             }
-            setPlayer(player: player, at: side.index)
+            playersState.setPlayer(player: player, at: side.index)
         }
 
         var results: [(disk: Disk?, x: Int, y: Int)] = []
@@ -265,4 +280,3 @@ extension Disk {
         }
     }
 }
-
