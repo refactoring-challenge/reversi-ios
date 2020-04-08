@@ -12,6 +12,7 @@
 		AA308D04243CC1F80041763B /* BoardState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D03243CC1F80041763B /* BoardState.swift */; };
 		AA308D06243E215C0041763B /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D05243E215C0041763B /* Repository.swift */; };
 		AA308D08243E261C0041763B /* PersistentInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D07243E261C0041763B /* PersistentInteractor.swift */; };
+		AA308D0A243E30110041763B /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D09243E30110041763B /* Player.swift */; };
 		D636B39F23D35043007F370F /* DiskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636B39E23D35043007F370F /* DiskView.swift */; };
 		D642BDB423A9FE4500396732 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642BDB323A9FE4500396732 /* AppDelegate.swift */; };
 		D642BDB623A9FE4500396732 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642BDB523A9FE4500396732 /* SceneDelegate.swift */; };
@@ -41,6 +42,7 @@
 		AA308D03243CC1F80041763B /* BoardState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardState.swift; sourceTree = "<group>"; };
 		AA308D05243E215C0041763B /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		AA308D07243E261C0041763B /* PersistentInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentInteractor.swift; sourceTree = "<group>"; };
+		AA308D09243E30110041763B /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		D636B39E23D35043007F370F /* DiskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskView.swift; sourceTree = "<group>"; };
 		D642BDB023A9FE4500396732 /* Reversi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reversi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D642BDB323A9FE4500396732 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				D642BDD723AA0B5700396732 /* Disk.swift */,
+				AA308D09243E30110041763B /* Player.swift */,
 			);
 			name = DataTypes;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 				D642BDD823AA0B5700396732 /* Disk.swift in Sources */,
 				D642BDB823A9FE4500396732 /* ViewController.swift in Sources */,
 				D642BDDC23AA137C00396732 /* BoardView.swift in Sources */,
+				AA308D0A243E30110041763B /* Player.swift in Sources */,
 				AA308D08243E261C0041763B /* PersistentInteractor.swift in Sources */,
 				AA308D06243E215C0041763B /* Repository.swift in Sources */,
 				D642BDB423A9FE4500396732 /* AppDelegate.swift in Sources */,

@@ -1,6 +1,6 @@
 import Foundation
 
-class BoardState {
+final class BoardState {
     struct Constant {
         let width: Int = 8
         let height: Int = 8

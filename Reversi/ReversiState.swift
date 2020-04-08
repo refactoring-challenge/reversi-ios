@@ -1,11 +1,6 @@
 import Foundation
 
-enum Player: Int {
-    case manual = 0
-    case computer = 1
-}
-
-class PlayersState {
+final class PlayersState {
     private var player1: Player = .manual
     private var player2: Player = .manual
 
@@ -31,7 +26,7 @@ class PlayersState {
     }
 }
 
-class ReversiState {
+final class ReversiState {
     let boardState: BoardState = .init()
     var constant: BoardState.Constant { boardState.constant }
     private let playersState: PlayersState = .init()
