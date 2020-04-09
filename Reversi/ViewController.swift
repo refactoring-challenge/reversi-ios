@@ -144,6 +144,12 @@ extension ViewController {
     func placeDisk(player: Player, disk: Disk, atX x: Int, y: Int, animated isAnimated: Bool, completion: ((Bool) -> Void)? = nil) {
         do {
             let diskCoordinates = try reversiState.flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
+
+            reversiState.setDisk(disk, atX: x, y: y)
+            for (x, y) in diskCoordinates {
+                reversiState.setDisk(disk, atX: x, y: y)
+            }
+
             updateDisks(disk, atX: x, y: y, diskCoordinates: diskCoordinates, animated: isAnimated, completion: completion)
         } catch let e as ReversiState.DiskPlacementError {
             switch player {
@@ -187,11 +193,6 @@ extension ViewController {
         }
     }
 
-    func updateDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
-        reversiState.setDisk(disk, atX: x, y: y)
-        boardView.updateDisk(disk, atX: x, y: y, animated: animated, completion: completion)
-    }
-
     func updateDisks(_ disk: Disk, atX x: Int, y: Int, diskCoordinates: [(Int, Int)], animated isAnimated: Bool, completion: ((Bool) -> Void)? = nil) {
         if isAnimated {
             animationState.createAnimationCanceller()
@@ -207,9 +208,9 @@ extension ViewController {
         } else {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.updateDisk(disk, atX: x, y: y, animated: false)
+                self.boardView.updateDisk(disk, atX: x, y: y, animated: false)
                 for (x, y) in diskCoordinates {
-                    self.updateDisk(disk, atX: x, y: y, animated: false)
+                    self.boardView.updateDisk(disk, atX: x, y: y, animated: false)
                 }
                 completion?(true)
                 self.saveGame()
@@ -226,14 +227,14 @@ extension ViewController {
             return
         }
 
-        updateDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
+        boardView.updateDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
             guard let self = self else { return }
             if self.animationState.isCancelled { return }
             if finished {
                 self.updateDisksWithAnimation(at: coordinates.dropFirst(), to: disk, completion: completion)
             } else {
                 for (x, y) in coordinates {
-                    self.updateDisk(disk, atX: x, y: y, animated: false)
+                    self.boardView.updateDisk(disk, atX: x, y: y, animated: false)
                 }
                 completion(false)
             }
