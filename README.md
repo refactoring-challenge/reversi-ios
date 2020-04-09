@@ -385,11 +385,48 @@ class ViewController: UIViewController {
 }
 ```
 
-`BoardView` が宣言する API は次の通りです。
+`BoardViewDelegate` が宣言する API は次の通りです。
 
 | API | 概要 |
 |:--|:--|
 | `func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int)` | `boardView` の `x`, `y` で指定されるセルがタップされたときに呼ばれます。 |
+
+### ViewController.swift
+
+本課題の対象となる Fat View Controller `ViewController` が実装されています。
+
+```swift
+class ViewController: UIViewController
+```
+
+`ViewController` の実装は主に次の五つのパートに分かれています。
+
+| パート | 内容　|
+|:--|:--|
+| 冒頭部 | `ViewController` のプロパティの宣言や `viewDidLoad()` ・ `viewDidAppear()` などの実装 |
+| Reversi logics | マスにディスクがおけるかや、勝敗を判定するメソッドなどの実装 |
+| Game management | 新規ゲームの開始やユーザーの入力待ち、勝敗判定など、リバーシのルール自体の実装 |
+| Views | 状態変更をビューに反映するためのメソッドの実装 |
+| Inputs | ユーザー入力をハンドリングするためのメソッドの実装 |
+| Save and Load | ゲームの状態をファイルに保存・読み込みするためのメソッドの実装 |
+| Additional types | このファイルで利用する補助的な型の実装 |
+| File-private extensions | このファイルで利用する補助的な `extension` の実装 |
+
+`ViewController` の実装で特筆すべきこととして、リバーシの盤の状態が `BoardView` インスタンスで管理されていることが挙げられます。 `boardView` プロパティがその役割を担っていて、モデルとビューが密結合したような状態です。さらに、ディスクが置かれたときに周辺のディスクをひっくり返す処理を実装した `placeDisk(_:atX:y:animated:completion:)` メソッドでは、データの変更とアニメーションの両方を互いに関係させながら処理が記述されており、ここでも密結合が見られます。これらは特に "Reversi logics" に関係が深いです。
+
+全体の処理の流れは　"Game management" で管理されており、 `waitForPlayer()` メソッドによるプレイヤーの行動待ち（ "Manual" の場合はユーザーの入力待ち）と、その結果を受けて次の状態（次のプレイヤーの番か、パスか、勝敗が決して結果表示か）への遷移を扱う `nextTurn()` メソッドがその中心です。典型的には、
+
+1. `waitForTurn()` でプレイヤーの行動待ち
+2. プレイヤーの行動を受けて `placeDisk(_:atX:y:animated:completion:)` でディスクをひっくり返す
+3. `nextTurn()` で次プレイヤーに遷移
+
+を繰り返すことでゲームが進行します。最初は `viewDidAppear()` で `waitForTurn()` が呼ばれることでこのループに突入します。
+
+他にわかりづらい点としては、 `animationCanceller` プロパティと `playerCancellers` プロパティがあります。本アプリには非同期処理のキャンセルが必要になるケースとして、ディスクをひっくり返すアニメーションの途中でのゲームリセットと、プレイヤーの行動待ち中のプレイヤーモードの切り替えがあります。前者ではアニメーションを中断しないといけません。後者では、たとえば、 "Computer" から "Manual" 切り替わったのに、 AI の思考が完了して勝手にディスクが置かれるというような事態を防がなければなりません。それらのキャンセル処理を管理するのが `animationCanceller` プロパティと `playerCancellers` プロパティです。対応する非同期処理中にはそれらのプロパティにキャンセラーが保持され、非同期処理が終わると `nil` がセットされます。
+
+`@IBOutlet` で接続されたプロパティと、対応するビューの関係は次のようになっています。
+
+<img alt="ビューとプロパティ" src="img/views-and-properties.png" width="207">
 
 ## 結果一覧
 
