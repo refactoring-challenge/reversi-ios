@@ -1,17 +1,20 @@
 import Foundation
 
-final class AnimationState {
+public final class AnimationState {
     private var animationCanceller: Canceller?
-    var isAnimating: Bool { animationCanceller != nil }
-    var isCancelled: Bool {
+    public var isAnimating: Bool { animationCanceller != nil }
+    public var isCancelled: Bool {
         guard let canceller = animationCanceller else { return false }
         return canceller.isCancelled
     }
 
     private var playerCancellers: [Disk: Canceller] = [:]
 
+    public init() {
+    }
+
     @discardableResult
-    func createAnimationCanceller(at side: Disk? = nil, cleanUp: Canceller.CleanUp? = nil) -> Canceller {
+    public func createAnimationCanceller(at side: Disk? = nil, cleanUp: Canceller.CleanUp? = nil) -> Canceller {
         switch side {
         case .some(let side):
             let cleanUpWrapper: Canceller.CleanUp = { [weak self] in
@@ -32,7 +35,7 @@ final class AnimationState {
         }
     }
 
-    func cancel(at side: Disk? = nil) {
+    public func cancel(at side: Disk? = nil) {
         switch side {
         case .some(let side):
             playerCancellers[side]?.cancel()
@@ -41,7 +44,7 @@ final class AnimationState {
         }
     }
 
-    func cancelAll() {
+    public func cancelAll() {
         animationCanceller?.cancel()
         animationCanceller = nil
 

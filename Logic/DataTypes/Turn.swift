@@ -1,11 +1,11 @@
 import Foundation
 
-struct Turn {
-    let side: Disk
-    let player: Player
+public struct Turn {
+    public let side: Disk
+    public let player: Player
 }
 
-enum CurrentTurn {
+public enum CurrentTurn {
     case turn(Turn)
     case gameOverWon(Turn)
     case gameOverTied

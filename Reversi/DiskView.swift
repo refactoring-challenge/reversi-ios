@@ -1,4 +1,5 @@
 import UIKit
+import Logic
 
 public class DiskView: UIView {
     /// このビューが表示するディスクの色を決定します。

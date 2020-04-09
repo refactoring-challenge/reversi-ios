@@ -23,7 +23,7 @@ extension Disk {
         preconditionFailure("Illegal index: \(index)")
     }
 
-    var index: Int {
+    public var index: Int {
         switch self {
         case .dark: return 0
         case .light: return 1

@@ -46,17 +46,21 @@ final class PlayersState {
     }
 }
 
-final class ReversiState {
+public final class ReversiState {
     private let boardState: BoardState = .init()
     private let sideState: SideState = .init()
     private let playersState: PlayersState = .init()
     private let persistentInteractor: PersistentInteractor
 
+    public init() {
+        self.persistentInteractor = PersistentInteractorImpl()
+    }
+
     init(persistentInteractor: PersistentInteractor = PersistentInteractorImpl()) {
         self.persistentInteractor = persistentInteractor
     }
 
-    var currentTurn: CurrentTurn {
+    public var currentTurn: CurrentTurn {
         if let side = sideState.side {
             let player = playersState.player(at: side)
             return CurrentTurn.turn(Turn(side: side, player: player))
@@ -71,39 +75,39 @@ final class ReversiState {
     }
 
     /* Player */
-    func player(at side: Disk) -> Player {
+    public func changePlayer(side: Disk, player: Player) {
+        playersState.setPlayer(player: player, at: side)
+    }
+
+    public func player(at side: Disk) -> Player {
         playersState.player(at: side)
     }
 
-    func setPlayer(_ turn: Turn) {
-        playersState.setPlayer(player: turn.player, at: turn.side)
-    }
-
     /* Disk */
-    func diskAt(x: Int, y: Int) -> Disk? {
+    public func diskAt(x: Int, y: Int) -> Disk? {
         boardState.diskAt(x: x, y: y)
     }
 
-    func setDisk(_ disk: Disk?, atX x: Int, y: Int) {
+    public func setDisk(_ disk: Disk?, atX x: Int, y: Int) {
         boardState.setDisk(disk, atX: x, y: y)
     }
 
-    func count(of disk: Disk) -> Int {
+    public func count(of disk: Disk) -> Int {
         boardState.count(of: disk)
     }
 
     /* Reversi logics */
-    func validMoves(for turn: Turn) -> [(x: Int, y: Int)] {
+    public func validMoves(for turn: Turn) -> [(x: Int, y: Int)] {
         boardState.validMoves(for: turn.side)
     }
 
-    struct DiskPlacementError: Error {
-        let disk: Disk
-        let x: Int
-        let y: Int
+    public struct DiskPlacementError: Error {
+        public let disk: Disk
+        public let x: Int
+        public let y: Int
     }
 
-    func flippedDiskCoordinatesByPlacingDisk(_ disk: Disk, atX x: Int, y: Int) throws -> [(Int, Int)] /* DiskPlacementError */ {
+    public func flippedDiskCoordinatesByPlacingDisk(_ disk: Disk, atX x: Int, y: Int) throws -> [(Int, Int)] /* DiskPlacementError */ {
         let diskCoordinates = boardState.flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
         if diskCoordinates.isEmpty {
             throw DiskPlacementError(disk: disk, x: x, y: y)
@@ -112,28 +116,28 @@ final class ReversiState {
     }
 
     /* Game life cycle */
-    func newGame() throws {
+    public func newGame() throws {
         resetAllState()
         try? saveGame()
     }
 
-    func nextTurn() -> Turn? {
+    public func nextTurn() -> Turn? {
         guard let side = sideState.nextSide() else { return nil }
         let player = playersState.player(at: side)
         return Turn(side: side, player: player)
     }
 
-    func flippedTurn(_ turn: Turn) -> Turn {
+    public func flippedTurn(_ turn: Turn) -> Turn {
         let side = turn.side.flipped
         let player = playersState.player(at: side)
         return Turn(side: side, player: player)
     }
 
-    func gameover() {
+    public func gameover() {
         sideState.gameOver()
     }
 
-    func canPlayTurnOfComputer(at side: Disk) -> Bool {
+    public func canPlayTurnOfComputer(at side: Disk) -> Bool {
         if side == sideState.side, case .computer = playersState.player(at: side) {
             return true
         } else {
@@ -142,11 +146,11 @@ final class ReversiState {
     }
 
     /* Save and Load */
-    func saveGame() throws {
+    public func saveGame() throws {
         try persistentInteractor.saveGame(side: sideState.side, playersState: playersState, boardState: boardState)
     }
 
-    func loadGame() throws {
+    public func loadGame() throws {
         resetAllState()
 
         let loadData = try persistentInteractor.loadGame()

@@ -1,4 +1,5 @@
 import UIKit
+import Logic
 
 private let animationDuration: TimeInterval = 0.25
 

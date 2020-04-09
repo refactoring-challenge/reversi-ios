@@ -1,4 +1,5 @@
 import UIKit
+import Logic
 
 class ViewController: UIViewController {
     @IBOutlet private var boardView: BoardView!
@@ -171,11 +172,11 @@ extension ViewController {
         }
     }
 
-    func changePlayer(turn: Turn) {
-        reversiState.setPlayer(turn)
+    func changePlayer(side: Disk, player: Player) {
+        reversiState.changePlayer(side: side, player: player)
         saveGame()
-        animationState.cancel(at: turn.side)
-        if !animationState.isAnimating && reversiState.canPlayTurnOfComputer(at: turn.side) {
+        animationState.cancel(at: side)
+        if !animationState.isAnimating && reversiState.canPlayTurnOfComputer(at: side) {
             playTurnOfComputer()
         }
     }
@@ -309,7 +310,13 @@ extension ViewController {
     
     @IBAction func changePlayerControlSegment(_ sender: UISegmentedControl) {
         guard let index = playerControls.firstIndex(of: sender) else { return }
-        changePlayer(turn: Turn(side: Disk(index: index), player: sender.convertToPlayer))
+        let side: Disk
+        switch index {
+        case 0: side = .dark
+        case 1: side = .light
+        default: preconditionFailure()
+        }
+        changePlayer(side: side, player: sender.convertToPlayer)
     }
 }
 

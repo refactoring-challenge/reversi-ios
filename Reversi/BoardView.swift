@@ -1,4 +1,5 @@
 import UIKit
+import Logic
 
 private let lineWidth: CGFloat = 2
 
