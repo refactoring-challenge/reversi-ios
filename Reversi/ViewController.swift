@@ -16,16 +16,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         boardView.delegate = self
         messageDiskSize = messageDiskSizeConstraint.constant
-
-        do {
-            try loadGame()
-        } catch _ {
-            do {
-                try newGame()
-            } catch _ {
-
-            }
-        }
+        loadGame()
     }
     
     private var viewHasAppeared: Bool = false
@@ -40,28 +31,55 @@ class ViewController: UIViewController {
 // MARK: Game management
 
 extension ViewController {
-    func saveGame() throws {
-        try reversiState.saveGame()
+    func saveGame() {
+        do {
+            try reversiState.saveGame()
+        } catch let e {
+            dump(e)
+            showAlter(title: "Error occurred.", message: "Cannot save games.")
+        }
     }
 
-    func loadGame() throws {
-        try reversiState.loadGame()
-        updateDisksForInitial()
-        updatePlayerControls(reversiState)
-        updateMessageViews()
-        updateCountLabels()
+    func loadGame() {
+        do {
+            try reversiState.loadGame()
+            updateDisksForInitial()
+            updatePlayerControls(reversiState)
+            updateMessageViews()
+            updateCountLabels()
+        } catch let e {
+            dump(e)
+            showAlter(title: "Error occurred.", message: "Cannot load games.")
+        }
     }
 
-    func newGame() throws {
-        try reversiState.newGame()
-        updateDisksForInitial()
-        updatePlayerControls(reversiState)
-        updateMessageViews()
-        updateCountLabels()
+    func newGame() {
+        do {
+            try reversiState.newGame()
+            updateDisksForInitial()
+            updatePlayerControls(reversiState)
+            updateMessageViews()
+            updateCountLabels()
+        } catch let e {
+            dump(e)
+            showAlter(title: "Error occurred.", message: "Cannot new games.")
+        }
     }
 
     func nextTurn() {
         guard let turn = reversiState.nextTurn() else { return }
+
+        func showCannotPlaceDiskAlert() {
+            let alertController = UIAlertController(
+                title: "Pass",
+                message: "Cannot place a disk.",
+                preferredStyle: .alert
+            )
+            alertController.addAction(UIAlertAction(title: "Dismiss", style: .default) { [weak self] _ in
+                self?.nextTurn()
+            })
+            present(alertController, animated: true)
+        }
 
         if reversiState.validMoves(for: turn).isEmpty {
             if reversiState.validMoves(for: turn.flipped).isEmpty {
@@ -69,16 +87,7 @@ extension ViewController {
                 updateMessageViews()
             } else {
                 updateMessageViews()
-                
-                let alertController = UIAlertController(
-                    title: "Pass",
-                    message: "Cannot place a disk.",
-                    preferredStyle: .alert
-                )
-                alertController.addAction(UIAlertAction(title: "Dismiss", style: .default) { [weak self] _ in
-                    self?.nextTurn()
-                })
-                present(alertController, animated: true)
+                showCannotPlaceDiskAlert()
             }
         } else {
             updateMessageViews()
@@ -110,7 +119,7 @@ extension ViewController {
             if canceller.isCancelled { return }
             canceller.cancel()
 
-            try? self.placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
+            self.placeDisk(player: .computer, disk: turn, atX: x, y: y, animated: true) { [weak self] _ in
                 self?.nextTurn()
             }
         }
@@ -121,9 +130,22 @@ extension ViewController {
     ///     whether or not the animations actually finished before the completion handler was called.
     ///     If `animated` is `false`,  this closure is performed at the beginning of the next run loop cycle. This parameter may be `nil`.
     /// - Throws: `DiskPlacementError` if the `disk` cannot be placed at (`x`, `y`).
-    func placeDisk(_ disk: Disk, atX x: Int, y: Int, animated isAnimated: Bool, completion: ((Bool) -> Void)? = nil) throws {
-        let diskCoordinates = try reversiState.flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
-        updateDisks(disk, atX: x, y: y, diskCoordinates: diskCoordinates, animated: isAnimated, completion: completion)
+    func placeDisk(player: Player, disk: Disk, atX x: Int, y: Int, animated isAnimated: Bool, completion: ((Bool) -> Void)? = nil) {
+        do {
+            let diskCoordinates = try reversiState.flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
+            updateDisks(disk, atX: x, y: y, diskCoordinates: diskCoordinates, animated: isAnimated, completion: completion)
+        } catch let e as ReversiState.DiskPlacementError {
+            switch player {
+            case .manual:
+                break // because doing nothing when an error occurs
+            case .computer:
+                dump(e)
+                showAlter(title: "Error occurred.", message: "Cannot place \(e.disk.name) disk at x: \(e.x) y: \(e.y)")
+            }
+        } catch let e {
+            dump(e)
+            showAlter(title: "Error occurred.", message: "Unknown error occurred.")
+        }
     }
 }
 
@@ -154,7 +176,7 @@ extension ViewController {
                 self.animationState.cancel()
 
                 completion?(finished)
-                try? self.saveGame()
+                self.saveGame()
                 self.updateCountLabels()
             }
         } else {
@@ -165,7 +187,7 @@ extension ViewController {
                     self.updateDisk(disk, atX: x, y: y, animated: false)
                 }
                 completion?(true)
-                try? self.saveGame()
+                self.saveGame()
                 self.updateCountLabels()
             }
         }
@@ -221,6 +243,14 @@ extension ViewController {
             messageLabel.text = "Tied"
         }
     }
+
+    func showAlter(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+            self?.newGame()
+        })
+        present(alertController, animated: true)
+    }
 }
 
 // MARK: Inputs
@@ -236,12 +266,8 @@ extension ViewController {
         alertController.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
             guard let self = self else { return }
             self.animationState.cancelAll()
-            do {
-                try self.newGame()
-                self.waitForPlayer()
-            } catch _ {
-
-            }
+            self.newGame()
+            self.waitForPlayer()
         })
         present(alertController, animated: true)
     }
@@ -250,7 +276,7 @@ extension ViewController {
         let side: Disk = Disk(index: playerControls.firstIndex(of: sender)!)
         let player = sender.convertToPlayer
         reversiState.setPlayer(player: player, at: side)
-        try? saveGame()
+        saveGame()
         animationState.cancel(at: side)
         if !animationState.isAnimating && reversiState.canPlayTurnOfComputer(at: side) {
             playTurnOfComputer()
@@ -263,8 +289,7 @@ extension ViewController: BoardViewDelegate {
         guard case .turn(let turn) = reversiState.currentGameState else { return }
         if animationState.isAnimating { return }
         guard case .manual = reversiState.currentPlayer else { return }
-        // try? because doing nothing when an error occurs
-        try? placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
+        placeDisk(player: .manual, disk: turn, atX: x, y: y, animated: true) { [weak self] _ in
             self?.nextTurn()
         }
     }
@@ -278,6 +303,15 @@ extension UISegmentedControl {
         case 0: return .manual
         case 1: return .computer
         default: preconditionFailure()
+        }
+    }
+}
+
+extension Disk {
+    var name: String {
+        switch self {
+        case .dark: return "dark"
+        case .light: return "light"
         }
     }
 }

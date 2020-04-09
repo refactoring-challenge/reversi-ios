@@ -45,14 +45,7 @@ extension Disk {
     fileprivate var cgColor: CGColor {
         uiColor.cgColor
     }
-    
-    fileprivate var name: String {
-        switch self {
-        case .dark: return "dark"
-        case .light: return "light"
-        }
-    }
-    
+       
     fileprivate init(name: String) {
         switch name {
         case Disk.dark.name:
