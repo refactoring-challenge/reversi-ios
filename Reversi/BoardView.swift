@@ -6,8 +6,18 @@ public class BoardView: UIView {
     private var cellViews: [CellView] = []
     private var actions: [CellSelectionAction] = []
     weak var delegate: BoardViewDelegate?
-    
-    func setUp() {
+
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        setUp()
+    }
+
+    required public init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setUp()
+    }
+
+    private func setUp() {
         backgroundColor = UIColor(named: "DarkColor")!
         
         let cellViews: [CellView] = (0 ..< BoardConstant.squaresCount).map { _ in
@@ -75,7 +85,8 @@ public class BoardView: UIView {
         }
     }
 
-    func updateDisk(_ disk: Disk?, at index: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+    func updateDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+        guard let index = BoardConstant.convertPositionToIndex(x: x, y: y) else { preconditionFailure() }
         cellViews[index].setDisk(disk, animated: animated, completion: completion)
     }
 }

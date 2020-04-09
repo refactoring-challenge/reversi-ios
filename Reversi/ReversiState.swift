@@ -102,8 +102,18 @@ final class ReversiState {
         boardState.validMoves(for: side)
     }
 
-    func flippedDiskCoordinatesByPlacingDisk(_ disk: Disk, atX x: Int, y: Int) -> [(Int, Int)] {
-        boardState.flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
+    struct DiskPlacementError: Error {
+        let disk: Disk
+        let x: Int
+        let y: Int
+    }
+
+    func flippedDiskCoordinatesByPlacingDisk(_ disk: Disk, atX x: Int, y: Int) throws -> [(Int, Int)] /* DiskPlacementError */ {
+        let diskCoordinates = boardState.flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
+        if diskCoordinates.isEmpty {
+            throw DiskPlacementError(disk: disk, x: x, y: y)
+        }
+        return diskCoordinates
     }
 
     /* Game life cycle */

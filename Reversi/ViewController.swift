@@ -16,7 +16,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         boardView.delegate = self
         messageDiskSize = messageDiskSizeConstraint.constant
-        boardView.setUp()
 
         do {
             try loadGame()
@@ -38,68 +37,6 @@ class ViewController: UIViewController {
     }
 }
 
-// MARK: Reversi logics
-
-extension ViewController {
-    /// - Parameter completion: A closure to be executed when the animation sequence ends.
-    ///     This closure has no return value and takes a single Boolean argument that indicates
-    ///     whether or not the animations actually finished before the completion handler was called.
-    ///     If `animated` is `false`,  this closure is performed at the beginning of the next run loop cycle. This parameter may be `nil`.
-    /// - Throws: `DiskPlacementError` if the `disk` cannot be placed at (`x`, `y`).
-    func placeDisk(_ disk: Disk, atX x: Int, y: Int, animated isAnimated: Bool, completion: ((Bool) -> Void)? = nil) throws {
-        let diskCoordinates = reversiState.flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
-        if diskCoordinates.isEmpty {
-            throw DiskPlacementError(disk: disk, x: x, y: y)
-        }
-        
-        if isAnimated {
-            animationState.createAnimationCanceller()
-            animateSettingDisks(at: [(x, y)] + diskCoordinates, to: disk) { [weak self] finished in
-                guard let self = self else { return }
-                if self.animationState.isCancelled { return }
-                self.animationState.cancel()
-
-                completion?(finished)
-                try? self.saveGame()
-                self.updateCountLabels()
-            }
-        } else {
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.updateDisk(disk, atX: x, y: y, animated: false)
-                for (x, y) in diskCoordinates {
-                    self.updateDisk(disk, atX: x, y: y, animated: false)
-                }
-                completion?(true)
-                try? self.saveGame()
-                self.updateCountLabels()
-            }
-        }
-    }
-    
-    private func animateSettingDisks<C: Collection>(at coordinates: C, to disk: Disk, completion: @escaping (Bool) -> Void)
-        where C.Element == (Int, Int)
-    {
-        guard let (x, y) = coordinates.first else {
-            completion(true)
-            return
-        }
-
-        updateDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
-            guard let self = self else { return }
-            if self.animationState.isCancelled { return }
-            if finished {
-                self.animateSettingDisks(at: coordinates.dropFirst(), to: disk, completion: completion)
-            } else {
-                for (x, y) in coordinates {
-                    self.updateDisk(disk, atX: x, y: y, animated: false)
-                }
-                completion(false)
-            }
-        }
-    }
-}
-
 // MARK: Game management
 
 extension ViewController {
@@ -109,7 +46,7 @@ extension ViewController {
 
     func loadGame() throws {
         try reversiState.loadGame()
-        updateBoard()
+        updateDisksForInitial()
         updatePlayerControls(reversiState)
         updateMessageViews()
         updateCountLabels()
@@ -117,7 +54,7 @@ extension ViewController {
 
     func newGame() throws {
         try reversiState.newGame()
-        updateBoard()
+        updateDisksForInitial()
         updatePlayerControls(reversiState)
         updateMessageViews()
         updateCountLabels()
@@ -173,10 +110,20 @@ extension ViewController {
             if canceller.isCancelled { return }
             canceller.cancel()
 
-            try! self.placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
+            try? self.placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
                 self?.nextTurn()
             }
         }
+    }
+
+    /// - Parameter completion: A closure to be executed when the animation sequence ends.
+    ///     This closure has no return value and takes a single Boolean argument that indicates
+    ///     whether or not the animations actually finished before the completion handler was called.
+    ///     If `animated` is `false`,  this closure is performed at the beginning of the next run loop cycle. This parameter may be `nil`.
+    /// - Throws: `DiskPlacementError` if the `disk` cannot be placed at (`x`, `y`).
+    func placeDisk(_ disk: Disk, atX x: Int, y: Int, animated isAnimated: Bool, completion: ((Bool) -> Void)? = nil) throws {
+        let diskCoordinates = try reversiState.flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
+        updateDisks(disk, atX: x, y: y, diskCoordinates: diskCoordinates, animated: isAnimated, completion: completion)
     }
 }
 
@@ -184,20 +131,64 @@ extension ViewController {
 
 extension ViewController {
     /* Board */
-    func updateDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
-        guard let index = BoardConstant.convertPositionToIndex(x: x, y: y) else {
-            preconditionFailure()
-        }
-        reversiState.setDisk(disk, atX: x, y: y)
-        boardView.updateDisk(disk, at: index, animated: animated, completion: completion)
-    }
-
-    func updateBoard() {
+    func updateDisksForInitial() {
         for y in BoardConstant.yRange {
             for x in BoardConstant.xRange {
                 let disk = reversiState.diskAt(x: x, y: y)
-                let index = BoardConstant.convertPositionToIndex(x: x, y: y)!
-                boardView.updateDisk(disk, at: index, animated: false)
+                boardView.updateDisk(disk, atX: x, y: y, animated: false)
+            }
+        }
+    }
+
+    func updateDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil) {
+        reversiState.setDisk(disk, atX: x, y: y)
+        boardView.updateDisk(disk, atX: x, y: y, animated: animated, completion: completion)
+    }
+
+    func updateDisks(_ disk: Disk, atX x: Int, y: Int, diskCoordinates: [(Int, Int)], animated isAnimated: Bool, completion: ((Bool) -> Void)? = nil) {
+        if isAnimated {
+            animationState.createAnimationCanceller()
+            updateDisksWithAnimation(at: [(x, y)] + diskCoordinates, to: disk) { [weak self] finished in
+                guard let self = self else { return }
+                if self.animationState.isCancelled { return }
+                self.animationState.cancel()
+
+                completion?(finished)
+                try? self.saveGame()
+                self.updateCountLabels()
+            }
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.updateDisk(disk, atX: x, y: y, animated: false)
+                for (x, y) in diskCoordinates {
+                    self.updateDisk(disk, atX: x, y: y, animated: false)
+                }
+                completion?(true)
+                try? self.saveGame()
+                self.updateCountLabels()
+            }
+        }
+    }
+
+    private func updateDisksWithAnimation<C: Collection>(at coordinates: C, to disk: Disk, completion: @escaping (Bool) -> Void)
+        where C.Element == (Int, Int)
+    {
+        guard let (x, y) = coordinates.first else {
+            completion(true)
+            return
+        }
+
+        updateDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
+            guard let self = self else { return }
+            if self.animationState.isCancelled { return }
+            if finished {
+                self.updateDisksWithAnimation(at: coordinates.dropFirst(), to: disk, completion: completion)
+            } else {
+                for (x, y) in coordinates {
+                    self.updateDisk(disk, atX: x, y: y, animated: false)
+                }
+                completion(false)
             }
         }
     }
@@ -280,12 +271,6 @@ extension ViewController: BoardViewDelegate {
 }
 
 // MARK: Additional types
-
-struct DiskPlacementError: Error {
-    let disk: Disk
-    let x: Int
-    let y: Int
-}
 
 extension UISegmentedControl {
     fileprivate var convertToPlayer: Player {
