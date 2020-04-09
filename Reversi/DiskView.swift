@@ -1,10 +1,12 @@
 import UIKit
 
 public class DiskView: UIView {
+    /// このビューが表示するディスクの色を決定します。
     public var disk: Disk = .dark {
         didSet { setNeedsDisplay() }
     }
     
+    /// Interface Builder からディスクの色を設定するためのプロパティです。 `"dark"` か `"light"` の文字列を設定します。
     @IBInspectable public var name: String {
         get { disk.name }
         set { disk = .init(name: newValue) }
