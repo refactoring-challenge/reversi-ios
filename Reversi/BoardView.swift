@@ -123,7 +123,7 @@ public class BoardView: UIView {
         return cellViews[y * width + x]
     }
     
-    /// `x `, `y ` で指定されたセルの状態を返します。
+    /// `x`, `y` で指定されたセルの状態を返します。
     /// セルにディスクが置かれていない場合、 `nil` が返されます。
     /// - Parameter x: セルの列です。
     /// - Parameter y: セルの行です。

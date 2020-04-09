@@ -254,7 +254,7 @@ x-------
 
 **基本的に ViewController.swift 以外には手を加える必要はありません** 。 `BoardView`, `CellView`, `DiskView` はリバーシ用に用意されたビュークラスで、 UIKit のコンポーネントと同じ感覚で利用できます。 `UISwitch` に不満があっても `UISwitch` そのものを改変するのではなく、ラッパークラスや `extension` で対応すると思います。 `BoardView` 等についても同様です。また、 `CellView` に関しては課題挑戦者が直接利用することもありません（ `BoardView` が内部的に利用しています）。 `DiskView` についても利用機会は限定的です。 `Disk` は黒か白かを表す小さな `enum` なので、実質的に使い方を覚える必要があるのは `BoardView` だけです。 `BoardView` にしても、 UIKit のビュークラス群と似た API を持つので、すぐに使い方を理解できると思います。
 
-以下、一つずつ説明します（ CellView.swift は省略します）。
+以下、一つずつ説明します（ CellView.swift は省略します）。ここで紹介する API についてはドキュメンテーションコメントが書かれているので、 Xcode 上で確認することもできます。
 
 ### Disk.swift
 
@@ -318,10 +318,10 @@ protocol BoardViewDelegate: AnyObject
 `BoardView` は 8 × 8 のセルを持ちます。 `BoardView` の API を通して、それらのセルの状態（黒、白、ディスクが置かれていない）を取得したり、変更したりすることができます。
 
 ```swift
-// 4 列目・ 5 行目のセルの状態を取得
+// 3 列目・ 4 行目のセルの状態を取得
 let disk: Disk? = boardView.diskAt(x: 3, y: 4)
 
-// 4 列目・ 5 行目のセルを黒のディスクが置かれている状態に変更
+// 3 列目・ 4 行目のセルを黒のディスクが置かれている状態に変更
 boardView.setDisk(.dark, atX: 3, y: 4, animated: false)
 ```
 
@@ -356,10 +356,10 @@ boardView.setDisk(.dark, atX: 3, y: 4, animated: true) { isFinished in
 | API | 概要 |
 |:--|:--|
 | `weak var delegate: BoardViewDelegate?` | セルがタップされたときの挙動を移譲するためのオブジェクトです。 |
-| `func diskAt(x: Int, y: Int) -> Disk?` | `x + 1` 列目・ `y + 1` 行目のセルの状態を返します。セルにディスクが置かれていない場合は `nil` を返します。 |
+| `func diskAt(x: Int, y: Int) -> Disk?` | `x`, `y` で指定されたセルの状態を返します。セルにディスクが置かれていない場合は `nil` を返します。 |
 | `let height: Int ` | 盤の高さ（ `8` ）を返します。 |
 | `func reset()` | 盤をゲーム開始時に状態に戻します。このメソッドはアニメーションを伴いません。 |
-| `func setDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil)` | `x + 1` 列目・ `y + 1` 行目のセルの状態を与えられた `disk` に変更します。 `animated` が `true` の場合、アニメーションが実行されます。アニメーションの完了通知は `completion` で受け取ることができます。 `completion` が受け取る `Bool` 値は、 `UIView.animate()` （参考: [API リファレンス](https://developer.apple.com/documentation/uikit/uiview/1622515-animate)）等に準じます。 |
+| `func setDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil)` | `x`, `y` で指定されたセルの状態を与えられた `disk` に変更します。 `animated` が `true` の場合、アニメーションが実行されます。アニメーションの完了通知は `completion` で受け取ることができます。 `completion` が受け取る `Bool` 値は、 `UIView.animate()` （参考: [API リファレンス](https://developer.apple.com/documentation/uikit/uiview/1622515-animate)）等に準じます。 |
 | `let width: Int` | 盤の幅（ `8` ）を返します。 |
 | `let xRange: Range<Int>` | 盤のセルの `x` の範囲（ `0 ..< 8` ）を返します。 |
 | `let yRange: Range<Int>` | 盤のセルの `y` の範囲（ `0 ..< 8` ）を返します。 |
@@ -369,7 +369,7 @@ boardView.setDisk(.dark, atX: 3, y: 4, animated: true) { isFinished in
 ```swift
 extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
-        // x + 1 列目・　y + 1 列目のセルがタップされたときに呼ばれる
+        // x 列目・ y 列目のセルがタップされたときに呼ばれる
     }
 }
 ```
@@ -389,7 +389,7 @@ class ViewController: UIViewController {
 
 | API | 概要 |
 |:--|:--|
-| `func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int)` | `boardView` の `x + 1` 列目・ `y + 1` 行目のセルがタップされたときに呼ばれます。 |
+| `func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int)` | `boardView` の `x`, `y` で指定されるセルがタップされたときに呼ばれます。 |
 
 ## 結果一覧
 
