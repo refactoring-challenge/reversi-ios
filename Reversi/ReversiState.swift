@@ -56,16 +56,16 @@ final class ReversiState {
         self.persistentInteractor = persistentInteractor
     }
 
-    var currentGameState: CurrentGameState {
+    var currentTurn: CurrentTurn {
         if let side = sideState.side {
             let player = playersState.player(at: side)
-            return CurrentGameState.turn(Turn(side: side, player: player))
+            return CurrentTurn.turn(Turn(side: side, player: player))
         } else {
             if let winner = boardState.sideWithMoreDisks() {
                 let player = playersState.player(at: winner)
-                return CurrentGameState.gameOverWon(Turn(side: winner, player: player))
+                return CurrentTurn.gameOverWon(Turn(side: winner, player: player))
             } else {
-                return CurrentGameState.gameOverTied
+                return CurrentTurn.gameOverTied
             }
         }
     }

@@ -14,7 +14,9 @@
 		AA308D08243E261C0041763B /* PersistentInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D07243E261C0041763B /* PersistentInteractor.swift */; };
 		AA308D0A243E30110041763B /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D09243E30110041763B /* Player.swift */; };
 		AA308D0E243ECCDF0041763B /* BoardConstant.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D0D243ECCDF0041763B /* BoardConstant.swift */; };
-		AA308D10243ED2700041763B /* CurrentGameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D0F243ED2700041763B /* CurrentGameState.swift */; };
+		AA308D10243ED2700041763B /* Turn.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D0F243ED2700041763B /* Turn.swift */; };
+		AA308D12243F176B0041763B /* Canceller.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D11243F176B0041763B /* Canceller.swift */; };
+		AA308D14243F18960041763B /* ThinkingOfComputerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA308D13243F18960041763B /* ThinkingOfComputerState.swift */; };
 		D636B39F23D35043007F370F /* DiskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636B39E23D35043007F370F /* DiskView.swift */; };
 		D642BDB423A9FE4500396732 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642BDB323A9FE4500396732 /* AppDelegate.swift */; };
 		D642BDB623A9FE4500396732 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642BDB523A9FE4500396732 /* SceneDelegate.swift */; };
@@ -46,7 +48,9 @@
 		AA308D07243E261C0041763B /* PersistentInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentInteractor.swift; sourceTree = "<group>"; };
 		AA308D09243E30110041763B /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		AA308D0D243ECCDF0041763B /* BoardConstant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardConstant.swift; sourceTree = "<group>"; };
-		AA308D0F243ED2700041763B /* CurrentGameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentGameState.swift; sourceTree = "<group>"; };
+		AA308D0F243ED2700041763B /* Turn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Turn.swift; sourceTree = "<group>"; };
+		AA308D11243F176B0041763B /* Canceller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Canceller.swift; sourceTree = "<group>"; };
+		AA308D13243F18960041763B /* ThinkingOfComputerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinkingOfComputerState.swift; sourceTree = "<group>"; };
 		D636B39E23D35043007F370F /* DiskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskView.swift; sourceTree = "<group>"; };
 		D642BDB023A9FE4500396732 /* Reversi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reversi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D642BDB323A9FE4500396732 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -98,7 +102,8 @@
 				D642BDD723AA0B5700396732 /* Disk.swift */,
 				AA308D09243E30110041763B /* Player.swift */,
 				AA308D0D243ECCDF0041763B /* BoardConstant.swift */,
-				AA308D0F243ED2700041763B /* CurrentGameState.swift */,
+				AA308D0F243ED2700041763B /* Turn.swift */,
+				AA308D11243F176B0041763B /* Canceller.swift */,
 			);
 			name = DataTypes;
 			sourceTree = "<group>";
@@ -130,6 +135,7 @@
 				AA308D07243E261C0041763B /* PersistentInteractor.swift */,
 				AA308CFF243B90F10041763B /* ReversiState.swift */,
 				AA308D01243B9EBA0041763B /* AnimationState.swift */,
+				AA308D13243F18960041763B /* ThinkingOfComputerState.swift */,
 				AA308D03243CC1F80041763B /* BoardState.swift */,
 				D642BDB723A9FE4500396732 /* ViewController.swift */,
 				D642BDB923A9FE4500396732 /* Main.storyboard */,
@@ -255,15 +261,17 @@
 				D636B39F23D35043007F370F /* DiskView.swift in Sources */,
 				D642BDD623AA0B3900396732 /* CellView.swift in Sources */,
 				D642BDD823AA0B5700396732 /* Disk.swift in Sources */,
+				AA308D12243F176B0041763B /* Canceller.swift in Sources */,
 				D642BDB823A9FE4500396732 /* ViewController.swift in Sources */,
 				D642BDDC23AA137C00396732 /* BoardView.swift in Sources */,
 				AA308D0A243E30110041763B /* Player.swift in Sources */,
 				AA308D08243E261C0041763B /* PersistentInteractor.swift in Sources */,
 				AA308D06243E215C0041763B /* Repository.swift in Sources */,
+				AA308D14243F18960041763B /* ThinkingOfComputerState.swift in Sources */,
 				D642BDB423A9FE4500396732 /* AppDelegate.swift in Sources */,
 				AA308D02243B9EBA0041763B /* AnimationState.swift in Sources */,
 				AA308D0E243ECCDF0041763B /* BoardConstant.swift in Sources */,
-				AA308D10243ED2700041763B /* CurrentGameState.swift in Sources */,
+				AA308D10243ED2700041763B /* Turn.swift in Sources */,
 				AA308D00243B90F10041763B /* ReversiState.swift in Sources */,
 				AA308D04243CC1F80041763B /* BoardState.swift in Sources */,
 				D642BDB623A9FE4500396732 /* SceneDelegate.swift in Sources */,

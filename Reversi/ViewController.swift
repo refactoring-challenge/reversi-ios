@@ -9,8 +9,8 @@ class ViewController: UIViewController {
     @IBOutlet private var countLabels: [UILabel]!
     @IBOutlet private var playerActivityIndicators: [UIActivityIndicatorView]!
     private var messageDiskSize: CGFloat! // to store the size designated in the storyboard
-    private var animationState: AnimationState = .init()
-    private var reversiState: ReversiState = .init()
+    private let reversiState: ReversiState = .init()
+    private let animationState: AnimationState = .init()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,6 +55,7 @@ extension ViewController {
 
     func newGame() {
         do {
+            animationState.cancelAll()
             try reversiState.newGame()
             updateDisksForInitial()
             updatePlayerControls(reversiState)
@@ -99,7 +100,7 @@ extension ViewController {
     }
 
     func waitForPlayer() {
-        switch reversiState.currentGameState {
+        switch reversiState.currentTurn {
         case .turn(let turn):
             switch turn.player {
             case .manual:
@@ -113,13 +114,18 @@ extension ViewController {
     }
     
     func playTurnOfComputer() {
-        switch reversiState.currentGameState {
+        switch reversiState.currentTurn {
         case .turn(let turn):
-            guard let (x, y) = reversiState.validMoves(for: turn).randomElement() else { preconditionFailure() }
+            let candidates = reversiState.validMoves(for: turn)
+            if candidates.isEmpty {
+                nextTurn()
+                return
+            }
+            guard let (x, y) = candidates.randomElement() else { preconditionFailure() }
             let side = turn.side
             playerActivityIndicators[side.index].startAnimating()
 
-            let cleanUp: AnimationState.CleanUp = { [weak self] in
+            let cleanUp: Canceller.CleanUp = { [weak self] in
                 self?.playerActivityIndicators[side.index].stopAnimating()
             }
             let canceller = animationState.createAnimationCanceller(at: side, cleanUp: cleanUp)
@@ -255,7 +261,7 @@ extension ViewController {
     }
     
     func updateMessageViews() {
-        switch reversiState.currentGameState {
+        switch reversiState.currentTurn {
         case .turn(let turn):
             messageDiskSizeConstraint.constant = messageDiskSize
             messageDiskView.disk = turn.side
@@ -295,7 +301,6 @@ extension ViewController {
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in })
         alertController.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
             guard let self = self else { return }
-            self.animationState.cancelAll()
             self.newGame()
             self.waitForPlayer()
         })
@@ -310,7 +315,7 @@ extension ViewController {
 
 extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
-        guard case .turn(let turn) = reversiState.currentGameState else { return }
+        guard case .turn(let turn) = reversiState.currentTurn else { return }
         if animationState.isAnimating { return }
         guard case .manual = turn.player else { return }
         placeDisk(player: .manual, disk: turn.side, atX: x, y: y, animated: true) { [weak self] _ in

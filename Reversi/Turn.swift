@@ -5,7 +5,7 @@ struct Turn {
     let player: Player
 }
 
-enum CurrentGameState {
+enum CurrentTurn {
     case turn(Turn)
     case gameOverWon(Turn)
     case gameOverTied

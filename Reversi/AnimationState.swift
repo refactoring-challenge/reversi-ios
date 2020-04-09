@@ -1,22 +1,6 @@
 import Foundation
 
 final class AnimationState {
-    typealias CleanUp = () -> Void
-    final class Canceller {
-        private(set) var isCancelled: Bool = false
-        private let cleanUp: CleanUp?
-
-        init(_ cleanUp: CleanUp?) {
-            self.cleanUp = cleanUp
-        }
-
-        func cancel() {
-            if isCancelled { return }
-            isCancelled = true
-            cleanUp?()
-        }
-    }
-
     private var animationCanceller: Canceller?
     var isAnimating: Bool { animationCanceller != nil }
     var isCancelled: Bool {
@@ -27,10 +11,10 @@ final class AnimationState {
     private var playerCancellers: [Disk: Canceller] = [:]
 
     @discardableResult
-    func createAnimationCanceller(at side: Disk? = nil, cleanUp: CleanUp? = nil) -> Canceller {
+    func createAnimationCanceller(at side: Disk? = nil, cleanUp: Canceller.CleanUp? = nil) -> Canceller {
         switch side {
         case .some(let side):
-            let cleanUpWrapper: CleanUp = { [weak self] in
+            let cleanUpWrapper: Canceller.CleanUp = { [weak self] in
                 cleanUp?()
                 self?.playerCancellers[side] = nil
             }
@@ -38,7 +22,7 @@ final class AnimationState {
             playerCancellers[side] = canceller
             return canceller
         case .none:
-            let cleanUpWrapper: CleanUp = { [weak self] in
+            let cleanUpWrapper: Canceller.CleanUp = { [weak self] in
                 cleanUp?()
                 self?.animationCanceller = nil
             }
