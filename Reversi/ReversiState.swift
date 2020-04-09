@@ -58,8 +58,16 @@ final class ReversiState {
         self.persistentInteractor = persistentInteractor
     }
 
-    var currentTurn: Disk? {
-        gameState.turn
+    var currentGameState: CurrentGameState {
+        if let turn = gameState.turn {
+            return CurrentGameState.turn(turn)
+        } else {
+            if let winner = boardState.sideWithMoreDisks() {
+                return CurrentGameState.gameOverWon(winner)
+            } else {
+                return CurrentGameState.gameOverTied
+            }
+        }
     }
 
     /* Player */
@@ -87,10 +95,6 @@ final class ReversiState {
 
     func count(of disk: Disk) -> Int {
         boardState.count(of: disk)
-    }
-
-    func sideWithMoreDisks() -> Disk? {
-        boardState.sideWithMoreDisks()
     }
 
     /* Reversi logics */

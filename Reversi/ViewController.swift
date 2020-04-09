@@ -159,7 +159,7 @@ extension ViewController {
     }
     
     func playTurnOfComputer() {
-        guard let turn = reversiState.currentTurn else { preconditionFailure() }
+        guard case .turn(let turn) = reversiState.currentGameState else { preconditionFailure() }
         let (x, y) = reversiState.validMoves(for: turn).randomElement()!
 
         playerActivityIndicators[turn.index].startAnimating()
@@ -216,20 +216,18 @@ extension ViewController {
     }
     
     func updateMessageViews() {
-        switch reversiState.currentTurn {
-        case .some(let side):
+        switch reversiState.currentGameState {
+        case .turn(let side):
             messageDiskSizeConstraint.constant = messageDiskSize
             messageDiskView.disk = side
             messageLabel.text = "'s turn"
-        case .none:
-            if let winner = reversiState.sideWithMoreDisks() {
-                messageDiskSizeConstraint.constant = messageDiskSize
-                messageDiskView.disk = winner
-                messageLabel.text = " won"
-            } else {
-                messageDiskSizeConstraint.constant = 0
-                messageLabel.text = "Tied"
-            }
+        case .gameOverWon(let winner):
+            messageDiskSizeConstraint.constant = messageDiskSize
+            messageDiskView.disk = winner
+            messageLabel.text = " won"
+        case .gameOverTied:
+            messageDiskSizeConstraint.constant = 0
+            messageLabel.text = "Tied"
         }
     }
 }
@@ -271,7 +269,7 @@ extension ViewController {
 
 extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
-        guard let turn = reversiState.currentTurn else { return }
+        guard case .turn(let turn) = reversiState.currentGameState else { return }
         if animationState.isAnimating { return }
         guard case .manual = reversiState.currentPlayer else { return }
         // try? because doing nothing when an error occurs
