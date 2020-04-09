@@ -1,5 +1,6 @@
 import UIKit
 import Logic
+import ReSwift
 
 class ViewController: UIViewController {
     @IBOutlet private var boardView: BoardView!
@@ -12,6 +13,14 @@ class ViewController: UIViewController {
     private var messageDiskSize: CGFloat! // to store the size designated in the storyboard
     private let reversiState: ReversiState = .init()
     private let animationState: AnimationState = .init()
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
