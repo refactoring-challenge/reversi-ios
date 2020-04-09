@@ -1,30 +1,13 @@
 import Foundation
 
 final class BoardState {
-    struct Constant {
-        let width: Int = 8
-        let height: Int = 8
-
-        let xRange: Range<Int>
-        let yRange: Range<Int>
-
-        var squaresCount: Int { width * height }
-
-        init() {
-            xRange = 0 ..< width
-            yRange = 0 ..< height
-        }
-    }
     private class SquareState {
         var disk: Disk?
     }
-
-    let constant: Constant = .init()
-
     private var squareStates: [SquareState]
 
     init() {
-        squareStates = (0 ..< constant.squaresCount).map { _ in SquareState() }
+        squareStates = (0 ..< BoardConstant.squaresCount).map { _ in SquareState() }
     }
 
     func setDisk(_ disk: Disk?, atX x: Int, y: Int) {
@@ -35,20 +18,20 @@ final class BoardState {
     }
 
     func reset() {
-        for y in constant.yRange {
-            for x in constant.xRange {
+        for y in BoardConstant.yRange {
+            for x in BoardConstant.xRange {
                 setDisk(nil, atX: x, y: y)
             }
         }
-        setDisk(.light, atX: constant.width / 2 - 1, y: constant.height / 2 - 1)
-        setDisk(.dark, atX: constant.width / 2, y: constant.height / 2 - 1)
-        setDisk(.dark, atX: constant.width / 2 - 1, y: constant.height / 2)
-        setDisk(.light, atX: constant.width / 2, y: constant.height / 2)
+        setDisk(.light, atX: BoardConstant.width / 2 - 1, y: BoardConstant.height / 2 - 1)
+        setDisk(.dark, atX: BoardConstant.width / 2, y: BoardConstant.height / 2 - 1)
+        setDisk(.dark, atX: BoardConstant.width / 2 - 1, y: BoardConstant.height / 2)
+        setDisk(.light, atX: BoardConstant.width / 2, y: BoardConstant.height / 2)
     }
 
     private func squareStateAt(x: Int, y: Int) -> SquareState? {
-        guard constant.xRange.contains(x) && constant.yRange.contains(y) else { return nil }
-        return squareStates[y * constant.width + x]
+        guard BoardConstant.xRange.contains(x) && BoardConstant.yRange.contains(y) else { return nil }
+        return squareStates[y * BoardConstant.width + x]
     }
 
     func diskAt(x: Int, y: Int) -> Disk? {
@@ -57,8 +40,8 @@ final class BoardState {
 
     func count(of disk: Disk) -> Int {
         var count = 0
-        for y in constant.yRange {
-            for x in constant.xRange {
+        for y in BoardConstant.yRange {
+            for x in BoardConstant.xRange {
                 if diskAt(x: x, y: y) == disk {
                     count +=  1
                 }
@@ -86,8 +69,8 @@ extension BoardState {
 
     func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
         var coordinates: [(Int, Int)] = []
-        for y in constant.yRange {
-            for x in constant.xRange {
+        for y in BoardConstant.yRange {
+            for x in BoardConstant.xRange {
                 if canPlaceDisk(side, atX: x, y: y) {
                     coordinates.append((x, y))
                 }
@@ -136,12 +119,5 @@ extension BoardState {
         }
 
         return diskCoordinates
-    }
-}
-
-extension BoardState.Constant {
-    func convertPositionToIndex(x: Int, y: Int) -> Int? {
-        guard xRange.contains(x) && yRange.contains(y) else { return nil }
-        return y * width + x
     }
 }

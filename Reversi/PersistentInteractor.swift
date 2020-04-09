@@ -8,7 +8,7 @@ struct LoadData {
 
 protocol PersistentInteractor {
     func saveGame(turn: Disk?, playersState: PlayersState, boardState: BoardState) throws /* FileIOError */
-    func loadGame(constant: BoardState.Constant) throws -> LoadData /* FileIOError */
+    func loadGame() throws -> LoadData /* FileIOError, PersistentError */
 }
 
 private let defaultPath = (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
@@ -31,13 +31,12 @@ class PersistentInteractorImpl: PersistentInteractor {
         try repository.saveData(path: path, data: data)
     }
 
-    func loadGame(constant: BoardState.Constant) throws -> LoadData {
+    func loadGame() throws -> LoadData {
         let lines: ArraySlice<Substring> = try repository.loadData(path: path)
-        return try parseLoadData(lines: lines, constant: constant)
+        return try parseLoadData(lines: lines)
     }
 
     func createSaveData(turn: Disk?, playersState: PlayersState, boardState: BoardState) -> String {
-        let constant = boardState.constant
         var output: String = ""
         output += turn.symbol
 
@@ -46,8 +45,8 @@ class PersistentInteractorImpl: PersistentInteractor {
         }
         output += "\n"
 
-        for y in constant.yRange {
-            for x in constant.xRange {
+        for y in BoardConstant.yRange {
+            for x in BoardConstant.xRange {
                 output += boardState.diskAt(x: x, y: y).symbol
             }
             output += "\n"
@@ -55,7 +54,7 @@ class PersistentInteractorImpl: PersistentInteractor {
         return output
     }
 
-    func parseLoadData(lines: ArraySlice<Substring>, constant: BoardState.Constant) throws -> LoadData {
+    func parseLoadData(lines: ArraySlice<Substring>) throws -> LoadData {
         var lines = lines
 
         guard var line = lines.popFirst() else {
@@ -89,7 +88,7 @@ class PersistentInteractorImpl: PersistentInteractor {
         // board
         var squares: [(disk: Disk?, x: Int, y: Int)] = []
         do {
-            guard lines.count == constant.height else {
+            guard lines.count == BoardConstant.height else {
                 throw PersistentError.parse(path: path, cause: nil)
             }
 
@@ -101,12 +100,12 @@ class PersistentInteractorImpl: PersistentInteractor {
                     squares.append((disk: disk, x: x, y: y))
                     x += 1
                 }
-                guard x == constant.width else {
+                guard x == BoardConstant.width else {
                     throw PersistentError.parse(path: path, cause: nil)
                 }
                 y += 1
             }
-            guard y == constant.height else {
+            guard y == BoardConstant.height else {
                 throw PersistentError.parse(path: path, cause: nil)
             }
         }

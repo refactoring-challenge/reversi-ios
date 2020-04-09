@@ -50,7 +50,6 @@ final class PlayersState {
 
 final class ReversiState {
     let boardState: BoardState = .init()
-    var constant: BoardState.Constant { boardState.constant }
     private let gameState: GameState = .init()
     private let playersState: PlayersState = .init()
     private let persistentInteractor: PersistentInteractor
@@ -116,7 +115,7 @@ final class ReversiState {
     func loadGame() throws {
         resetAllState()
 
-        let loadData = try persistentInteractor.loadGame(constant: constant)
+        let loadData = try persistentInteractor.loadGame()
         gameState.setTurn(turn: loadData.turn)
         loadData.players.enumerated().forEach {
             playersState.setPlayer(player: $0.element, at: Disk(index: $0.offset))
