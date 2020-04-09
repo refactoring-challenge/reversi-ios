@@ -1,13 +1,13 @@
 import Foundation
 
 struct LoadData {
-    let turn: Disk?
+    let side: Disk?
     let players: [Player]
     let squares: [(disk: Disk?, x: Int, y: Int)]
 }
 
 protocol PersistentInteractor {
-    func saveGame(turn: Disk?, playersState: PlayersState, boardState: BoardState) throws /* FileIOError */
+    func saveGame(side: Disk?, playersState: PlayersState, boardState: BoardState) throws /* FileIOError */
     func loadGame() throws -> LoadData /* FileIOError, PersistentError */
 }
 
@@ -26,8 +26,8 @@ class PersistentInteractorImpl: PersistentInteractor {
         self.repository = repository
     }
 
-    func saveGame(turn: Disk?, playersState: PlayersState, boardState: BoardState) throws {
-        let data = createSaveData(turn: turn, playersState: playersState, boardState: boardState)
+    func saveGame(side: Disk?, playersState: PlayersState, boardState: BoardState) throws {
+        let data = createSaveData(side: side, playersState: playersState, boardState: boardState)
         try repository.saveData(path: path, data: data)
     }
 
@@ -36,9 +36,9 @@ class PersistentInteractorImpl: PersistentInteractor {
         return try parseLoadData(lines: lines)
     }
 
-    func createSaveData(turn: Disk?, playersState: PlayersState, boardState: BoardState) -> String {
+    func createSaveData(side: Disk?, playersState: PlayersState, boardState: BoardState) -> String {
         var output: String = ""
-        output += turn.symbol
+        output += side.symbol
 
         for side in Disk.sides {
             output += playersState.player(at: side).rawValue.description
@@ -61,8 +61,8 @@ class PersistentInteractorImpl: PersistentInteractor {
             throw PersistentError.parse(path: path, cause: nil)
         }
 
-        // turn
-        let turn: Disk?
+        // side
+        let side: Disk?
         do {
             guard
                 let diskSymbol = line.popFirst(),
@@ -70,7 +70,7 @@ class PersistentInteractorImpl: PersistentInteractor {
             else {
                 throw PersistentError.parse(path: path, cause: nil)
             }
-            turn = disk
+            side = disk
         }
 
         // players
@@ -110,7 +110,7 @@ class PersistentInteractorImpl: PersistentInteractor {
             }
         }
 
-        return LoadData(turn: turn, players: players, squares: squares)
+        return LoadData(side: side, players: players, squares: squares)
     }
 }
 

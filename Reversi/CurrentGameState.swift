@@ -1,8 +1,13 @@
 import Foundation
 
+struct Turn {
+    let side: Disk
+    let player: Player
+}
+
 enum CurrentGameState {
-    case turn(Disk)
-    case gameOverWon(Disk)
+    case turn(Turn)
+    case gameOverWon(Turn)
     case gameOverTied
 
     var isGameOver: Bool {

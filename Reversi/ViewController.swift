@@ -67,7 +67,10 @@ extension ViewController {
     }
 
     func nextTurn() {
-        guard let turn = reversiState.nextTurn() else { return }
+        guard let turn = reversiState.nextTurn() else {
+            gameOver()
+            return
+        }
 
         func showCannotPlaceDiskAlert() {
             let alertController = UIAlertController(
@@ -82,7 +85,8 @@ extension ViewController {
         }
 
         if reversiState.validMoves(for: turn).isEmpty {
-            if reversiState.validMoves(for: turn.flipped).isEmpty {
+            let flippedTurn = reversiState.flippedTurn(turn)
+            if reversiState.validMoves(for: flippedTurn).isEmpty {
                 gameOver()
             } else {
                 updateMessageViews()
@@ -95,36 +99,40 @@ extension ViewController {
     }
 
     func waitForPlayer() {
-        guard !reversiState.currentGameState.isGameOver else {
+        switch reversiState.currentGameState {
+        case .turn(let turn):
+            switch turn.player {
+            case .manual:
+                break
+            case .computer:
+                playTurnOfComputer()
+            }
+        case .gameOverWon, .gameOverTied:
             gameOver()
-            return
-        }
-        switch reversiState.currentPlayer {
-        case .manual:
-            break
-        case .computer:
-            playTurnOfComputer()
         }
     }
     
     func playTurnOfComputer() {
-        guard case .turn(let turn) = reversiState.currentGameState else { preconditionFailure() }
-        let (x, y) = reversiState.validMoves(for: turn).randomElement()!
+        switch reversiState.currentGameState {
+        case .turn(let turn):
+            guard let (x, y) = reversiState.validMoves(for: turn).randomElement() else { preconditionFailure() }
+            let side = turn.side
+            playerActivityIndicators[side.index].startAnimating()
 
-        playerActivityIndicators[turn.index].startAnimating()
-        
-        let cleanUp: AnimationState.CleanUp = { [weak self] in
-            self?.playerActivityIndicators[turn.index].stopAnimating()
-        }
-        let canceller = animationState.createAnimationCanceller(at: turn, cleanUp: cleanUp)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-            guard let self = self else { return }
-            if canceller.isCancelled { return }
-            canceller.cancel()
-
-            self.placeDisk(player: .computer, disk: turn, atX: x, y: y, animated: true) { [weak self] _ in
-                self?.nextTurn()
+            let cleanUp: AnimationState.CleanUp = { [weak self] in
+                self?.playerActivityIndicators[side.index].stopAnimating()
             }
+            let canceller = animationState.createAnimationCanceller(at: side, cleanUp: cleanUp)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                guard let self = self else { return }
+                if canceller.isCancelled { return }
+                canceller.cancel()
+                self.placeDisk(player: .computer, disk: side, atX: x, y: y, animated: true) { [weak self] _ in
+                    self?.nextTurn()
+                }
+            }
+        case .gameOverWon, .gameOverTied:
+            preconditionFailure()
         }
     }
 
@@ -148,6 +156,15 @@ extension ViewController {
         } catch let e {
             dump(e)
             showAlter(title: "Error occurred.", message: "Unknown error occurred.")
+        }
+    }
+
+    func changePlayer(turn: Turn) {
+        reversiState.setPlayer(turn)
+        saveGame()
+        animationState.cancel(at: turn.side)
+        if !animationState.isAnimating && reversiState.canPlayTurnOfComputer(at: turn.side) {
+            playTurnOfComputer()
         }
     }
 
@@ -238,13 +255,13 @@ extension ViewController {
     
     func updateMessageViews() {
         switch reversiState.currentGameState {
-        case .turn(let side):
+        case .turn(let turn):
             messageDiskSizeConstraint.constant = messageDiskSize
-            messageDiskView.disk = side
+            messageDiskView.disk = turn.side
             messageLabel.text = "'s turn"
         case .gameOverWon(let winner):
             messageDiskSizeConstraint.constant = messageDiskSize
-            messageDiskView.disk = winner
+            messageDiskView.disk = winner.side
             messageLabel.text = " won"
         case .gameOverTied:
             messageDiskSizeConstraint.constant = 0
@@ -285,14 +302,8 @@ extension ViewController {
     }
     
     @IBAction func changePlayerControlSegment(_ sender: UISegmentedControl) {
-        let side: Disk = Disk(index: playerControls.firstIndex(of: sender)!)
-        let player = sender.convertToPlayer
-        reversiState.setPlayer(player: player, at: side)
-        saveGame()
-        animationState.cancel(at: side)
-        if !animationState.isAnimating && reversiState.canPlayTurnOfComputer(at: side) {
-            playTurnOfComputer()
-        }
+        guard let index = playerControls.firstIndex(of: sender) else { return }
+        changePlayer(turn: Turn(side: Disk(index: index), player: sender.convertToPlayer))
     }
 }
 
@@ -300,8 +311,8 @@ extension ViewController: BoardViewDelegate {
     func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
         guard case .turn(let turn) = reversiState.currentGameState else { return }
         if animationState.isAnimating { return }
-        guard case .manual = reversiState.currentPlayer else { return }
-        placeDisk(player: .manual, disk: turn, atX: x, y: y, animated: true) { [weak self] _ in
+        guard case .manual = turn.player else { return }
+        placeDisk(player: .manual, disk: turn.side, atX: x, y: y, animated: true) { [weak self] _ in
             self?.nextTurn()
         }
     }

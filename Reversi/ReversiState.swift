@@ -1,25 +1,24 @@
 import Foundation
 
-final class GameState {
-    private(set) var turn: Disk? = .dark // `nil` if the current game is over
+final class SideState {
+    private(set) var side: Disk? = .dark // `nil` if the current game is over
 
-    func setTurn(turn: Disk?) {
-        self.turn = turn
+    func setSide(_ side: Disk?) {
+        self.side = side
     }
 
     func gameOver() {
-        turn = nil
+        side = nil
     }
 
     func reset() {
-        turn = .dark
+        side = .dark
     }
 
-    func nextTurn() -> Disk? {
-        guard var turn = turn else { return nil }
-        turn.flip()
-        self.turn = turn
-        return turn
+    func nextSide() -> Disk? {
+        guard let temp = side else { return nil }
+        self.side = temp.flipped
+        return self.side
     }
 }
 
@@ -49,7 +48,7 @@ final class PlayersState {
 
 final class ReversiState {
     private let boardState: BoardState = .init()
-    private let gameState: GameState = .init()
+    private let sideState: SideState = .init()
     private let playersState: PlayersState = .init()
     private let persistentInteractor: PersistentInteractor
 
@@ -58,11 +57,13 @@ final class ReversiState {
     }
 
     var currentGameState: CurrentGameState {
-        if let turn = gameState.turn {
-            return CurrentGameState.turn(turn)
+        if let side = sideState.side {
+            let player = playersState.player(at: side)
+            return CurrentGameState.turn(Turn(side: side, player: player))
         } else {
             if let winner = boardState.sideWithMoreDisks() {
-                return CurrentGameState.gameOverWon(winner)
+                let player = playersState.player(at: winner)
+                return CurrentGameState.gameOverWon(Turn(side: winner, player: player))
             } else {
                 return CurrentGameState.gameOverTied
             }
@@ -70,17 +71,12 @@ final class ReversiState {
     }
 
     /* Player */
-    var currentPlayer: Player {
-        guard let turn = gameState.turn else { preconditionFailure() }
-        return playersState.player(at: turn)
-    }
-
     func player(at side: Disk) -> Player {
         playersState.player(at: side)
     }
 
-    func setPlayer(player: Player, at side: Disk) {
-        playersState.setPlayer(player: player, at: side)
+    func setPlayer(_ turn: Turn) {
+        playersState.setPlayer(player: turn.player, at: turn.side)
     }
 
     /* Disk */
@@ -97,8 +93,8 @@ final class ReversiState {
     }
 
     /* Reversi logics */
-    func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
-        boardState.validMoves(for: side)
+    func validMoves(for turn: Turn) -> [(x: Int, y: Int)] {
+        boardState.validMoves(for: turn.side)
     }
 
     struct DiskPlacementError: Error {
@@ -121,16 +117,24 @@ final class ReversiState {
         try? saveGame()
     }
 
-    func nextTurn() -> Disk? {
-        gameState.nextTurn()
+    func nextTurn() -> Turn? {
+        guard let side = sideState.nextSide() else { return nil }
+        let player = playersState.player(at: side)
+        return Turn(side: side, player: player)
+    }
+
+    func flippedTurn(_ turn: Turn) -> Turn {
+        let side = turn.side.flipped
+        let player = playersState.player(at: side)
+        return Turn(side: side, player: player)
     }
 
     func gameover() {
-        gameState.gameOver()
+        sideState.gameOver()
     }
 
     func canPlayTurnOfComputer(at side: Disk) -> Bool {
-        if side == gameState.turn, case .computer = playersState.player(at: side) {
+        if side == sideState.side, case .computer = playersState.player(at: side) {
             return true
         } else {
             return false
@@ -139,14 +143,14 @@ final class ReversiState {
 
     /* Save and Load */
     func saveGame() throws {
-        try persistentInteractor.saveGame(turn: gameState.turn, playersState: playersState, boardState: boardState)
+        try persistentInteractor.saveGame(side: sideState.side, playersState: playersState, boardState: boardState)
     }
 
     func loadGame() throws {
         resetAllState()
 
         let loadData = try persistentInteractor.loadGame()
-        gameState.setTurn(turn: loadData.turn)
+        sideState.setSide(loadData.side)
         loadData.players.enumerated().forEach {
             playersState.setPlayer(player: $0.element, at: Disk(index: $0.offset))
         }
@@ -157,15 +161,24 @@ final class ReversiState {
     }
 
     private func checkGameOver() {
-        guard let currentTurn = gameState.turn else { return } // Already game over
-        if boardState.validMoves(for: currentTurn).isEmpty {
-            gameState.gameOver()
+        guard let currentSide = sideState.side else { return } // Already game over
+        if boardState.validMoves(for: currentSide).isEmpty && boardState.validMoves(for: currentSide.flipped).isEmpty {
+            sideState.gameOver()
         }
     }
 
     private func resetAllState() {
-        gameState.reset()
+        sideState.reset()
         boardState.reset()
         playersState.reset()
+    }
+}
+
+extension Disk {
+    fileprivate var flipped: Disk {
+        switch self {
+        case .dark: return .light
+        case .light: return .dark
+        }
     }
 }
