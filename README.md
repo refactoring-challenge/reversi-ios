@@ -349,15 +349,47 @@ boardView.setDisk(.dark, atX: 3, y: 4, animated: true) { isFinished in
 
 `setDisk()` によるアニメーションをキャンセルする API はありません。ただし、アニメーションの途中で、同一のセルに新しい状態が設定された場合には適切に処理されます。これも　`UISwitch` の `setOn(_:animated)` の挙動に似ています。
 
+なお、 `BoardView` は **リバーシのルールに関する API を持ちません** 。たとえば、あるセルにディスクを配置したときに周囲のディスクを裏返したり、あるセルにある色のディスクを配置できるかを判定する API 等は提供しません。単なる、 8 × 8 のセルを持つテーブル上の構造を持ったビューにすぎません。
+
 その他にも、 `BoardView` は補助的にいくつかの API を提供します。 `BoardView` が提供する API は次の通りです。
 
 | API | 概要 |
 |:--|:--|
+| `weak var delegate: BoardViewDelegate?` | セルがタップされたときの挙動を移譲するためのオブジェクトです。 |
 | `func diskAt(x: Int, y: Int) -> Disk?` | `x + 1` 列目・ `y + 1` 行目のセルの状態を返します。セルにディスクが置かれていない場合は `nil` を返します。 |
 | `let height: Int ` | 盤の高さ（ `8` ）を返します。 |
 | `func reset()` | 盤をゲーム開始時に状態に戻します。このメソッドはアニメーションを伴いません。 |
 | `func setDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil)` | `x + 1` 列目・ `y + 1` 行目のセルの状態を与えられた `disk` に変更します。 `animated` が `true` の場合、アニメーションが実行されます。アニメーションの完了通知は `completion` で受け取ることができます。 `completion` が受け取る `Bool` 値は、 `UIView.animate()` （参考: [API リファレンス](https://developer.apple.com/documentation/uikit/uiview/1622515-animate)）等に準じます。 |
 | `let width: Int` | 盤の幅（ `8` ）を返します。 |
+| `let xRange: Range<Int>` | 盤のセルの `x` の範囲（ `0 ..< 8` ）を返します。 |
+| `let yRange: Range<Int>` | 盤のセルの `y` の範囲（ `0 ..< 8` ）を返します。 |
+
+`BoardView` は `BoardViewDelegate` を通じて、セルがタップされたことを通知します。
+
+```swift
+extension ViewController: BoardViewDelegate {
+    func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
+        // x + 1 列目・　y + 1 列目のセルがタップされたときに呼ばれる
+    }
+}
+```
+
+これは `UITableView` と `UITableViewDelegate` の関係に似ています。 `BoardView` の `delegate` プロパティを用いて `BoardViewDelegate` を設定します。典型的には、 View Controller を `BoardViewDelegate` に適合させ、 `delegate` プロパティに渡します。
+
+```swift
+class ViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        boardView.delegate = self
+    }
+}
+```
+
+`BoardView` が宣言する API は次の通りです。
+
+| API | 概要 |
+|:--|:--|
+| `func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int)` | `boardView` の `x + 1` 列目・ `y + 1` 行目のセルがタップされたときに呼ばれます。 |
 
 ## 結果一覧
 
