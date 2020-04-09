@@ -2,7 +2,6 @@ import Foundation
 
 final class GameState {
     private(set) var turn: Disk? = .dark // `nil` if the current game is over
-    var isGameOver: Bool { turn == nil }
 
     func setTurn(turn: Disk?) {
         self.turn = turn
@@ -153,6 +152,14 @@ final class ReversiState {
         }
         loadData.squares.forEach {
             boardState.setDisk($0.disk, atX: $0.x, y: $0.y)
+        }
+        checkGameOver()
+    }
+
+    private func checkGameOver() {
+        guard let currentTurn = gameState.turn else { return } // Already game over
+        if boardState.validMoves(for: currentTurn).isEmpty {
+            gameState.gameOver()
         }
     }
 

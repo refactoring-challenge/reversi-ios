@@ -83,8 +83,7 @@ extension ViewController {
 
         if reversiState.validMoves(for: turn).isEmpty {
             if reversiState.validMoves(for: turn.flipped).isEmpty {
-                reversiState.gameover()
-                updateMessageViews()
+                gameOver()
             } else {
                 updateMessageViews()
                 showCannotPlaceDiskAlert()
@@ -96,6 +95,10 @@ extension ViewController {
     }
 
     func waitForPlayer() {
+        guard !reversiState.currentGameState.isGameOver else {
+            gameOver()
+            return
+        }
         switch reversiState.currentPlayer {
         case .manual:
             break
@@ -146,6 +149,11 @@ extension ViewController {
             dump(e)
             showAlter(title: "Error occurred.", message: "Unknown error occurred.")
         }
+    }
+
+    func gameOver() {
+        reversiState.gameover()
+        updateGameOver()
     }
 }
 
@@ -242,6 +250,10 @@ extension ViewController {
             messageDiskSizeConstraint.constant = 0
             messageLabel.text = "Tied"
         }
+    }
+
+    func updateGameOver() {
+        updateMessageViews()
     }
 
     func showAlter(title: String, message: String) {
