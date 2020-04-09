@@ -49,7 +49,7 @@ final class PlayersState {
 }
 
 final class ReversiState {
-    let boardState: BoardState = .init()
+    private let boardState: BoardState = .init()
     private let gameState: GameState = .init()
     private let playersState: PlayersState = .init()
     private let persistentInteractor: PersistentInteractor
@@ -62,7 +62,7 @@ final class ReversiState {
         gameState.turn
     }
 
-    /* Players */
+    /* Player */
     var currentPlayer: Player {
         guard let turn = gameState.turn else { preconditionFailure() }
         return playersState.player(at: turn)
@@ -74,6 +74,23 @@ final class ReversiState {
 
     func setPlayer(player: Player, at side: Disk) {
         playersState.setPlayer(player: player, at: side)
+    }
+
+    /* Disk */
+    func diskAt(x: Int, y: Int) -> Disk? {
+        boardState.diskAt(x: x, y: y)
+    }
+
+    func setDisk(_ disk: Disk?, atX x: Int, y: Int) {
+        boardState.setDisk(disk, atX: x, y: y)
+    }
+
+    func count(of disk: Disk) -> Int {
+        boardState.count(of: disk)
+    }
+
+    func sideWithMoreDisks() -> Disk? {
+        boardState.sideWithMoreDisks()
     }
 
     /* Reversi logics */

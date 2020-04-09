@@ -188,15 +188,14 @@ extension ViewController {
         guard let index = BoardConstant.convertPositionToIndex(x: x, y: y) else {
             preconditionFailure()
         }
-        reversiState.boardState.setDisk(disk, atX: x, y: y)
+        reversiState.setDisk(disk, atX: x, y: y)
         boardView.updateDisk(disk, at: index, animated: animated, completion: completion)
     }
 
     func updateBoard() {
-        let boardState = reversiState.boardState
         for y in BoardConstant.yRange {
             for x in BoardConstant.xRange {
-                let disk = boardState.diskAt(x: x, y: y)
+                let disk = reversiState.diskAt(x: x, y: y)
                 let index = BoardConstant.convertPositionToIndex(x: x, y: y)!
                 boardView.updateDisk(disk, at: index, animated: false)
             }
@@ -212,7 +211,7 @@ extension ViewController {
 
     func updateCountLabels() {
         for side in Disk.sides {
-            countLabels[side.index].text = "\(reversiState.boardState.count(of: side))"
+            countLabels[side.index].text = "\(reversiState.count(of: side))"
         }
     }
     
@@ -223,7 +222,7 @@ extension ViewController {
             messageDiskView.disk = side
             messageLabel.text = "'s turn"
         case .none:
-            if let winner = reversiState.boardState.sideWithMoreDisks() {
+            if let winner = reversiState.sideWithMoreDisks() {
                 messageDiskSizeConstraint.constant = messageDiskSize
                 messageDiskView.disk = winner
                 messageLabel.text = " won"
