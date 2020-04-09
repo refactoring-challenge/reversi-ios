@@ -248,15 +248,15 @@ x-------
 |:--|:--|:--|
 | [ViewController.swift](Reversi/ViewController.swift) | `ViewController` | アプリ本体（ `UIViewController` のサブクラス） |
 | [BoardView.swift](Reversi/BoardView.swift)<br />（ Xcode 上では Views グループの中） | `BoardView` | リバーシの盤を表すビュー（ `UIView` のサブクラス） |
-| [CellView.swift](CellView.swift)<br />（ Xcode 上では Views グループの中） | `CellView` | リバーシの盤のセルを表すビュー（ `UIView` のサブクラス） |
-| [DiskView.swift](DiskView.swift)<br />（ Xcode 上では Views グループの中） | `DiskView` | リバーシのディスクを表すビュー（ `UIView` のサブクラス） |
-| [Disk.swift](Disk.swift)<br />（ Xcode 上では DataTypes グループの中） | `Disk` | リバーシのディスク（黒か白か）を表すデータ構造（ `enum` ） |
+| [CellView.swift](Reversi/CellView.swift)<br />（ Xcode 上では Views グループの中） | `CellView` | リバーシの盤のセルを表すビュー（ `UIView` のサブクラス） |
+| [DiskView.swift](Reversi/DiskView.swift)<br />（ Xcode 上では Views グループの中） | `DiskView` | リバーシのディスクを表すビュー（ `UIView` のサブクラス） |
+| [Disk.swift](Reversi/Disk.swift)<br />（ Xcode 上では DataTypes グループの中） | `Disk` | リバーシのディスク（黒か白か）を表すデータ構造（ `enum` ） |
 
 **基本的に ViewController.swift 以外には手を加える必要はありません** 。 `BoardView`, `CellView`, `DiskView` はリバーシ用に用意されたビュークラスで、 UIKit のコンポーネントと同じ感覚で利用できます。 `UISwitch` に不満があっても `UISwitch` そのものを改変するのではなく、ラッパークラスや `extension` で対応すると思います。 `BoardView` 等についても同様です。また、 `CellView` に関しては課題挑戦者が直接利用することもありません（ `BoardView` が内部的に利用しています）。 `DiskView` についても利用機会は限定的です。 `Disk` は黒か白かを表す小さな `enum` なので、実質的に使い方を覚える必要があるのは `BoardView` だけです。 `BoardView` にしても、 UIKit のビュークラス群と似た API を持つので、すぐに使い方を理解できると思います。
 
 以下、一つずつ説明します（ CellView.swift は省略します）。
 
-### [Disk.swift](Disk.swift)
+### Disk.swift
 
 ディスクが黒（ dark ）か白（ light ）かを表す次のような `enum` が実装されています。
 
@@ -275,7 +275,7 @@ public enum Disk {
 | `var flipped: Disk { get }` | 自身の値を反転させた値（ `.dark` なら `.light` 、 `.light` なら `.dark` ）を返します。 |
 | `static var sides: [Disk] { get }` | `[.dark, .light]` を返します。 |
 
-### [DiskView.swift](DiskView.swift)
+### DiskView.swift
 
 ディスクを表すビュー `DiskView` が実装されています。
 
@@ -306,7 +306,7 @@ diskView.disk.flip()
 | `var disk: Disk { get set }` | このビューが表示するディスクの色を決定します。 |
 | `var name: String { get set }` | Interface Builder からディスクの色を設定するためのプロパティです。 `"dark"` か `"light"` の文字列を設定します。 |
 
-### [BoardView.swift](Reversi/BoardView.swift)
+### BoardView.swift
 
 リバーシの盤を表すビュー `BoardView` が実装されています。また、 `BoardView` に対するインタラクションをハンドリングするための `BoardViewDelegate` が宣言されています。
 
