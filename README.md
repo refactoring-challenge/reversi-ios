@@ -399,7 +399,7 @@ class ViewController: UIViewController {
 class ViewController: UIViewController
 ```
 
-`ViewController` の実装は主に次の五つのパートに分かれています。
+`ViewController` の実装は主に次の 8 個のパートに分かれています。
 
 | パート | 内容　|
 |:--|:--|
