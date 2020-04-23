@@ -6,13 +6,20 @@ class ViewController: UIViewController {
     @IBOutlet private var messageDiskView: DiskView!
     @IBOutlet private var messageLabel: UILabel!
     @IBOutlet private var messageDiskSizeConstraint: NSLayoutConstraint!
-    private var messageDiskSize: CGFloat! // to store the size designated in the storyboard
+    /// Storyboard 上で設定されたサイズを保管します。
+    /// 引き分けの際は `messageDiskView` の表示が必要ないため、
+    /// `messageDiskSizeConstraint.constant` を `0` に設定します。
+    /// その後、新しいゲームが開始されたときに `messageDiskSize` を
+    /// 元のサイズで表示する必要があり、
+    /// その際に `messageDiskSize` に保管された値を使います。
+    private var messageDiskSize: CGFloat!
     
     @IBOutlet private var playerControls: [UISegmentedControl]!
     @IBOutlet private var countLabels: [UILabel]!
     @IBOutlet private var playerActivityIndicators: [UIActivityIndicatorView]!
     
-    private var turn: Disk? = .dark // `nil` if the current game is over
+    /// どちらの色のプレイヤーのターンかを表します。ゲーム終了時は `nil` です。
+    private var turn: Disk? = .dark
     
     private var animationCanceller: Canceller?
     private var isAnimating: Bool { animationCanceller != nil }
