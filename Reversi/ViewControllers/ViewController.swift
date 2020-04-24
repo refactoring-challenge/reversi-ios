@@ -26,12 +26,12 @@ class ViewController: UIViewController {
     
     private var playerCancellers: [Disk: Canceller] = [:]
 
-//    private var viewModel = ViewModel()
+    private var board: Board = Board(width: 8, height: 8)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        boardView.delegate = self
+
+        boardView.inject(board, delegate: self)
         messageDiskSize = messageDiskSizeConstraint.constant
         
         do {
@@ -60,8 +60,8 @@ extension ViewController {
     func countDisks(of side: Disk) -> Int {
         var count = 0
         
-        for y in boardView.board.range.y {
-            for x in boardView.board.range.x {
+        for y in board.range.y {
+            for x in board.range.x {
                 if boardView.diskAt(x: x, y: y) == side {
                     count +=  1
                 }
@@ -140,8 +140,8 @@ extension ViewController {
     func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
         var coordinates: [(Int, Int)] = []
         
-        for y in boardView.board.range.y {
-            for x in boardView.board.range.x {
+        for y in board.range.y {
+            for x in board.range.x {
                 if canPlaceDisk(side, atX: x, y: y) {
                     coordinates.append((x, y))
                 }
@@ -426,8 +426,8 @@ extension ViewController {
         }
         output += "\n"
         
-        for y in boardView.board.range.y {
-            for x in boardView.board.range.x {
+        for y in board.range.y {
+            for x in board.range.x {
                 output += boardView.diskAt(x: x, y: y).symbol
             }
             output += "\n"
@@ -472,7 +472,7 @@ extension ViewController {
         }
 
         do { // board
-            guard lines.count == boardView.board.size.height else {
+            guard lines.count == board.size.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
             
@@ -484,12 +484,12 @@ extension ViewController {
                     boardView.setDisk(disk, atX: x, y: y, animated: false)
                     x += 1
                 }
-                guard x == boardView.board.size.width else {
+                guard x == board.size.width else {
                     throw FileIOError.read(path: path, cause: nil)
                 }
                 y += 1
             }
-            guard y == boardView.board.size.height else {
+            guard y == board.size.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
         }

@@ -106,22 +106,31 @@
 			path = Entities;
 			sourceTree = "<group>";
 		};
-		D636B3A123D43203007F370F /* Views */ = {
+		99C17E17245311EF00E6B16D /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				D642BDDB23AA137C00396732 /* BoardView.swift */,
 				D642BDD523AA0B3900396732 /* CellView.swift */,
 				D636B39E23D35043007F370F /* DiskView.swift */,
 			);
-			name = Views;
+			path = Views;
 			sourceTree = "<group>";
 		};
-		D636B3A423D432D3007F370F /* DataTypes */ = {
+		99C17E182453120000E6B16D /* DataTypes */ = {
 			isa = PBXGroup;
 			children = (
 				D642BDD723AA0B5700396732 /* Disk.swift */,
 			);
-			name = DataTypes;
+			path = DataTypes;
+			sourceTree = "<group>";
+		};
+		99C17E192453121700E6B16D /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				D642BDB723A9FE4500396732 /* ViewController.swift */,
+				D642BDB923A9FE4500396732 /* Main.storyboard */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		D642BDA723A9FE4500396732 = {
@@ -147,16 +156,15 @@
 		D642BDB223A9FE4500396732 /* Reversi */ = {
 			isa = PBXGroup;
 			children = (
+				99C17E192453121700E6B16D /* ViewControllers */,
+				99C17E182453120000E6B16D /* DataTypes */,
+				99C17E17245311EF00E6B16D /* Views */,
 				99C17E142453106100E6B16D /* Entities */,
 				D642BDB323A9FE4500396732 /* AppDelegate.swift */,
 				D642BDB523A9FE4500396732 /* SceneDelegate.swift */,
-				D642BDB723A9FE4500396732 /* ViewController.swift */,
-				D642BDB923A9FE4500396732 /* Main.storyboard */,
 				D642BDBC23A9FE4700396732 /* Assets.xcassets */,
 				D642BDBE23A9FE4700396732 /* LaunchScreen.storyboard */,
 				D642BDC123A9FE4700396732 /* Info.plist */,
-				D636B3A123D43203007F370F /* Views */,
-				D636B3A423D432D3007F370F /* DataTypes */,
 			);
 			path = Reversi;
 			sourceTree = "<group>";

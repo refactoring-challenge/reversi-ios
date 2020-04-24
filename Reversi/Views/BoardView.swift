@@ -6,20 +6,16 @@ public class BoardView: UIView {
     private var cellViews: [CellView] = []
     private var actions: [CellSelectionAction] = []
 
-    private(set) var board: Board = Board(width: 8, height: 8)
-    
+    private var board: Board!
+
+    public func inject(_ board: Board, delegate: BoardViewDelegate) {
+        self.board = board
+        self.delegate = delegate
+        setUp()
+    }
+
     /// セルがタップされたときの挙動を移譲するためのオブジェクトです。
-    public weak var delegate: BoardViewDelegate?
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        setUp()
-    }
-    
-    required public init?(coder: NSCoder) {
-        super.init(coder: coder)
-        setUp()
-    }
+    fileprivate weak var delegate: BoardViewDelegate?
     
     private func setUp() {
         self.backgroundColor = UIColor(named: "DarkColor")!
