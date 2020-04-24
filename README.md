@@ -125,8 +125,8 @@ x-------
 -4------
 --3oo---
 ---2x---
-----167x
----o8o--
+----156x
+---o7o--
 --o-x---
 ```
 
@@ -412,7 +412,7 @@ class ViewController: UIViewController
 | Additional types | このファイルで利用する補助的な型の実装 |
 | File-private extensions | このファイルで利用する補助的な `extension` の実装 |
 
-`ViewController` の実装で特筆すべきこととして、リバーシの盤の状態が `BoardView` インスタンスで管理されていることが挙げられます。 `boardView` プロパティがその役割を担っていて、モデルとビューのコードが混ざりあった状態です。さらに、ディスクが置かれたときに周辺のディスクをひっくり返す処理を実装した `placeDisk(_:atX:y:animated:completion:)` メソッドでは、データの変更とアニメーションが互いに密接に関係した処理を行っています。これらは特に "Reversi logics" に関係が深いです。
+`ViewController` の実装で特筆すべきこととして、リバーシの盤の状態が `BoardView` インスタンスで管理されていることが挙げられます。 `boardView` プロパティがその役割を担っていて、モデルとビューのコードが混ざりあった状態です。さらに、ディスクが置かれたときに周辺のディスクをひっくり返す処理を実装した `placeDisk(_:atX:y:animated:completion:)` メソッド（と、その中から呼び出されている `animateSettingDisks(at:to:completion:)` メソッド）では、データの変更とアニメーションが互いに密接に関係した処理を行っています。これらは特に "Reversi logics" に関係が深いです。
 
 全体の処理の流れは　"Game management" で管理されており、 `waitForPlayer()` メソッドによるプレイヤーの行動待ち（ "Manual" の場合はユーザーの入力待ち）と、その結果を受けて次の状態（次のプレイヤーの番か、パスか、勝敗が決して結果表示か）への遷移を扱う `nextTurn()` メソッドがその中心です。典型的には、
 

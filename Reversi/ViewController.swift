@@ -168,13 +168,13 @@ extension ViewController {
                 self?.animationCanceller = nil
             }
             animationCanceller = Canceller(cleanUp)
-            animateSettingDisks(at: [(x, y)] + diskCoordinates, to: disk) { [weak self] finished in
+            animateSettingDisks(at: [(x, y)] + diskCoordinates, to: disk) { [weak self] isFinished in
                 guard let self = self else { return }
                 guard let canceller = self.animationCanceller else { return }
                 if canceller.isCancelled { return }
                 cleanUp()
 
-                completion?(finished)
+                completion?(isFinished)
                 try? self.saveGame()
                 self.updateCountLabels()
             }
@@ -192,6 +192,10 @@ extension ViewController {
         }
     }
     
+    /// `coordinates` で指定されたセルに、アニメーションしながら順番に `disk` を置く。
+    /// `coordinates` から先頭の座標を取得してそのセルに `disk` を置き、
+    /// 残りの座標についてこのメソッドを再帰呼び出しすることで処理が行われる。
+    /// すべてのセルに `disk` が置けたら `completion` ハンドラーが呼び出される。
     private func animateSettingDisks<C: Collection>(at coordinates: C, to disk: Disk, completion: @escaping (Bool) -> Void)
         where C.Element == (Int, Int)
     {
@@ -201,10 +205,10 @@ extension ViewController {
         }
         
         let animationCanceller = self.animationCanceller!
-        boardView.setDisk(disk, atX: x, y: y, animated: true) { [weak self] finished in
+        boardView.setDisk(disk, atX: x, y: y, animated: true) { [weak self] isFinished in
             guard let self = self else { return }
             if animationCanceller.isCancelled { return }
-            if finished {
+            if isFinished {
                 self.animateSettingDisks(at: coordinates.dropFirst(), to: disk, completion: completion)
             } else {
                 for (x, y) in coordinates {
