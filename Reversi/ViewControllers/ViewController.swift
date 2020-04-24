@@ -26,12 +26,15 @@ class ViewController: UIViewController {
 
     private var playerCancellers: [Disk: Canceller] = [:]
 
-    private var board: Board = Board(width: 8, height: 8)
+    private var viewModel: ViewModel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let board = Board(width: 8, height: 8)
+        viewModel = ViewModel(board: board)
         boardView.inject(board, delegate: self)
+
         messageDiskSize = messageDiskSizeConstraint.constant
         
         do {
@@ -60,9 +63,9 @@ extension ViewController {
     func countDisks(of side: Disk) -> Int {
         var count = 0
         
-        for y in board.range.y {
-            for x in board.range.x {
-                if boardView.diskAt(x: x, y: y) == side {
+        for y in viewModel.board.range.y {
+            for x in viewModel.board.range.x {
+                if viewModel.board.diskAt(x: x, y: y) == side {
                     count +=  1
                 }
             }
@@ -96,7 +99,7 @@ extension ViewController {
             (x: -1, y:  1),
         ]
         
-        guard boardView.diskAt(x: x, y: y) == nil else {
+        guard viewModel.board.diskAt(x: x, y: y) == nil else {
             return []
         }
         
@@ -111,7 +114,7 @@ extension ViewController {
                 x += direction.x
                 y += direction.y
                 
-                switch (disk, boardView.diskAt(x: x, y: y)) { // Uses tuples to make patterns exhaustive
+                switch (disk, viewModel.board.diskAt(x: x, y: y)) { // Uses tuples to make patterns exhaustive
                 case (.dark, .some(.dark)), (.light, .some(.light)):
                     diskCoordinates.append(contentsOf: diskCoordinatesInLine)
                     break flipping
@@ -140,8 +143,8 @@ extension ViewController {
     func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
         var coordinates: [(Int, Int)] = []
         
-        for y in board.range.y {
-            for x in board.range.x {
+        for y in viewModel.board.range.y {
+            for x in viewModel.board.range.x {
                 if canPlaceDisk(side, atX: x, y: y) {
                     coordinates.append((x, y))
                 }
@@ -426,9 +429,9 @@ extension ViewController {
         }
         output += "\n"
         
-        for y in board.range.y {
-            for x in board.range.x {
-                output += boardView.diskAt(x: x, y: y).symbol
+        for y in viewModel.board.range.y {
+            for x in viewModel.board.range.x {
+                output += viewModel.board.diskAt(x: x, y: y).symbol
             }
             output += "\n"
         }
@@ -472,7 +475,7 @@ extension ViewController {
         }
 
         board: do {
-            guard lines.count == board.size.height else {
+            guard lines.count == viewModel.board.size.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
             
@@ -484,12 +487,12 @@ extension ViewController {
                     boardView.setDisk(disk, atX: x, y: y, animated: false)
                     x += 1
                 }
-                guard x == board.size.width else {
+                guard x == viewModel.board.size.width else {
                     throw FileIOError.read(path: path, cause: nil)
                 }
                 y += 1
             }
-            guard y == board.size.height else {
+            guard y == viewModel.board.size.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
         }

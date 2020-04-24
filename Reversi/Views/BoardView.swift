@@ -20,9 +20,10 @@ public class BoardView: UIView {
     private func setUp() {
         self.backgroundColor = UIColor(named: "DarkColor")!
         
-        let cellViews: [CellView] = (0 ..< (board.size.width * board.size.height)).map { _ in
+        let cellViews: [CellView] = board.disks.map { disk in
             let cellView = CellView()
             cellView.translatesAutoresizingMaskIntoConstraints = false
+            cellView.setDisk(disk, animated: false)
             return cellView
         }
         self.cellViews = cellViews
@@ -103,15 +104,6 @@ public class BoardView: UIView {
     private func cellViewAt(x: Int, y: Int) -> CellView? {
         guard board.range.x.contains(x) && board.range.y.contains(y) else { return nil }
         return cellViews[y * board.size.width + x]
-    }
-
-    /// `x`, `y` で指定されたセルの状態を返します。
-    /// セルにディスクが置かれていない場合、 `nil` が返されます。
-    /// - Parameter x: セルの列です。
-    /// - Parameter y: セルの行です。
-    /// - Returns: セルにディスクが置かれている場合はそのディスクの値を、置かれていない場合は `nil` を返します。
-    public func diskAt(x: Int, y: Int) -> Disk? {
-        cellViewAt(x: x, y: y)?.disk
     }
 
     /// `x`, `y` で指定されたセルの状態を、与えられた `disk` に変更します。

@@ -10,6 +10,7 @@
 		18EA95F08215ABD5FADFF659 /* Pods_ReversiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78F732EB2EED336CF010116A /* Pods_ReversiTests.framework */; };
 		57BC5A31340930AE655E22A6 /* Pods_Reversi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624A2DE899E8155158E0B70E /* Pods_Reversi.framework */; };
 		99C17E162453106E00E6B16D /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C17E152453106E00E6B16D /* Board.swift */; };
+		99C17E1C245317D400E6B16D /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C17E1B245317D400E6B16D /* ViewModel.swift */; };
 		D636B39F23D35043007F370F /* DiskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636B39E23D35043007F370F /* DiskView.swift */; };
 		D642BDB423A9FE4500396732 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642BDB323A9FE4500396732 /* AppDelegate.swift */; };
 		D642BDB623A9FE4500396732 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642BDB523A9FE4500396732 /* SceneDelegate.swift */; };
@@ -40,6 +41,7 @@
 		843B45C7C04D732A1AB7E47C /* Pods-ReversiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReversiTests.debug.xcconfig"; path = "Target Support Files/Pods-ReversiTests/Pods-ReversiTests.debug.xcconfig"; sourceTree = "<group>"; };
 		94329A7AC559B434DC9E1C18 /* Pods-ReversiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReversiTests.release.xcconfig"; path = "Target Support Files/Pods-ReversiTests/Pods-ReversiTests.release.xcconfig"; sourceTree = "<group>"; };
 		99C17E152453106E00E6B16D /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		99C17E1B245317D400E6B16D /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		CC18256CFDF2075B2ED8D64D /* Pods-Reversi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reversi.debug.xcconfig"; path = "Target Support Files/Pods-Reversi/Pods-Reversi.debug.xcconfig"; sourceTree = "<group>"; };
 		D636B39E23D35043007F370F /* DiskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskView.swift; sourceTree = "<group>"; };
 		D642BDB023A9FE4500396732 /* Reversi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reversi.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +103,7 @@
 		99C17E142453106100E6B16D /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				D642BDD723AA0B5700396732 /* Disk.swift */,
 				99C17E152453106E00E6B16D /* Board.swift */,
 			);
 			path = Entities;
@@ -116,14 +119,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		99C17E182453120000E6B16D /* DataTypes */ = {
-			isa = PBXGroup;
-			children = (
-				D642BDD723AA0B5700396732 /* Disk.swift */,
-			);
-			path = DataTypes;
-			sourceTree = "<group>";
-		};
 		99C17E192453121700E6B16D /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -131,6 +126,14 @@
 				D642BDB923A9FE4500396732 /* Main.storyboard */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		99C17E1A245317CB00E6B16D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				99C17E1B245317D400E6B16D /* ViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		D642BDA723A9FE4500396732 = {
@@ -156,8 +159,8 @@
 		D642BDB223A9FE4500396732 /* Reversi */ = {
 			isa = PBXGroup;
 			children = (
+				99C17E1A245317CB00E6B16D /* ViewModels */,
 				99C17E192453121700E6B16D /* ViewControllers */,
-				99C17E182453120000E6B16D /* DataTypes */,
 				99C17E17245311EF00E6B16D /* Views */,
 				99C17E142453106100E6B16D /* Entities */,
 				D642BDB323A9FE4500396732 /* AppDelegate.swift */,
@@ -347,6 +350,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D636B39F23D35043007F370F /* DiskView.swift in Sources */,
+				99C17E1C245317D400E6B16D /* ViewModel.swift in Sources */,
 				D642BDD623AA0B3900396732 /* CellView.swift in Sources */,
 				D642BDD823AA0B5700396732 /* Disk.swift in Sources */,
 				D642BDB823A9FE4500396732 /* ViewController.swift in Sources */,
