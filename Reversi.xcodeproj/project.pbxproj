@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		62D97B2424530022008513D3 /* MirrorDiffKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62D97B2224530022008513D3 /* MirrorDiffKit.framework */; };
+		62D97B2524530022008513D3 /* MirrorDiffKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62D97B2224530022008513D3 /* MirrorDiffKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		62D97B2624530022008513D3 /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62D97B2324530022008513D3 /* ReactiveSwift.framework */; };
+		62D97B2724530022008513D3 /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62D97B2324530022008513D3 /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D636B39F23D35043007F370F /* DiskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636B39E23D35043007F370F /* DiskView.swift */; };
 		D642BDB423A9FE4500396732 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642BDB323A9FE4500396732 /* AppDelegate.swift */; };
 		D642BDB623A9FE4500396732 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642BDB523A9FE4500396732 /* SceneDelegate.swift */; };
@@ -30,7 +34,24 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		62D97B2824530023008513D3 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				62D97B2524530022008513D3 /* MirrorDiffKit.framework in Embed Frameworks */,
+				62D97B2724530022008513D3 /* ReactiveSwift.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		62D97B2224530022008513D3 /* MirrorDiffKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MirrorDiffKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		62D97B2324530022008513D3 /* ReactiveSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReactiveSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D636B39E23D35043007F370F /* DiskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskView.swift; sourceTree = "<group>"; };
 		D642BDB023A9FE4500396732 /* Reversi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reversi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D642BDB323A9FE4500396732 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -53,6 +74,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				62D97B2424530022008513D3 /* MirrorDiffKit.framework in Frameworks */,
+				62D97B2624530022008513D3 /* ReactiveSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +89,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		62D97B2124530022008513D3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				62D97B2224530022008513D3 /* MirrorDiffKit.framework */,
+				62D97B2324530022008513D3 /* ReactiveSwift.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D636B3A123D43203007F370F /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -90,6 +122,7 @@
 				D642BDB223A9FE4500396732 /* Reversi */,
 				D642BDC923A9FE4700396732 /* ReversiTests */,
 				D642BDB123A9FE4500396732 /* Products */,
+				62D97B2124530022008513D3 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -137,6 +170,7 @@
 				D642BDAC23A9FE4500396732 /* Sources */,
 				D642BDAD23A9FE4500396732 /* Frameworks */,
 				D642BDAE23A9FE4500396732 /* Resources */,
+				62D97B2824530023008513D3 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

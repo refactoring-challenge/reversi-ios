@@ -1,0 +1,6 @@
+[submodule "Carthage/Checkouts/MirrorDiffKit"]
+	path = Carthage/Checkouts/MirrorDiffKit
+	url = https://github.com/Kuniwak/MirrorDiffKit.git
+[submodule "Carthage/Checkouts/ReactiveSwift"]
+	path = Carthage/Checkouts/ReactiveSwift
+	url = https://github.com/ReactiveCocoa/ReactiveSwift.git
