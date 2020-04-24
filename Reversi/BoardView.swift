@@ -5,32 +5,18 @@ private let lineWidth: CGFloat = 2
 public class BoardView: UIView {
     private var cellViews: [CellView] = []
     private var actions: [CellSelectionAction] = []
-    
-    /// 盤の幅（ `8` ）を表します。
-    public let width: Int = 8
-    
-    /// 盤の高さ（ `8` ）を返します。
-    public let height: Int = 8
-    
-    /// 盤のセルの `x` の範囲（ `0 ..< 8` ）を返します。
-    public let xRange: Range<Int>
-    
-    /// 盤のセルの `y` の範囲（ `0 ..< 8` ）を返します。
-    public let yRange: Range<Int>
+
+    private(set) var board: Board = Board(width: 8, height: 8)
     
     /// セルがタップされたときの挙動を移譲するためのオブジェクトです。
     public weak var delegate: BoardViewDelegate?
     
     override public init(frame: CGRect) {
-        xRange = 0 ..< width
-        yRange = 0 ..< height
         super.init(frame: frame)
         setUp()
     }
     
     required public init?(coder: NSCoder) {
-        xRange = 0 ..< width
-        yRange = 0 ..< height
         super.init(coder: coder)
         setUp()
     }
@@ -38,7 +24,7 @@ public class BoardView: UIView {
     private func setUp() {
         self.backgroundColor = UIColor(named: "DarkColor")!
         
-        let cellViews: [CellView] = (0 ..< (width * height)).map { _ in
+        let cellViews: [CellView] = (0 ..< (board.size.width * board.size.height)).map { _ in
             let cellView = CellView()
             cellView.translatesAutoresizingMaskIntoConstraints = false
             return cellView
@@ -57,8 +43,8 @@ public class BoardView: UIView {
             cellViews[0].widthAnchor.constraint(equalTo: cellViews[0].heightAnchor),
         ])
         
-        for y in yRange {
-            for x in xRange {
+        for y in board.range.y {
+            for x in board.range.x {
                 let topNeighborAnchor: NSLayoutYAxisAnchor
                 if let cellView = cellViewAt(x: x, y: y - 1) {
                     topNeighborAnchor = cellView.bottomAnchor
@@ -79,12 +65,12 @@ public class BoardView: UIView {
                     cellView.leftAnchor.constraint(equalTo: leftNeighborAnchor, constant: lineWidth),
                 ])
                 
-                if y == height - 1 {
+                if y == board.size.height - 1 {
                     NSLayoutConstraint.activate([
                         self.bottomAnchor.constraint(equalTo: cellView.bottomAnchor, constant: lineWidth),
                     ])
                 }
-                if x == width - 1 {
+                if x == board.size.width - 1 {
                     NSLayoutConstraint.activate([
                         self.rightAnchor.constraint(equalTo: cellView.rightAnchor, constant: lineWidth),
                     ])
@@ -94,8 +80,8 @@ public class BoardView: UIView {
         
         reset()
         
-        for y in yRange {
-            for x in xRange {
+        for y in board.range.y {
+            for x in board.range.x {
                 let cellView: CellView = cellViewAt(x: x, y: y)!
                 let action = CellSelectionAction(boardView: self, x: x, y: y)
                 actions.append(action) // To retain the `action`
@@ -106,21 +92,21 @@ public class BoardView: UIView {
     
     /// 盤をゲーム開始時に状態に戻します。このメソッドはアニメーションを伴いません。
     public func reset() {
-        for y in  yRange {
-            for x in xRange {
+        for y in board.range.y {
+            for x in board.range.x {
                 setDisk(nil, atX: x, y: y, animated: false)
             }
         }
         
-        setDisk(.light, atX: width / 2 - 1, y: height / 2 - 1, animated: false)
-        setDisk(.dark, atX: width / 2, y: height / 2 - 1, animated: false)
-        setDisk(.dark, atX: width / 2 - 1, y: height / 2, animated: false)
-        setDisk(.light, atX: width / 2, y: height / 2, animated: false)
+        setDisk(.light, atX: board.size.width / 2 - 1, y: board.size.height / 2 - 1, animated: false)
+        setDisk(.dark, atX: board.size.width / 2, y: board.size.height / 2 - 1, animated: false)
+        setDisk(.dark, atX: board.size.width / 2 - 1, y: board.size.height / 2, animated: false)
+        setDisk(.light, atX: board.size.width / 2, y: board.size.height / 2, animated: false)
     }
     
     private func cellViewAt(x: Int, y: Int) -> CellView? {
-        guard xRange.contains(x) && yRange.contains(y) else { return nil }
-        return cellViews[y * width + x]
+        guard board.range.x.contains(x) && board.range.y.contains(y) else { return nil }
+        return cellViews[y * board.size.width + x]
     }
     
     /// `x`, `y` で指定されたセルの状態を返します。

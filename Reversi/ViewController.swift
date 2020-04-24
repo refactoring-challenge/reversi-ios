@@ -25,6 +25,8 @@ class ViewController: UIViewController {
     private var isAnimating: Bool { animationCanceller != nil }
     
     private var playerCancellers: [Disk: Canceller] = [:]
+
+//    private var viewModel = ViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,8 +60,8 @@ extension ViewController {
     func countDisks(of side: Disk) -> Int {
         var count = 0
         
-        for y in boardView.yRange {
-            for x in boardView.xRange {
+        for y in boardView.board.range.y {
+            for x in boardView.board.range.x {
                 if boardView.diskAt(x: x, y: y) == side {
                     count +=  1
                 }
@@ -138,8 +140,8 @@ extension ViewController {
     func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
         var coordinates: [(Int, Int)] = []
         
-        for y in boardView.yRange {
-            for x in boardView.xRange {
+        for y in boardView.board.range.y {
+            for x in boardView.board.range.x {
                 if canPlaceDisk(side, atX: x, y: y) {
                     coordinates.append((x, y))
                 }
@@ -346,6 +348,9 @@ extension ViewController {
     /// アラートを表示して、ゲームを初期化して良いか確認し、
     /// "OK" が選択された場合ゲームを初期化します。
     @IBAction func pressResetButton(_ sender: UIButton) {
+        _pressResetButton()
+    }
+    func _pressResetButton() {
         let alertController = UIAlertController(
             title: "Confirmation",
             message: "Do you really want to reset the game?",
@@ -354,15 +359,15 @@ extension ViewController {
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in })
         alertController.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
             guard let self = self else { return }
-            
+
             self.animationCanceller?.cancel()
             self.animationCanceller = nil
-            
+
             for side in Disk.sides {
                 self.playerCancellers[side]?.cancel()
                 self.playerCancellers.removeValue(forKey: side)
             }
-            
+
             self.newGame()
             self.waitForPlayer()
         })
@@ -371,15 +376,19 @@ extension ViewController {
     
     /// プレイヤーのモードが変更された場合に呼ばれるハンドラーです。
     @IBAction func changePlayerControlSegment(_ sender: UISegmentedControl) {
-        let side: Disk = Disk(index: playerControls.firstIndex(of: sender)!)
-        
+        _changePlayerControlSegment(
+            side: Disk(index: playerControls.firstIndex(of: sender)!),
+            player: Player(rawValue: sender.selectedSegmentIndex)!
+        )
+    }
+    func _changePlayerControlSegment(side: Disk, player: Player) {
         try? saveGame()
-        
+
         if let canceller = playerCancellers[side] {
             canceller.cancel()
         }
-        
-        if !isAnimating, side == turn, case .computer = Player(rawValue: sender.selectedSegmentIndex)! {
+
+        if !isAnimating, side == turn, case .computer = player {
             playTurnOfComputer()
         }
     }
@@ -417,8 +426,8 @@ extension ViewController {
         }
         output += "\n"
         
-        for y in boardView.yRange {
-            for x in boardView.xRange {
+        for y in boardView.board.range.y {
+            for x in boardView.board.range.x {
                 output += boardView.diskAt(x: x, y: y).symbol
             }
             output += "\n"
@@ -463,7 +472,7 @@ extension ViewController {
         }
 
         do { // board
-            guard lines.count == boardView.height else {
+            guard lines.count == boardView.board.size.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
             
@@ -475,12 +484,12 @@ extension ViewController {
                     boardView.setDisk(disk, atX: x, y: y, animated: false)
                     x += 1
                 }
-                guard x == boardView.width else {
+                guard x == boardView.board.size.width else {
                     throw FileIOError.read(path: path, cause: nil)
                 }
                 y += 1
             }
-            guard y == boardView.height else {
+            guard y == boardView.board.size.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
         }

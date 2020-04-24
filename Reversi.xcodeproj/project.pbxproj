@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		18EA95F08215ABD5FADFF659 /* Pods_ReversiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78F732EB2EED336CF010116A /* Pods_ReversiTests.framework */; };
 		57BC5A31340930AE655E22A6 /* Pods_Reversi.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624A2DE899E8155158E0B70E /* Pods_Reversi.framework */; };
+		99C17E162453106E00E6B16D /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99C17E152453106E00E6B16D /* Board.swift */; };
 		D636B39F23D35043007F370F /* DiskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D636B39E23D35043007F370F /* DiskView.swift */; };
 		D642BDB423A9FE4500396732 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642BDB323A9FE4500396732 /* AppDelegate.swift */; };
 		D642BDB623A9FE4500396732 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D642BDB523A9FE4500396732 /* SceneDelegate.swift */; };
@@ -38,6 +39,7 @@
 		78F732EB2EED336CF010116A /* Pods_ReversiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ReversiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		843B45C7C04D732A1AB7E47C /* Pods-ReversiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReversiTests.debug.xcconfig"; path = "Target Support Files/Pods-ReversiTests/Pods-ReversiTests.debug.xcconfig"; sourceTree = "<group>"; };
 		94329A7AC559B434DC9E1C18 /* Pods-ReversiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReversiTests.release.xcconfig"; path = "Target Support Files/Pods-ReversiTests/Pods-ReversiTests.release.xcconfig"; sourceTree = "<group>"; };
+		99C17E152453106E00E6B16D /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		CC18256CFDF2075B2ED8D64D /* Pods-Reversi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Reversi.debug.xcconfig"; path = "Target Support Files/Pods-Reversi/Pods-Reversi.debug.xcconfig"; sourceTree = "<group>"; };
 		D636B39E23D35043007F370F /* DiskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskView.swift; sourceTree = "<group>"; };
 		D642BDB023A9FE4500396732 /* Reversi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reversi.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -96,6 +98,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		99C17E142453106100E6B16D /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				99C17E152453106E00E6B16D /* Board.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
 		D636B3A123D43203007F370F /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -137,6 +147,7 @@
 		D642BDB223A9FE4500396732 /* Reversi */ = {
 			isa = PBXGroup;
 			children = (
+				99C17E142453106100E6B16D /* Entities */,
 				D642BDB323A9FE4500396732 /* AppDelegate.swift */,
 				D642BDB523A9FE4500396732 /* SceneDelegate.swift */,
 				D642BDB723A9FE4500396732 /* ViewController.swift */,
@@ -334,6 +345,7 @@
 				D642BDDC23AA137C00396732 /* BoardView.swift in Sources */,
 				D642BDB423A9FE4500396732 /* AppDelegate.swift in Sources */,
 				D642BDB623A9FE4500396732 /* SceneDelegate.swift in Sources */,
+				99C17E162453106E00E6B16D /* Board.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
