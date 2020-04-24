@@ -5,27 +5,27 @@ private let animationDuration: TimeInterval = 0.25
 public class CellView: UIView {
     private let button: UIButton = UIButton()
     private let diskView: DiskView = DiskView()
-    
+
     private var _disk: Disk?
     public var disk: Disk? {
         get { _disk }
         set { setDisk(newValue, animated: true) }
     }
-    
+
     override public init(frame: CGRect) {
         super.init(frame: frame)
         setUp()
     }
-    
+
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
         setUp()
     }
-    
+
     private func setUp() {
-        do { // button
+        button: do {
             button.translatesAutoresizingMaskIntoConstraints = false
-            do { // backgroundImage
+            backgroundImage: do {
                 UIGraphicsBeginImageContext(CGSize(width: 1, height: 1))
                 defer { UIGraphicsEndImageContext() }
                 
@@ -40,21 +40,21 @@ public class CellView: UIView {
             self.addSubview(button)
         }
 
-        do { // diskView
+        diskView: do {
             diskView.translatesAutoresizingMaskIntoConstraints = false
             self.addSubview(diskView)
         }
 
         setNeedsLayout()
     }
-    
+
     public override func layoutSubviews() {
         super.layoutSubviews()
         
         button.frame = bounds
         layoutDiskView()
     }
-    
+
     private func layoutDiskView() {
         let cellSize = bounds.size
         let diskDiameter = Swift.min(cellSize.width, cellSize.height) * 0.8
@@ -70,7 +70,7 @@ public class CellView: UIView {
         )
         diskView.alpha = _disk == nil ? 0.0 : 1.0
     }
-    
+
     public func setDisk(_ disk: Disk?, animated: Bool, completion: ((Bool) -> Void)? = nil) {
         let diskBefore: Disk? = _disk
         _disk = disk
@@ -116,23 +116,23 @@ public class CellView: UIView {
             setNeedsLayout()
         }
     }
-    
+
     public func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
         button.addTarget(target, action: action, for: controlEvents)
     }
-    
+
     public func removeTarget(_ target: Any?, action: Selector?, for controlEvents: UIControl.Event) {
         button.removeTarget(target, action: action, for: controlEvents)
     }
-    
+
     public func actions(forTarget target: Any?, forControlEvent controlEvent: UIControl.Event) -> [String]? {
         button.actions(forTarget: target, forControlEvent: controlEvent)
     }
-    
+
     public var allTargets: Set<AnyHashable> {
         button.allTargets
     }
-    
+
     public var allControlEvents: UIControl.Event {
         button.allControlEvents
     }

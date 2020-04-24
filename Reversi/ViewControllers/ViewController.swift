@@ -2,7 +2,7 @@ import UIKit
 
 class ViewController: UIViewController {
     @IBOutlet private var boardView: BoardView!
-    
+
     @IBOutlet private var messageDiskView: DiskView!
     @IBOutlet private var messageLabel: UILabel!
     @IBOutlet private var messageDiskSizeConstraint: NSLayoutConstraint!
@@ -13,21 +13,21 @@ class ViewController: UIViewController {
     /// 元のサイズで表示する必要があり、
     /// その際に `messageDiskSize` に保管された値を使います。
     private var messageDiskSize: CGFloat!
-    
+
     @IBOutlet private var playerControls: [UISegmentedControl]!
     @IBOutlet private var countLabels: [UILabel]!
     @IBOutlet private var playerActivityIndicators: [UIActivityIndicatorView]!
-    
+
     /// どちらの色のプレイヤーのターンかを表します。ゲーム終了時は `nil` です。
     private var turn: Disk? = .dark
-    
+
     private var animationCanceller: Canceller?
     private var isAnimating: Bool { animationCanceller != nil }
-    
+
     private var playerCancellers: [Disk: Canceller] = [:]
 
     private var board: Board = Board(width: 8, height: 8)
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -40,7 +40,7 @@ class ViewController: UIViewController {
             newGame()
         }
     }
-    
+
     private var viewHasAppeared: Bool = false
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -70,7 +70,7 @@ extension ViewController {
         
         return count
     }
-    
+
     /// 盤上に置かれたディスクの枚数が多い方の色を返します。
     /// 引き分けの場合は `nil` が返されます。
     /// - Returns: 盤上に置かれたディスクの枚数が多い方の色です。引き分けの場合は `nil` を返します。
@@ -83,7 +83,7 @@ extension ViewController {
             return darkCount > lightCount ? .dark : .light
         }
     }
-    
+
     private func flippedDiskCoordinatesByPlacingDisk(_ disk: Disk, atX x: Int, y: Int) -> [(Int, Int)] {
         let directions = [
             (x: -1, y: -1),
@@ -125,7 +125,7 @@ extension ViewController {
         
         return diskCoordinates
     }
-    
+
     /// `x`, `y` で指定されたセルに、 `disk` が置けるかを調べます。
     /// ディスクを置くためには、少なくとも 1 枚のディスクをひっくり返せる必要があります。
     /// - Parameter x: セルの列です。
@@ -134,7 +134,7 @@ extension ViewController {
     func canPlaceDisk(_ disk: Disk, atX x: Int, y: Int) -> Bool {
         !flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y).isEmpty
     }
-    
+
     /// `side` で指定された色のディスクを置ける盤上のセルの座標をすべて返します。
     /// - Returns: `side` で指定された色のディスクを置ける盤上のすべてのセルの座標の配列です。
     func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
@@ -193,7 +193,7 @@ extension ViewController {
             }
         }
     }
-    
+
     /// `coordinates` で指定されたセルに、アニメーションしながら順番に `disk` を置く。
     /// `coordinates` から先頭の座標を取得してそのセルに `disk` を置き、
     /// 残りの座標についてこのメソッドを再帰呼び出しすることで処理が行われる。
@@ -239,7 +239,7 @@ extension ViewController {
         
         try? saveGame()
     }
-    
+
     /// プレイヤーの行動を待ちます。
     func waitForPlayer() {
         guard let turn = self.turn else { return }
@@ -250,7 +250,7 @@ extension ViewController {
             playTurnOfComputer()
         }
     }
-    
+
     /// プレイヤーの行動後、そのプレイヤーのターンを終了して次のターンを開始します。
     /// もし、次のプレイヤーに有効な手が存在しない場合、パスとなります。
     /// 両プレイヤーに有効な手がない場合、ゲームの勝敗を表示します。
@@ -283,7 +283,7 @@ extension ViewController {
             waitForPlayer()
         }
     }
-    
+
     /// "Computer" が選択されている場合のプレイヤーの行動を決定します。
     func playTurnOfComputer() {
         guard let turn = self.turn else { preconditionFailure() }
@@ -320,7 +320,7 @@ extension ViewController {
             countLabels[side.index].text = "\(countDisks(of: side))"
         }
     }
-    
+
     /// 現在の状況に応じてメッセージを表示します。
     func updateMessageViews() {
         switch turn {
@@ -373,7 +373,7 @@ extension ViewController {
         })
         present(alertController, animated: true)
     }
-    
+
     /// プレイヤーのモードが変更された場合に呼ばれるハンドラーです。
     @IBAction func changePlayerControlSegment(_ sender: UISegmentedControl) {
         _changePlayerControlSegment(
@@ -416,7 +416,7 @@ extension ViewController {
     private var path: String {
         (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
     }
-    
+
     /// ゲームの状態をファイルに書き出し、保存します。
     func saveGame() throws {
         var output: String = ""
@@ -439,7 +439,7 @@ extension ViewController {
             throw FileIOError.read(path: path, cause: error)
         }
     }
-    
+
     /// ゲームの状態をファイルから読み込み、復元します。
     func loadGame() throws {
         let input = try String(contentsOfFile: path, encoding: .utf8)
@@ -449,7 +449,7 @@ extension ViewController {
             throw FileIOError.read(path: path, cause: nil)
         }
         
-        do { // turn
+        turn: do {
             guard
                 let diskSymbol = line.popFirst(),
                 let disk = Optional<Disk>(symbol: diskSymbol.description)
@@ -471,7 +471,7 @@ extension ViewController {
             playerControls[side.index].selectedSegmentIndex = player.rawValue
         }
 
-        do { // board
+        board: do {
             guard lines.count == board.size.height else {
                 throw FileIOError.read(path: path, cause: nil)
             }
@@ -497,7 +497,7 @@ extension ViewController {
         updateMessageViews()
         updateCountLabels()
     }
-    
+
     enum FileIOError: Error {
         case write(path: String, cause: Error?)
         case read(path: String, cause: Error?)
@@ -516,11 +516,11 @@ extension ViewController {
 final class Canceller {
     private(set) var isCancelled: Bool = false
     private let body: (() -> Void)?
-    
+
     init(_ body: (() -> Void)?) {
         self.body = body
     }
-    
+
     func cancel() {
         if isCancelled { return }
         isCancelled = true
@@ -546,7 +546,7 @@ extension Disk {
         }
         preconditionFailure("Illegal index: \(index)")
     }
-    
+
     var index: Int {
         switch self {
         case .dark: return 0
@@ -568,7 +568,7 @@ extension Optional where Wrapped == Disk {
             return nil
         }
     }
-    
+
     fileprivate var symbol: String {
         switch self {
         case .some(.dark):

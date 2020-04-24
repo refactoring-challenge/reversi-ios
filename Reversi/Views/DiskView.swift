@@ -5,18 +5,18 @@ public class DiskView: UIView {
     public var disk: Disk = .dark {
         didSet { setNeedsDisplay() }
     }
-    
+
     /// Interface Builder からディスクの色を設定するためのプロパティです。 `"dark"` か `"light"` の文字列を設定します。
     @IBInspectable public var name: String {
         get { disk.name }
         set { disk = .init(name: newValue) }
     }
-    
+
     override public init(frame: CGRect) {
         super.init(frame: frame)
         setUp()
     }
-    
+
     required public init?(coder: NSCoder) {
         super.init(coder: coder)
         setUp()
@@ -41,18 +41,18 @@ extension Disk {
         case .light: return UIColor(named: "LightColor")!
         }
     }
-    
+
     fileprivate var cgColor: CGColor {
         uiColor.cgColor
     }
-    
+
     fileprivate var name: String {
         switch self {
         case .dark: return "dark"
         case .light: return "light"
         }
     }
-    
+
     fileprivate init(name: String) {
         switch name {
         case Disk.dark.name:

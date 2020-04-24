@@ -16,7 +16,7 @@ public class BoardView: UIView {
 
     /// セルがタップされたときの挙動を移譲するためのオブジェクトです。
     fileprivate weak var delegate: BoardViewDelegate?
-    
+
     private func setUp() {
         self.backgroundColor = UIColor(named: "DarkColor")!
         
@@ -85,7 +85,7 @@ public class BoardView: UIView {
             }
         }
     }
-    
+
     /// 盤をゲーム開始時に状態に戻します。このメソッドはアニメーションを伴いません。
     public func reset() {
         for y in board.range.y {
@@ -99,12 +99,12 @@ public class BoardView: UIView {
         setDisk(.dark, atX: board.size.width / 2 - 1, y: board.size.height / 2, animated: false)
         setDisk(.light, atX: board.size.width / 2, y: board.size.height / 2, animated: false)
     }
-    
+
     private func cellViewAt(x: Int, y: Int) -> CellView? {
         guard board.range.x.contains(x) && board.range.y.contains(y) else { return nil }
         return cellViews[y * board.size.width + x]
     }
-    
+
     /// `x`, `y` で指定されたセルの状態を返します。
     /// セルにディスクが置かれていない場合、 `nil` が返されます。
     /// - Parameter x: セルの列です。
@@ -113,7 +113,7 @@ public class BoardView: UIView {
     public func diskAt(x: Int, y: Int) -> Disk? {
         cellViewAt(x: x, y: y)?.disk
     }
-    
+
     /// `x`, `y` で指定されたセルの状態を、与えられた `disk` に変更します。
     /// `animated` が `true` の場合、アニメーションが実行されます。
     /// アニメーションの完了通知は `completion` ハンドラーで受け取ることができます。
@@ -144,13 +144,13 @@ private class CellSelectionAction: NSObject {
     private weak var boardView: BoardView?
     let x: Int
     let y: Int
-    
+
     init(boardView: BoardView, x: Int, y: Int) {
         self.boardView = boardView
         self.x = x
         self.y = y
     }
-    
+
     @objc func selectCell() {
         guard let boardView = boardView else { return }
         boardView.delegate?.boardView(boardView, didSelectCellAtX: x, y: y)
