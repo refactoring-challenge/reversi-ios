@@ -98,9 +98,7 @@ extension ViewController {
         
         if isAnimated {
             let canceller = animationCanceller ?? Canceller(nil)
-            animateSettingDisks(at: [(x, y)] + diskCoordinates, to: disk, animationCanceller: canceller) { [weak self] isFinished in
-                guard let self = self else { return }
-                guard let canceller = self.animationCanceller else { return }
+            animateSettingDisks(at: [(x, y)] + diskCoordinates, to: disk, animationCanceller: canceller) { isFinished in
                 if canceller.isCancelled { return }
 
                 completion?(isFinished)
