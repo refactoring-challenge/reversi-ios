@@ -70,9 +70,14 @@ extension ViewController {
         } else {
             cleanUp = {}
         }
-        try placeDisk(disk, atX: x, y: y, animated: isAnimated, animationCanceller: animationCanceller) { isFinished in
+        do {
+            try placeDisk(disk, atX: x, y: y, animated: isAnimated, animationCanceller: animationCanceller) { isFinished in
+                cleanUp()
+                completion?(isFinished)
+            }
+        } catch let error {
             cleanUp()
-            completion?(isFinished)
+            throw error
         }
     }
     
