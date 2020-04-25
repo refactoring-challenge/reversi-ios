@@ -71,7 +71,7 @@ extension ViewController {
             cleanUp = {}
         }
         do {
-            try placeDisk(disk, atX: x, y: y, animated: isAnimated, animationCanceller: animationCanceller) { isFinished in
+            try boardView.placeDisk(disk, atX: x, y: y, animated: isAnimated, animationCanceller: animationCanceller) { isFinished in
                 cleanUp()
                 completion?(isFinished)
             }
@@ -79,67 +79,7 @@ extension ViewController {
             cleanUp()
             throw error
         }
-    }
-    
-    /// `x`, `y` で指定されたセルに `disk` を置きます。
-    /// - Parameter x: セルの列です。
-    /// - Parameter y: セルの行です。
-    /// - Parameter isAnimated: ディスクを置いたりひっくり返したりするアニメーションを表示するかどうかを指定します。
-    /// - Parameter animationCanceller: アニメーションの実行をキャンセルするためのもの
-    /// - Parameter completion: アニメーション完了時に実行されるクロージャです。
-    ///     このクロージャは値を返さず、アニメーションが完了したかを示す真偽値を受け取ります。
-    ///     もし `animated` が `false` の場合、このクロージャは次の run loop サイクルの初めに実行されます。
-    /// - Throws: もし `disk` を `x`, `y` で指定されるセルに置けない場合、 `DiskPlacementError` を `throw` します。
-    func placeDisk(_ disk: Disk, atX x: Int, y: Int, animated isAnimated: Bool, animationCanceller: Canceller?, completion: ((Bool) -> Void)? = nil) throws {
-        let diskCoordinates = boardView.flippedDiskCoordinatesByPlacingDisk(disk, atX: x, y: y)
-        if diskCoordinates.isEmpty {
-            throw DiskPlacementError(disk: disk, x: x, y: y)
-        }
-        
-        if isAnimated {
-            let canceller = animationCanceller ?? Canceller(nil)
-            animateSettingDisks(at: [(x, y)] + diskCoordinates, to: disk, animationCanceller: canceller) { isFinished in
-                if canceller.isCancelled { return }
-
-                completion?(isFinished)
-            }
-        } else {
-            DispatchQueue.main.async { [weak self] in
-                guard let self = self else { return }
-                self.boardView.setDisk(disk, atX: x, y: y, animated: false)
-                for (x, y) in diskCoordinates {
-                    self.boardView.setDisk(disk, atX: x, y: y, animated: false)
-                }
-                completion?(true)
-            }
-        }
-    }
-    
-    /// `coordinates` で指定されたセルに、アニメーションしながら順番に `disk` を置く。
-    /// `coordinates` から先頭の座標を取得してそのセルに `disk` を置き、
-    /// 残りの座標についてこのメソッドを再帰呼び出しすることで処理が行われる。
-    /// すべてのセルに `disk` が置けたら `completion` ハンドラーが呼び出される。
-    private func animateSettingDisks<C: Collection>(at coordinates: C, to disk: Disk, animationCanceller: Canceller, completion: @escaping (Bool) -> Void)
-        where C.Element == (Int, Int)
-    {
-        guard let (x, y) = coordinates.first else {
-            completion(true)
-            return
-        }
-        
-        boardView.setDisk(disk, atX: x, y: y, animated: true) { [weak self] isFinished in
-            guard let self = self else { return }
-            if animationCanceller.isCancelled { return }
-            if isFinished {
-                self.animateSettingDisks(at: coordinates.dropFirst(), to: disk, animationCanceller: animationCanceller, completion: completion)
-            } else {
-                for (x, y) in coordinates {
-                    self.boardView.setDisk(disk, atX: x, y: y, animated: false)
-                }
-                completion(false)
-            }
-        }
-    }
+    }    
 }
 
 // MARK: Game management
