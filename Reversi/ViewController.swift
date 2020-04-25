@@ -71,9 +71,12 @@ extension ViewController {
             cleanUp = {}
         }
         do {
-            try boardView.placeDisk(disk, atX: x, y: y, animated: isAnimated, animationCanceller: animationCanceller) { isFinished in
+            try boardView.placeDisk(disk, atX: x, y: y, animated: isAnimated, animationCanceller: animationCanceller) { [weak self] isFinished in
+                guard let self = self else { return }
                 cleanUp()
                 completion?(isFinished)
+                try? self.saveGame()
+                self.updateCountLabels()
             }
         } catch let error {
             cleanUp()
@@ -163,10 +166,7 @@ extension ViewController {
             cleanUp()
             
             try! self.placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
-                guard let self = self else { return }
-                self.nextTurn()
-                try? self.saveGame()
-                self.updateCountLabels()
+                self?.nextTurn()
             }
         }
         
@@ -261,10 +261,7 @@ extension ViewController: BoardViewDelegate {
         guard case .manual = Player(rawValue: playerControls[turn.index].selectedSegmentIndex)! else { return }
         // try? because doing nothing when an error occurs
         try? placeDisk(turn, atX: x, y: y, animated: true) { [weak self] _ in
-            guard let self = self else { return }
-            self.nextTurn()
-            try? self.saveGame()
-            self.updateCountLabels()
+            self?.nextTurn()
         }
     }
 }
