@@ -5,5 +5,8 @@
     <mapping directory="$PROJECT_DIR$/Carthage/Checkouts/MirrorDiffKit" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Carthage/Checkouts/ReactiveSwift" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Carthage/Checkouts/ReactiveSwift/Carthage/Checkouts/Nimble" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Carthage/Checkouts/ReactiveSwift/Carthage/Checkouts/Quick" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Carthage/Checkouts/ReactiveSwift/Carthage/Checkouts/Quick/Externals/Nimble" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Carthage/Checkouts/ReactiveSwift/Carthage/Checkouts/xcconfigs" vcs="Git" />
   </component>
 </project>
