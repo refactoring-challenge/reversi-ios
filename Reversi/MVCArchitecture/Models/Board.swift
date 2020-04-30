@@ -55,8 +55,7 @@ extension Board where T == Disk? {
                     // NOTE: Break if the line is out of the board.
                     guard let line = Line(
                         start: coordinateForSameColor,
-                        direction: direction,
-                        distance: distance
+                        directedDistance: DirectedDistance(direction: direction, distance: distance)
                     ) else {
                         break
                     }

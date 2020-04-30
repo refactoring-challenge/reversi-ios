@@ -3,6 +3,7 @@ import MirrorDiffKit
 @testable import Reversi
 
 
+
 class BoardTests: XCTestCase {
     func testAvailability() {
         struct TestCase {
@@ -10,6 +11,8 @@ class BoardTests: XCTestCase {
             let diskToTest: Disk
             let expected: Set<Line>
         }
+
+
 
         let testCases: [UInt: TestCase] = [
             #line: TestCase(
@@ -28,26 +31,22 @@ class BoardTests: XCTestCase {
                     Line(
                         start: Coordinate(x: .four, y: .four),
                         unsafeEnd: Coordinate(x: .four, y: .six),
-                        direction: .bottom,
-                        distance: .two
+                        directedDistance: DirectedDistance(direction: .bottom, distance: .two)
                     ),
                     Line(
                         start: Coordinate(x: .four, y: .four),
                         unsafeEnd: Coordinate(x: .six, y: .four),
-                        direction: .right,
-                        distance: .two
+                        directedDistance: DirectedDistance(direction: .right, distance: .two)
                     ),
                     Line(
                         start: Coordinate(x: .five, y: .five),
                         unsafeEnd: Coordinate(x: .five, y: .three),
-                        direction: .top,
-                        distance: .two
+                        directedDistance: DirectedDistance(direction: .top, distance: .two)
                     ),
                     Line(
                         start: Coordinate(x: .five, y: .five),
                         unsafeEnd: Coordinate(x: .three, y: .five),
-                        direction: .left,
-                        distance: .two
+                        directedDistance: DirectedDistance(direction: .left, distance: .two)
                     ),
                 ])
             ),
