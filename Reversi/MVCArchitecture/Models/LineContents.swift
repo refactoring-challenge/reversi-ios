@@ -18,4 +18,17 @@ struct LineContents: Equatable {
         self.line = line
         self.disks = disks
     }
+
+
+    init?(board: Board<Disk?>, base: LineContents) {
+        guard let line = base.line.grown else {
+            return nil
+        }
+
+        var disks = base.disks
+        disks.append(board[line.end])
+
+        self.line = line
+        self.disks = disks
+    }
 }

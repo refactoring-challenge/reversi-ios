@@ -54,6 +54,14 @@ struct Line: Hashable {
         }
         return Line(start: start, direction: self.direction, distance: prevDistance)
     }
+
+
+    var grown: Line? {
+        guard let nextDistance = self.distance.next else {
+            return nil
+        }
+        return Line(start: start, direction: self.direction, distance: nextDistance)
+    }
 }
 
 
