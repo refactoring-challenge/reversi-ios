@@ -18,16 +18,16 @@ enum LocationAvailabilityHint: Equatable {
         //   2. the end coordinate is empty on the board
         //   3. all of disks between the start and the end are have the color of flipped one
 
-        guard lineContents.contents.first == diskToTest else {
+        guard lineContents.disks.first == diskToTest else {
             return .unavailable(because: .startIsNotSameColor)
         }
 
         // BUG3: I expected `x == nil` mean x == .some(.none), but it mean x == .none.
-        guard lineContents.contents.last == .some(nil) else {
+        guard lineContents.disks.last == .some(nil) else {
             return .unavailable(because: .endIsNotEmpty)
         }
 
-        let disksBetweenStartAndEnd = lineContents.contents[1..<lineContents.contents.count-1]
+        let disksBetweenStartAndEnd = lineContents.disks[1..<lineContents.disks.count-1]
         guard disksBetweenStartAndEnd.count > 0 else {
             return .unavailable(because: .lineIsTooShort)
         }

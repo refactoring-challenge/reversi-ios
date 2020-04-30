@@ -1,21 +1,21 @@
 struct LineContents: Equatable {
     let line: Line
-    let contents: [Disk?]
+    let disks: [Disk?]
 
 
     init(board: Board<Disk?>, line: Line) {
-        var contents = [Disk?]()
+        var disks = [Disk?]()
         var shorterLine: Line? = line
 
         while let currentLine = shorterLine {
             let diskOrNil = board[currentLine.end]
-            contents.insert(diskOrNil, at: 0)
+            disks.insert(diskOrNil, at: 0)
             shorterLine = currentLine.shortened
         }
         // BUG2: Missing addition for start.
-        contents.insert(board[line.start], at: 0)
+        disks.insert(board[line.start], at: 0)
 
         self.line = line
-        self.contents = contents
+        self.disks = disks
     }
 }
