@@ -46,11 +46,16 @@ extension Board where T == Disk? {
     }
 
 
-    func availableCoordinates(for diskToTest: Disk) -> Set<Line> {
+    func availableCoordinates(for turn: Turn) -> Set<Coordinate> {
+        Set(self.availableLines(for: turn).map { line in line.end })
+    }
+
+
+    func availableLines(for turn: Turn) -> Set<Line> {
         var result = Set<Line>()
 
         for coordinate in Coordinate.allCases {
-            guard self[coordinate] == diskToTest else {
+            guard self[coordinate] == turn.disk else {
                 continue
             }
             let coordinateForSameColor = coordinate
@@ -66,7 +71,7 @@ extension Board where T == Disk? {
 
                 var nextLineContents: LineContents? = self[line]
                 while let lineContents = nextLineContents {
-                    switch LocationAvailabilityHint.from(lineContents: lineContents, diskToTest: diskToTest) {
+                    switch LocationAvailabilityHint.from(lineContents: lineContents, turn: turn) {
                     case .unavailable(because: .startIsNotSameColor), .unavailable(because: .lineIsTooShort):
                         // NOTE: .startIsNotSameColor is not reachable because coordinates to search are already filtered.
                         // NOTE: .lineIsTooShort is not reachable because the distances to search start with 2.

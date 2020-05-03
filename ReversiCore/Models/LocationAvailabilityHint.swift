@@ -11,14 +11,14 @@ enum LocationAvailabilityHint: Equatable {
     }
 
 
-    static func from(lineContents: LineContents, diskToTest: Disk) -> LocationAvailabilityHint {
+    static func from(lineContents: LineContents, turn: Turn) -> LocationAvailabilityHint {
         // NOTE: Placable if the line contents satisfies all of the conditions:
         //
         //   1. the start coordinate has the same color as the disk on the board
         //   2. the end coordinate is empty on the board
         //   3. all of disks between the start and the end are have the color of flipped one
 
-        guard lineContents.disks.first == diskToTest else {
+        guard lineContents.disks.first == turn.disk else {
             return .unavailable(because: .startIsNotSameColor)
         }
 
@@ -32,7 +32,7 @@ enum LocationAvailabilityHint: Equatable {
             return .unavailable(because: .lineIsTooShort)
         }
 
-        let flipped = diskToTest.flipped
+        let flipped = turn.disk.flipped
         let isAvailable = disksBetweenStartAndEnd.allSatisfy { diskBetweenStartAndEnd in
             diskBetweenStartAndEnd == flipped
         }
