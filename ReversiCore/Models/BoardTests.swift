@@ -1,6 +1,6 @@
 import XCTest
 import MirrorDiffKit
-@testable import Reversi
+@testable import ReversiCore
 
 
 

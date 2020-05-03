@@ -1,0 +1,892 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		624D5F54245E9C9700C3EBFC /* ReversiCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F4B245E9C9700C3EBFC /* ReversiCore.framework */; };
+		624D5F62245E9CA600C3EBFC /* Distance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F1E245E9BF700C3EBFC /* Distance.swift */; };
+		624D5F63245E9CA600C3EBFC /* DirectedDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F1F245E9BF700C3EBFC /* DirectedDistance.swift */; };
+		624D5F64245E9CA600C3EBFC /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F20245E9BF700C3EBFC /* Board.swift */; };
+		624D5F65245E9CA600C3EBFC /* LocationAvailabilityHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F21245E9BF700C3EBFC /* LocationAvailabilityHint.swift */; };
+		624D5F66245E9CA600C3EBFC /* LineContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F23245E9BF700C3EBFC /* LineContents.swift */; };
+		624D5F67245E9CA600C3EBFC /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F24245E9BF700C3EBFC /* Coordinate.swift */; };
+		624D5F68245E9CA600C3EBFC /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F25245E9BF700C3EBFC /* Line.swift */; };
+		624D5F69245E9CA600C3EBFC /* BoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F26245E9BF700C3EBFC /* BoardModel.swift */; };
+		624D5F6A245E9CA600C3EBFC /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F27245E9BF700C3EBFC /* Direction.swift */; };
+		624D5F6B245E9CA700C3EBFC /* Distance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F1E245E9BF700C3EBFC /* Distance.swift */; };
+		624D5F6C245E9CA700C3EBFC /* DirectedDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F1F245E9BF700C3EBFC /* DirectedDistance.swift */; };
+		624D5F6D245E9CA700C3EBFC /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F20245E9BF700C3EBFC /* Board.swift */; };
+		624D5F6E245E9CA700C3EBFC /* LocationAvailabilityHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F21245E9BF700C3EBFC /* LocationAvailabilityHint.swift */; };
+		624D5F6F245E9CA700C3EBFC /* LineContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F23245E9BF700C3EBFC /* LineContents.swift */; };
+		624D5F70245E9CA700C3EBFC /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F24245E9BF700C3EBFC /* Coordinate.swift */; };
+		624D5F71245E9CA700C3EBFC /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F25245E9BF700C3EBFC /* Line.swift */; };
+		624D5F72245E9CA700C3EBFC /* BoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F26245E9BF700C3EBFC /* BoardModel.swift */; };
+		624D5F73245E9CA700C3EBFC /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F27245E9BF700C3EBFC /* Direction.swift */; };
+		624D5F74245E9CAA00C3EBFC /* BoardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F22245E9BF700C3EBFC /* BoardTests.swift */; };
+		624D5F7B245E9CE000C3EBFC /* MirrorDiffKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F7A245E9CE000C3EBFC /* MirrorDiffKit.framework */; };
+		624D5F7C245E9CE000C3EBFC /* MirrorDiffKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F7A245E9CE000C3EBFC /* MirrorDiffKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		624D5F7F245E9CF100C3EBFC /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F7E245E9CF100C3EBFC /* ReactiveSwift.framework */; };
+		624D5F80245E9CF100C3EBFC /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F7E245E9CF100C3EBFC /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		624D5F82245E9D0D00C3EBFC /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F81245E9D0D00C3EBFC /* ReactiveSwift.framework */; };
+		624D5F83245E9D0D00C3EBFC /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F81245E9D0D00C3EBFC /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		624D5F86245E9D1700C3EBFC /* MirrorDiffKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F85245E9D1700C3EBFC /* MirrorDiffKit.framework */; };
+		624D5F87245E9D1700C3EBFC /* MirrorDiffKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F85245E9D1700C3EBFC /* MirrorDiffKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		62B7C4A5245E9E13006F58CE /* Disk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B7C4A4245E9E13006F58CE /* Disk.swift */; };
+		62B7C4A6245E9E42006F58CE /* Disk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62B7C4A4245E9E13006F58CE /* Disk.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		624D5F55245E9C9700C3EBFC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 624D5F17245E9BBE00C3EBFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 624D5F4A245E9C9700C3EBFC;
+			remoteInfo = "ReversiCore-macOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		624D5F7D245E9CE000C3EBFC /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				624D5F7C245E9CE000C3EBFC /* MirrorDiffKit.framework in Embed Frameworks */,
+				624D5F80245E9CF100C3EBFC /* ReactiveSwift.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		624D5F84245E9D0D00C3EBFC /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				624D5F83245E9D0D00C3EBFC /* ReactiveSwift.framework in Embed Frameworks */,
+				624D5F87245E9D1700C3EBFC /* MirrorDiffKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		624D5F1E245E9BF700C3EBFC /* Distance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Distance.swift; sourceTree = "<group>"; };
+		624D5F1F245E9BF700C3EBFC /* DirectedDistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectedDistance.swift; sourceTree = "<group>"; };
+		624D5F20245E9BF700C3EBFC /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		624D5F21245E9BF700C3EBFC /* LocationAvailabilityHint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationAvailabilityHint.swift; sourceTree = "<group>"; };
+		624D5F22245E9BF700C3EBFC /* BoardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardTests.swift; sourceTree = "<group>"; };
+		624D5F23245E9BF700C3EBFC /* LineContents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineContents.swift; sourceTree = "<group>"; };
+		624D5F24245E9BF700C3EBFC /* Coordinate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinate.swift; sourceTree = "<group>"; };
+		624D5F25245E9BF700C3EBFC /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
+		624D5F26245E9BF700C3EBFC /* BoardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardModel.swift; sourceTree = "<group>"; };
+		624D5F27245E9BF700C3EBFC /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
+		624D5F2E245E9C4700C3EBFC /* ReversiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ReversiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		624D5F4B245E9C9700C3EBFC /* ReversiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ReversiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		624D5F53245E9C9700C3EBFC /* ReversiCore-macOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ReversiCore-macOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		624D5F76245E9CCC00C3EBFC /* MirrorDiffKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MirrorDiffKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		624D5F7A245E9CE000C3EBFC /* MirrorDiffKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MirrorDiffKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		624D5F7E245E9CF100C3EBFC /* ReactiveSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReactiveSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		624D5F81245E9D0D00C3EBFC /* ReactiveSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReactiveSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		624D5F85245E9D1700C3EBFC /* MirrorDiffKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MirrorDiffKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		62B7C4A4245E9E13006F58CE /* Disk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Disk.swift; sourceTree = "<group>"; };
+		62B7C4A7245EA01E006F58CE /* ReversiCore.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ReversiCore.plist; path = Configs/ReversiCore.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		624D5F2B245E9C4700C3EBFC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				624D5F7B245E9CE000C3EBFC /* MirrorDiffKit.framework in Frameworks */,
+				624D5F7F245E9CF100C3EBFC /* ReactiveSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		624D5F48245E9C9700C3EBFC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				624D5F82245E9D0D00C3EBFC /* ReactiveSwift.framework in Frameworks */,
+				624D5F86245E9D1700C3EBFC /* MirrorDiffKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		624D5F50245E9C9700C3EBFC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				624D5F54245E9C9700C3EBFC /* ReversiCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		624D5F16245E9BBE00C3EBFC = {
+			isa = PBXGroup;
+			children = (
+				62B7C4AA245EA03F006F58CE /* MVCArchitecture */,
+				62B7C4A9245EA030006F58CE /* Configs */,
+				624D5F2F245E9C4700C3EBFC /* Products */,
+				624D5F75245E9CCC00C3EBFC /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		624D5F1D245E9BF700C3EBFC /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				624D5F1E245E9BF700C3EBFC /* Distance.swift */,
+				624D5F1F245E9BF700C3EBFC /* DirectedDistance.swift */,
+				624D5F20245E9BF700C3EBFC /* Board.swift */,
+				624D5F21245E9BF700C3EBFC /* LocationAvailabilityHint.swift */,
+				624D5F22245E9BF700C3EBFC /* BoardTests.swift */,
+				624D5F23245E9BF700C3EBFC /* LineContents.swift */,
+				62B7C4A4245E9E13006F58CE /* Disk.swift */,
+				624D5F24245E9BF700C3EBFC /* Coordinate.swift */,
+				624D5F25245E9BF700C3EBFC /* Line.swift */,
+				624D5F26245E9BF700C3EBFC /* BoardModel.swift */,
+				624D5F27245E9BF700C3EBFC /* Direction.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		624D5F2F245E9C4700C3EBFC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				624D5F2E245E9C4700C3EBFC /* ReversiCore.framework */,
+				624D5F4B245E9C9700C3EBFC /* ReversiCore.framework */,
+				624D5F53245E9C9700C3EBFC /* ReversiCore-macOSTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		624D5F75245E9CCC00C3EBFC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				624D5F81245E9D0D00C3EBFC /* ReactiveSwift.framework */,
+				624D5F85245E9D1700C3EBFC /* MirrorDiffKit.framework */,
+				624D5F7A245E9CE000C3EBFC /* MirrorDiffKit.framework */,
+				624D5F7E245E9CF100C3EBFC /* ReactiveSwift.framework */,
+				624D5F76245E9CCC00C3EBFC /* MirrorDiffKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		62B7C4A9245EA030006F58CE /* Configs */ = {
+			isa = PBXGroup;
+			children = (
+				62B7C4A7245EA01E006F58CE /* ReversiCore.plist */,
+			);
+			name = Configs;
+			sourceTree = "<group>";
+		};
+		62B7C4AA245EA03F006F58CE /* MVCArchitecture */ = {
+			isa = PBXGroup;
+			children = (
+				624D5F1D245E9BF700C3EBFC /* Models */,
+			);
+			name = MVCArchitecture;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		624D5F29245E9C4700C3EBFC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		624D5F46245E9C9700C3EBFC /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		624D5F2D245E9C4700C3EBFC /* ReversiCore-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 624D5F40245E9C4700C3EBFC /* Build configuration list for PBXNativeTarget "ReversiCore-iOS" */;
+			buildPhases = (
+				624D5F29245E9C4700C3EBFC /* Headers */,
+				624D5F2A245E9C4700C3EBFC /* Sources */,
+				624D5F2B245E9C4700C3EBFC /* Frameworks */,
+				624D5F2C245E9C4700C3EBFC /* Resources */,
+				624D5F7D245E9CE000C3EBFC /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ReversiCore-iOS";
+			productName = "ReversiCore-iOS";
+			productReference = 624D5F2E245E9C4700C3EBFC /* ReversiCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		624D5F4A245E9C9700C3EBFC /* ReversiCore-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 624D5F5C245E9C9700C3EBFC /* Build configuration list for PBXNativeTarget "ReversiCore-macOS" */;
+			buildPhases = (
+				624D5F46245E9C9700C3EBFC /* Headers */,
+				624D5F47245E9C9700C3EBFC /* Sources */,
+				624D5F48245E9C9700C3EBFC /* Frameworks */,
+				624D5F49245E9C9700C3EBFC /* Resources */,
+				624D5F84245E9D0D00C3EBFC /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ReversiCore-macOS";
+			productName = "ReversiCore-macOS";
+			productReference = 624D5F4B245E9C9700C3EBFC /* ReversiCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		624D5F52245E9C9700C3EBFC /* ReversiCore-macOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 624D5F5F245E9C9700C3EBFC /* Build configuration list for PBXNativeTarget "ReversiCore-macOSTests" */;
+			buildPhases = (
+				624D5F4F245E9C9700C3EBFC /* Sources */,
+				624D5F50245E9C9700C3EBFC /* Frameworks */,
+				624D5F51245E9C9700C3EBFC /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				624D5F56245E9C9700C3EBFC /* PBXTargetDependency */,
+			);
+			name = "ReversiCore-macOSTests";
+			productName = "ReversiCore-macOSTests";
+			productReference = 624D5F53245E9C9700C3EBFC /* ReversiCore-macOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		624D5F17245E9BBE00C3EBFC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1130;
+				LastUpgradeCheck = 1130;
+				TargetAttributes = {
+					624D5F2D245E9C4700C3EBFC = {
+						CreatedOnToolsVersion = 11.3.1;
+					};
+					624D5F4A245E9C9700C3EBFC = {
+						CreatedOnToolsVersion = 11.3.1;
+					};
+					624D5F52245E9C9700C3EBFC = {
+						CreatedOnToolsVersion = 11.3.1;
+					};
+				};
+			};
+			buildConfigurationList = 624D5F1A245E9BBE00C3EBFC /* Build configuration list for PBXProject "ReversiCore" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 624D5F16245E9BBE00C3EBFC;
+			productRefGroup = 624D5F2F245E9C4700C3EBFC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				624D5F2D245E9C4700C3EBFC /* ReversiCore-iOS */,
+				624D5F4A245E9C9700C3EBFC /* ReversiCore-macOS */,
+				624D5F52245E9C9700C3EBFC /* ReversiCore-macOSTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		624D5F2C245E9C4700C3EBFC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		624D5F49245E9C9700C3EBFC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		624D5F51245E9C9700C3EBFC /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		624D5F2A245E9C4700C3EBFC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				624D5F65245E9CA600C3EBFC /* LocationAvailabilityHint.swift in Sources */,
+				624D5F66245E9CA600C3EBFC /* LineContents.swift in Sources */,
+				624D5F63245E9CA600C3EBFC /* DirectedDistance.swift in Sources */,
+				624D5F62245E9CA600C3EBFC /* Distance.swift in Sources */,
+				624D5F69245E9CA600C3EBFC /* BoardModel.swift in Sources */,
+				624D5F64245E9CA600C3EBFC /* Board.swift in Sources */,
+				62B7C4A5245E9E13006F58CE /* Disk.swift in Sources */,
+				624D5F68245E9CA600C3EBFC /* Line.swift in Sources */,
+				624D5F67245E9CA600C3EBFC /* Coordinate.swift in Sources */,
+				624D5F6A245E9CA600C3EBFC /* Direction.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		624D5F47245E9C9700C3EBFC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				624D5F6E245E9CA700C3EBFC /* LocationAvailabilityHint.swift in Sources */,
+				624D5F6F245E9CA700C3EBFC /* LineContents.swift in Sources */,
+				624D5F6C245E9CA700C3EBFC /* DirectedDistance.swift in Sources */,
+				624D5F6B245E9CA700C3EBFC /* Distance.swift in Sources */,
+				624D5F72245E9CA700C3EBFC /* BoardModel.swift in Sources */,
+				624D5F6D245E9CA700C3EBFC /* Board.swift in Sources */,
+				62B7C4A6245E9E42006F58CE /* Disk.swift in Sources */,
+				624D5F71245E9CA700C3EBFC /* Line.swift in Sources */,
+				624D5F70245E9CA700C3EBFC /* Coordinate.swift in Sources */,
+				624D5F73245E9CA700C3EBFC /* Direction.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		624D5F4F245E9C9700C3EBFC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				624D5F74245E9CAA00C3EBFC /* BoardTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		624D5F56245E9C9700C3EBFC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 624D5F4A245E9C9700C3EBFC /* ReversiCore-macOS */;
+			targetProxy = 624D5F55245E9C9700C3EBFC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		624D5F1B245E9BBE00C3EBFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Configs/ReversiCore.plist;
+			};
+			name = Debug;
+		};
+		624D5F1C245E9BBE00C3EBFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Configs/ReversiCore.plist;
+			};
+			name = Release;
+		};
+		624D5F41245E9C4700C3EBFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "$(inherited)";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kuniwak.ReversiCore-iOS";
+				PRODUCT_NAME = ReversiCore;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		624D5F42245E9C4700C3EBFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "$(inherited)";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kuniwak.ReversiCore-iOS";
+				PRODUCT_NAME = ReversiCore;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		624D5F5D245E9C9700C3EBFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "$(inherited)";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kuniwak.ReversiCore;
+				PRODUCT_NAME = ReversiCore;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		624D5F5E245E9C9700C3EBFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "$(inherited)";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kuniwak.ReversiCore;
+				PRODUCT_NAME = ReversiCore;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		624D5F60245E9C9700C3EBFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Configs/ReversiCoreTests.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kuniwak.ReversiCore-macOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		624D5F61245E9C9700C3EBFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Configs/ReversiCoreTests.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kuniwak.ReversiCore-macOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		624D5F1A245E9BBE00C3EBFC /* Build configuration list for PBXProject "ReversiCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				624D5F1B245E9BBE00C3EBFC /* Debug */,
+				624D5F1C245E9BBE00C3EBFC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		624D5F40245E9C4700C3EBFC /* Build configuration list for PBXNativeTarget "ReversiCore-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				624D5F41245E9C4700C3EBFC /* Debug */,
+				624D5F42245E9C4700C3EBFC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		624D5F5C245E9C9700C3EBFC /* Build configuration list for PBXNativeTarget "ReversiCore-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				624D5F5D245E9C9700C3EBFC /* Debug */,
+				624D5F5E245E9C9700C3EBFC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		624D5F5F245E9C9700C3EBFC /* Build configuration list for PBXNativeTarget "ReversiCore-macOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				624D5F60245E9C9700C3EBFC /* Debug */,
+				624D5F61245E9C9700C3EBFC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 624D5F17245E9BBE00C3EBFC /* Project object */;
+}
