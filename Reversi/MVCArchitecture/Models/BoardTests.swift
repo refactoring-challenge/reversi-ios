@@ -50,6 +50,26 @@ class BoardTests: XCTestCase {
                     ),
                 ])
             ),
+            #line: TestCase(
+                board: Board(unsafeArray: [
+                    [nil, .dark, .light, nil, nil, nil, nil, nil],
+                    [nil, nil, .light, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                ]),
+                diskToTest: .light,
+                expected: Set([
+                    Line(
+                        start: Coordinate(x: .three, y: .one),
+                        unsafeEnd: Coordinate(x: .one, y: .one),
+                        directedDistance: DirectedDistance(direction: .left, distance: .two)
+                    ),
+                ])
+            ),
         ]
 
         testCases.forEach {
