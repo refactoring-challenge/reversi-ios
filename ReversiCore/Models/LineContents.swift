@@ -20,7 +20,7 @@ struct LineContents: Equatable {
     }
 
 
-    init?(board: Board<Disk?>, base: LineContents) {
+    init?(expandingTo base: LineContents, on board: Board<Disk?>) {
         guard let line = base.line.grown else {
             return nil
         }

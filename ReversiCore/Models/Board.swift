@@ -56,16 +56,16 @@ extension Board where T == Disk? {
             let coordinateForSameColor = coordinate
 
             for direction in Direction.allCases {
-                for distance in Distance.AllCasesLongerThan1ByAscendant {
-                    // NOTE: Break if the line is out of the board.
-                    guard let line = Line(
-                        start: coordinateForSameColor,
-                        directedDistance: DirectedDistance(direction: direction, distance: distance)
-                    ) else {
-                        break
-                    }
+                // NOTE: Try other directions if the directed distance is out of the board.
+                guard let line = Line(
+                    start: coordinateForSameColor,
+                    directedDistance: DirectedDistance(direction: direction, distance: .two)
+                ) else {
+                    continue
+                }
 
-                    let lineContents = LineContents(board: self, line: line)
+                var nextLineContents: LineContents? = self[line]
+                while let lineContents = nextLineContents {
                     switch LocationAvailabilityHint.from(lineContents: lineContents, diskToTest: diskToTest) {
                     case .unavailable(because: .startIsNotSameColor), .unavailable(because: .lineIsTooShort):
                         // NOTE: .startIsNotSameColor is not reachable because coordinates to search are already filtered.
@@ -89,6 +89,8 @@ extension Board where T == Disk? {
                     case .available:
                         result.insert(line)
                     }
+
+                    nextLineContents = LineContents(expandingTo: lineContents, on: self)
                 }
             }
         }
