@@ -27,6 +27,11 @@ struct Board<T> {
 
 
 extension Board where T == Disk? {
+    subscript(_ line: Line) -> LineContents {
+        LineContents(board: self, line: line)
+    }
+
+
     static func initial() -> Board<Disk?> {
         Board<Disk?>(unsafeArray: [
             [nil, nil, nil, nil, nil, nil, nil, nil],
