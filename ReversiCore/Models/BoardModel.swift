@@ -2,7 +2,17 @@ import ReactiveSwift
 
 
 
-class BoardModel {
+protocol BoardModelProtocol {
+    var turnDidChange: ReactiveSwift.Property<Turn> { get }
+    var boardDidChange: ReactiveSwift.Property<Board<Disk?>> { get }
+    var availableCoordinatesDidChange: ReactiveSwift.Property<Set<Coordinate>> { get }
+
+    func placeDisk(at coordinate: Coordinate)
+}
+
+
+
+class BoardModel: BoardModelProtocol {
     // NOTE: This model has both a turn and board.
     // WHY: Because valid mutable operations to the board is depends on and affect to the turn and it must be
     //      atomic operations. Separating the properties into several smaller models is possible but it cannot
@@ -36,11 +46,13 @@ class BoardModel {
 
         self.availableCoordinatesDidChange = ReactiveSwift.Property
             .combineLatest(turnDidChangeMutable, boardDidChangeMutable)
-            .map { (turn, board) in board.availableCoordinates(for: turn) }
+            .map { (turn, board) in
+                board.availableCoordinates(for: turn)
+            }
     }
 
 
-    func place(to coordinate: Coordinate) {
+    func placeDisk(at coordinate: Coordinate) {
         self.board = self.board.updated(value: self.turn.disk, at: coordinate)
         self.turn = self.turn.next
     }

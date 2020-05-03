@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		2475E179EC617218113F0DEB /* Turn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB6A807B2C8DF846E859 /* Turn.swift */; };
 		2475E207203E1DD3D56FAD82 /* Turn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB6A807B2C8DF846E859 /* Turn.swift */; };
+		2475E76C76E11D197E2B4AAE /* DiskCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB7245F8FF240763E4BF /* DiskCount.swift */; };
+		2475EB139882181A6AADCF23 /* DiskCountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E521D78A018A62633528 /* DiskCountModel.swift */; };
+		2475EE272133E11F4DA39D76 /* DiskCountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E521D78A018A62633528 /* DiskCountModel.swift */; };
+		2475EEE011EBDB522D45B1EC /* DiskCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB7245F8FF240763E4BF /* DiskCount.swift */; };
 		624D5F54245E9C9700C3EBFC /* ReversiCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F4B245E9C9700C3EBFC /* ReversiCore.framework */; };
 		624D5F62245E9CA600C3EBFC /* Distance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F1E245E9BF700C3EBFC /* Distance.swift */; };
 		624D5F63245E9CA600C3EBFC /* DirectedDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F1F245E9BF700C3EBFC /* DirectedDistance.swift */; };
@@ -79,7 +83,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2475E521D78A018A62633528 /* DiskCountModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskCountModel.swift; sourceTree = "<group>"; };
 		2475EB6A807B2C8DF846E859 /* Turn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Turn.swift; sourceTree = "<group>"; };
+		2475EB7245F8FF240763E4BF /* DiskCount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskCount.swift; sourceTree = "<group>"; };
 		624D5F1E245E9BF700C3EBFC /* Distance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Distance.swift; sourceTree = "<group>"; };
 		624D5F1F245E9BF700C3EBFC /* DirectedDistance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectedDistance.swift; sourceTree = "<group>"; };
 		624D5F20245E9BF700C3EBFC /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
@@ -157,6 +163,8 @@
 				624D5F23245E9BF700C3EBFC /* LineContents.swift */,
 				624D5F21245E9BF700C3EBFC /* LocationAvailabilityHint.swift */,
 				2475EB6A807B2C8DF846E859 /* Turn.swift */,
+				2475E521D78A018A62633528 /* DiskCountModel.swift */,
+				2475EB7245F8FF240763E4BF /* DiskCount.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -355,6 +363,8 @@
 				624D5F67245E9CA600C3EBFC /* Coordinate.swift in Sources */,
 				624D5F6A245E9CA600C3EBFC /* Direction.swift in Sources */,
 				2475E179EC617218113F0DEB /* Turn.swift in Sources */,
+				2475EB139882181A6AADCF23 /* DiskCountModel.swift in Sources */,
+				2475E76C76E11D197E2B4AAE /* DiskCount.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -373,6 +383,8 @@
 				624D5F70245E9CA700C3EBFC /* Coordinate.swift in Sources */,
 				624D5F73245E9CA700C3EBFC /* Direction.swift in Sources */,
 				2475E207203E1DD3D56FAD82 /* Turn.swift in Sources */,
+				2475EE272133E11F4DA39D76 /* DiskCountModel.swift in Sources */,
+				2475EEE011EBDB522D45B1EC /* DiskCount.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

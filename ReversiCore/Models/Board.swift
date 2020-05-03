@@ -21,6 +21,11 @@ struct Board<T> {
     }
 
 
+    func forEach(_ block: (T) -> Void) {
+        self.array.forEach { $0.forEach(block) }
+    }
+
+
     // TODO: Serialize/deserialize methods
 }
 
@@ -43,6 +48,25 @@ extension Board where T == Disk? {
             [nil, nil, nil, nil, nil, nil, nil, nil],
             [nil, nil, nil, nil, nil, nil, nil, nil],
         ])
+    }
+
+
+    func countDisks() -> DiskCount {
+        var light = 0
+        var dark = 0
+
+        self.forEach { diskOrNil in
+            switch diskOrNil {
+            case .none:
+                return
+            case .some(.dark):
+                dark += 1
+            case .some(.light):
+                light += 1
+            }
+        }
+
+        return DiskCount(light: light, dark: dark)
     }
 
 
