@@ -142,17 +142,17 @@
 		624D5F1D245E9BF700C3EBFC /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				624D5F1E245E9BF700C3EBFC /* Distance.swift */,
-				624D5F1F245E9BF700C3EBFC /* DirectedDistance.swift */,
 				624D5F20245E9BF700C3EBFC /* Board.swift */,
-				624D5F21245E9BF700C3EBFC /* LocationAvailabilityHint.swift */,
-				624D5F22245E9BF700C3EBFC /* BoardTests.swift */,
-				624D5F23245E9BF700C3EBFC /* LineContents.swift */,
-				62B7C4A4245E9E13006F58CE /* Disk.swift */,
-				624D5F24245E9BF700C3EBFC /* Coordinate.swift */,
-				624D5F25245E9BF700C3EBFC /* Line.swift */,
 				624D5F26245E9BF700C3EBFC /* BoardModel.swift */,
+				624D5F22245E9BF700C3EBFC /* BoardTests.swift */,
+				624D5F24245E9BF700C3EBFC /* Coordinate.swift */,
+				624D5F1F245E9BF700C3EBFC /* DirectedDistance.swift */,
 				624D5F27245E9BF700C3EBFC /* Direction.swift */,
+				62B7C4A4245E9E13006F58CE /* Disk.swift */,
+				624D5F1E245E9BF700C3EBFC /* Distance.swift */,
+				624D5F25245E9BF700C3EBFC /* Line.swift */,
+				624D5F23245E9BF700C3EBFC /* LineContents.swift */,
+				624D5F21245E9BF700C3EBFC /* LocationAvailabilityHint.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
