@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "624D5F4A245E9C9700C3EBFC"
-               BuildableName = "ReversiCore_macOS.framework"
+               BuildableName = "ReversiCore.framework"
                BlueprintName = "ReversiCore-macOS"
                ReferencedContainer = "container:ReversiCore.xcodeproj">
             </BuildableReference>
@@ -61,7 +61,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "624D5F4A245E9C9700C3EBFC"
-            BuildableName = "ReversiCore_macOS.framework"
+            BuildableName = "ReversiCore.framework"
             BlueprintName = "ReversiCore-macOS"
             ReferencedContainer = "container:ReversiCore.xcodeproj">
          </BuildableReference>

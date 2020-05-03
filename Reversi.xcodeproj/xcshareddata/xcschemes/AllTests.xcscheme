@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D642BDC523A9FE4700396732"
-               BuildableName = "ReversiTests.xctest"
-               BlueprintName = "ReversiTests"
-               ReferencedContainer = "container:Reversi.xcodeproj">
+               BlueprintIdentifier = "624D5F52245E9C9700C3EBFC"
+               BuildableName = "ReversiCore-macOSTests.xctest"
+               BlueprintName = "ReversiCore-macOSTests"
+               ReferencedContainer = "container:ReversiCore/ReversiCore.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D642BDC523A9FE4700396732"
-               BuildableName = "ReversiTests.xctest"
-               BlueprintName = "ReversiTests"
-               ReferencedContainer = "container:Reversi.xcodeproj">
+               BlueprintIdentifier = "624D5F52245E9C9700C3EBFC"
+               BuildableName = "ReversiCore-macOSTests.xctest"
+               BlueprintName = "ReversiCore-macOSTests"
+               ReferencedContainer = "container:ReversiCore/ReversiCore.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
