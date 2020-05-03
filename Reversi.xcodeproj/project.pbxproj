@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		62B7C4AD245EDBE8006F58CE /* ReversiCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62B7C4AC245EDBE8006F58CE /* ReversiCore.framework */; };
+		62B7C4AE245EDBE8006F58CE /* ReversiCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62B7C4AC245EDBE8006F58CE /* ReversiCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		62D97B2424530022008513D3 /* MirrorDiffKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62D97B2224530022008513D3 /* MirrorDiffKit.framework */; };
 		62D97B2524530022008513D3 /* MirrorDiffKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62D97B2224530022008513D3 /* MirrorDiffKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		62D97B2624530022008513D3 /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62D97B2324530022008513D3 /* ReactiveSwift.framework */; };
@@ -41,6 +43,7 @@
 			files = (
 				62D97B2524530022008513D3 /* MirrorDiffKit.framework in Embed Frameworks */,
 				62D97B2724530022008513D3 /* ReactiveSwift.framework in Embed Frameworks */,
+				62B7C4AE245EDBE8006F58CE /* ReversiCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,6 +51,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		62B7C4AC245EDBE8006F58CE /* ReversiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReversiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62D97B2224530022008513D3 /* MirrorDiffKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MirrorDiffKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62D97B2324530022008513D3 /* ReactiveSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReactiveSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D636B39E23D35043007F370F /* DiskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskView.swift; sourceTree = "<group>"; };
@@ -72,6 +76,7 @@
 			files = (
 				62D97B2424530022008513D3 /* MirrorDiffKit.framework in Frameworks */,
 				62D97B2624530022008513D3 /* ReactiveSwift.framework in Frameworks */,
+				62B7C4AD245EDBE8006F58CE /* ReversiCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +95,7 @@
 			children = (
 				62D97B2224530022008513D3 /* MirrorDiffKit.framework */,
 				62D97B2324530022008513D3 /* ReactiveSwift.framework */,
+				62B7C4AC245EDBE8006F58CE /* ReversiCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

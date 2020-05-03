@@ -9,7 +9,10 @@
 /* Begin PBXBuildFile section */
 		2475E179EC617218113F0DEB /* Turn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB6A807B2C8DF846E859 /* Turn.swift */; };
 		2475E207203E1DD3D56FAD82 /* Turn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB6A807B2C8DF846E859 /* Turn.swift */; };
+		2475E6254FCF9E7165CDF4A6 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E7C0B00AB5D445B2844A /* GameState.swift */; };
+		2475E66F4206F7610B4764E4 /* GameResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EF840F6D3A3EA59C38BE /* GameResult.swift */; };
 		2475E76C76E11D197E2B4AAE /* DiskCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB7245F8FF240763E4BF /* DiskCount.swift */; };
+		2475E9C7957A905A262B7B5B /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E7C0B00AB5D445B2844A /* GameState.swift */; };
 		2475EB139882181A6AADCF23 /* DiskCountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E521D78A018A62633528 /* DiskCountModel.swift */; };
 		2475EE272133E11F4DA39D76 /* DiskCountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E521D78A018A62633528 /* DiskCountModel.swift */; };
 		2475EEE011EBDB522D45B1EC /* DiskCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB7245F8FF240763E4BF /* DiskCount.swift */; };
@@ -21,7 +24,7 @@
 		624D5F66245E9CA600C3EBFC /* LineContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F23245E9BF700C3EBFC /* LineContents.swift */; };
 		624D5F67245E9CA600C3EBFC /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F24245E9BF700C3EBFC /* Coordinate.swift */; };
 		624D5F68245E9CA600C3EBFC /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F25245E9BF700C3EBFC /* Line.swift */; };
-		624D5F69245E9CA600C3EBFC /* BoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F26245E9BF700C3EBFC /* BoardModel.swift */; };
+		624D5F69245E9CA600C3EBFC /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F26245E9BF700C3EBFC /* GameModel.swift */; };
 		624D5F6A245E9CA600C3EBFC /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F27245E9BF700C3EBFC /* Direction.swift */; };
 		624D5F6B245E9CA700C3EBFC /* Distance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F1E245E9BF700C3EBFC /* Distance.swift */; };
 		624D5F6C245E9CA700C3EBFC /* DirectedDistance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F1F245E9BF700C3EBFC /* DirectedDistance.swift */; };
@@ -30,7 +33,7 @@
 		624D5F6F245E9CA700C3EBFC /* LineContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F23245E9BF700C3EBFC /* LineContents.swift */; };
 		624D5F70245E9CA700C3EBFC /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F24245E9BF700C3EBFC /* Coordinate.swift */; };
 		624D5F71245E9CA700C3EBFC /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F25245E9BF700C3EBFC /* Line.swift */; };
-		624D5F72245E9CA700C3EBFC /* BoardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F26245E9BF700C3EBFC /* BoardModel.swift */; };
+		624D5F72245E9CA700C3EBFC /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F26245E9BF700C3EBFC /* GameModel.swift */; };
 		624D5F73245E9CA700C3EBFC /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F27245E9BF700C3EBFC /* Direction.swift */; };
 		624D5F74245E9CAA00C3EBFC /* BoardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D5F22245E9BF700C3EBFC /* BoardTests.swift */; };
 		624D5F7B245E9CE000C3EBFC /* MirrorDiffKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 624D5F7A245E9CE000C3EBFC /* MirrorDiffKit.framework */; };
@@ -84,6 +87,7 @@
 
 /* Begin PBXFileReference section */
 		2475E521D78A018A62633528 /* DiskCountModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskCountModel.swift; sourceTree = "<group>"; };
+		2475E7C0B00AB5D445B2844A /* GameState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
 		2475EB6A807B2C8DF846E859 /* Turn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Turn.swift; sourceTree = "<group>"; };
 		2475EB7245F8FF240763E4BF /* DiskCount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskCount.swift; sourceTree = "<group>"; };
 		624D5F1E245E9BF700C3EBFC /* Distance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Distance.swift; sourceTree = "<group>"; };
@@ -94,7 +98,7 @@
 		624D5F23245E9BF700C3EBFC /* LineContents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineContents.swift; sourceTree = "<group>"; };
 		624D5F24245E9BF700C3EBFC /* Coordinate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinate.swift; sourceTree = "<group>"; };
 		624D5F25245E9BF700C3EBFC /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
-		624D5F26245E9BF700C3EBFC /* BoardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardModel.swift; sourceTree = "<group>"; };
+		624D5F26245E9BF700C3EBFC /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
 		624D5F27245E9BF700C3EBFC /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 		624D5F2E245E9C4700C3EBFC /* ReversiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ReversiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		624D5F4B245E9C9700C3EBFC /* ReversiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ReversiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -152,7 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				624D5F20245E9BF700C3EBFC /* Board.swift */,
-				624D5F26245E9BF700C3EBFC /* BoardModel.swift */,
+				624D5F26245E9BF700C3EBFC /* GameModel.swift */,
 				624D5F22245E9BF700C3EBFC /* BoardTests.swift */,
 				624D5F24245E9BF700C3EBFC /* Coordinate.swift */,
 				624D5F1F245E9BF700C3EBFC /* DirectedDistance.swift */,
@@ -165,6 +169,7 @@
 				2475EB6A807B2C8DF846E859 /* Turn.swift */,
 				2475E521D78A018A62633528 /* DiskCountModel.swift */,
 				2475EB7245F8FF240763E4BF /* DiskCount.swift */,
+				2475E7C0B00AB5D445B2844A /* GameState.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -356,7 +361,7 @@
 				624D5F66245E9CA600C3EBFC /* LineContents.swift in Sources */,
 				624D5F63245E9CA600C3EBFC /* DirectedDistance.swift in Sources */,
 				624D5F62245E9CA600C3EBFC /* Distance.swift in Sources */,
-				624D5F69245E9CA600C3EBFC /* BoardModel.swift in Sources */,
+				624D5F69245E9CA600C3EBFC /* GameModel.swift in Sources */,
 				624D5F64245E9CA600C3EBFC /* Board.swift in Sources */,
 				62B7C4A5245E9E13006F58CE /* Disk.swift in Sources */,
 				624D5F68245E9CA600C3EBFC /* Line.swift in Sources */,
@@ -365,6 +370,7 @@
 				2475E179EC617218113F0DEB /* Turn.swift in Sources */,
 				2475EB139882181A6AADCF23 /* DiskCountModel.swift in Sources */,
 				2475E76C76E11D197E2B4AAE /* DiskCount.swift in Sources */,
+				2475E6254FCF9E7165CDF4A6 /* GameState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,7 +382,7 @@
 				624D5F6F245E9CA700C3EBFC /* LineContents.swift in Sources */,
 				624D5F6C245E9CA700C3EBFC /* DirectedDistance.swift in Sources */,
 				624D5F6B245E9CA700C3EBFC /* Distance.swift in Sources */,
-				624D5F72245E9CA700C3EBFC /* BoardModel.swift in Sources */,
+				624D5F72245E9CA700C3EBFC /* GameModel.swift in Sources */,
 				624D5F6D245E9CA700C3EBFC /* Board.swift in Sources */,
 				62B7C4A6245E9E42006F58CE /* Disk.swift in Sources */,
 				624D5F71245E9CA700C3EBFC /* Line.swift in Sources */,
@@ -385,6 +391,7 @@
 				2475E207203E1DD3D56FAD82 /* Turn.swift in Sources */,
 				2475EE272133E11F4DA39D76 /* DiskCountModel.swift in Sources */,
 				2475EEE011EBDB522D45B1EC /* DiskCount.swift in Sources */,
+				2475E9C7957A905A262B7B5B /* GameState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,4 +1,4 @@
-enum Turn: Hashable {
+enum Turn: CaseIterable, Hashable {
     case first
     case next
 
