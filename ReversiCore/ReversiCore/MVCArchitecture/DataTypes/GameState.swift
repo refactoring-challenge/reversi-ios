@@ -1,3 +1,8 @@
+// NOTE: This type has both a turn and board.
+// WHY: Because valid mutable operations to the board is depends on and affect to the turn and it must be
+//      atomic operations. Separating the properties into several smaller models is possible but it cannot
+//      ensure the atomicity without any aggregation wrapper models. And the wrapper model is not needed in
+//      the complexity.
 struct GameState {
     let board: Board
     let turn: Turn
@@ -16,6 +21,17 @@ struct GameState {
     }
 
 
+    func next(by selector: CoordinateSelector) -> GameState {
+        guard let availableCoordinates = NonEmptyArray(self.availableCoordinates()) else {
+            // NOTE: Must pass if no coordinates are available.
+            return self.unsafePass()
+        }
+
+        let selectedAvailableCoordinate = selector(availableCoordinates)
+        return self.unsafeNext(by: selectedAvailableCoordinate)
+    }
+
+
     // NOTE: It is unsafe because the available coordinate is possibly no longer available.
     func unsafeNext(by available: AvailableCoordinate) -> GameState {
         let linesShouldBeReplaced = self.availableLines()
@@ -31,19 +47,9 @@ struct GameState {
     }
 
 
+    // NOTE: It is unsafe because pass may be unavailable.
     func unsafePass() -> GameState {
         GameState(board: self.board, turn: self.turn.next)
-    }
-
-
-    func next(by selector: CoordinateSelector) -> GameState {
-        guard let availableCoordinates = NonEmptyArray(self.availableCoordinates()) else {
-            // NOTE: Must pass if no coordinates are available.
-            return self.unsafePass()
-        }
-
-        let selectedAvailableCoordinate = selector(availableCoordinates)
-        return self.unsafeNext(by: selectedAvailableCoordinate)
     }
 
 

@@ -15,11 +15,6 @@ protocol GameModelProtocol: class {
 
 
 class GameModel: GameModelProtocol {
-    // NOTE: This model has both a turn and board.
-    // WHY: Because valid mutable operations to the board is depends on and affect to the turn and it must be
-    //      atomic operations. Separating the properties into several smaller models is possible but it cannot
-    //      ensure the atomicity without any aggregation wrapper models. And the wrapper model is not needed in
-    //      the complexity.
     let gameStateDidChange: ReactiveSwift.Property<GameState>
     let availableCoordinatesDidChange: ReactiveSwift.Property<Set<Coordinate>>
 
