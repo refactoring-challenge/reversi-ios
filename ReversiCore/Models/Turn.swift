@@ -1,13 +1,13 @@
 enum Turn: CaseIterable, Hashable {
     case first
-    case next
+    case second
 
 
     var disk: Disk {
         switch self {
         case .first:
             return .dark
-        case .next:
+        case .second:
             return .light
         }
     }
@@ -16,8 +16,8 @@ enum Turn: CaseIterable, Hashable {
     var next: Turn {
         switch self {
         case .first:
-            return .next
-        case .next:
+            return .second
+        case .second:
             return .first
         }
     }

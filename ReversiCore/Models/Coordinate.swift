@@ -52,28 +52,45 @@ struct Coordinate: Hashable {
 
 extension Coordinate: CustomDebugStringConvertible {
     var debugDescription: String {
-        "(\(self.x.debugDescription), \(self.y.debugDescription))"
+        "\(self.x.debugDescription)\(self.y.debugDescription)"
     }
 }
 
 
 
 enum CoordinateX: Int, CaseIterable, Hashable {
-    case one = 1
-    case two
-    case three
-    case four
-    case five
-    case six
-    case seven
-    case eight
+    case a = 1
+    case b
+    case c
+    case d
+    case e
+    case f
+    case g
+    case h
 }
 
 
 
 extension CoordinateX: CustomDebugStringConvertible {
     var debugDescription: String {
-        "x=\(self.rawValue)"
+        switch self {
+        case .a:
+            return "a"
+        case .b:
+            return "b"
+        case .c:
+            return "c"
+        case .d:
+            return "d"
+        case .e:
+            return "e"
+        case .f:
+            return "f"
+        case .g:
+            return "g"
+        case .h:
+            return "h"
+        }
     }
 }
 
@@ -94,6 +111,6 @@ enum CoordinateY: Int, CaseIterable, Hashable {
 
 extension CoordinateY: CustomDebugStringConvertible {
     var debugDescription: String {
-        "y=\(self.rawValue)"
+        self.rawValue.description
     }
 }

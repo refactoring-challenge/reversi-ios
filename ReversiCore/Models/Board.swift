@@ -1,44 +1,9 @@
-struct Board<T> {
-    private let array: [[T]]
+struct Board: Equatable {
+    private let array: [[Disk?]]
 
 
-    init(unsafeArray: [[T]]) {
-        self.array = unsafeArray
-    }
-
-
-    // BUG1: Missing -1 for rawValue (CoordinateX and Y is 1-based)
-    subscript(_ coordinate: Coordinate) -> T {
-        // NOTE: all coordinates are bound by 8x8, so it must be success.
-        self.array[coordinate.y.rawValue - 1][coordinate.x.rawValue - 1]
-    }
-
-
-    func updated(value: T, at coordinate: Coordinate) -> Board {
-        var cloneArray = self.array
-        cloneArray[coordinate.y.rawValue - 1][coordinate.x.rawValue - 1] = value
-        return Board(unsafeArray: cloneArray)
-    }
-
-
-    func forEach(_ block: (T) -> Void) {
-        self.array.forEach { $0.forEach(block) }
-    }
-
-
-    // TODO: Serialize/deserialize methods
-}
-
-
-
-extension Board where T == Disk? {
-    subscript(_ line: Line) -> LineContents {
-        LineContents(board: self, line: line)
-    }
-
-
-    static func initial() -> Board<Disk?> {
-        Board<Disk?>(unsafeArray: [
+    static func initial() -> Board {
+        Board(unsafeArray: [
             [nil, nil, nil, nil, nil, nil, nil, nil],
             [nil, nil, nil, nil, nil, nil, nil, nil],
             [nil, nil, nil, nil, nil, nil, nil, nil],
@@ -48,6 +13,28 @@ extension Board where T == Disk? {
             [nil, nil, nil, nil, nil, nil, nil, nil],
             [nil, nil, nil, nil, nil, nil, nil, nil],
         ])
+    }
+
+
+    init(unsafeArray: [[Disk?]]) {
+        self.array = unsafeArray
+    }
+
+
+    // BUG1: Missing -1 for rawValue (CoordinateX and Y is 1-based)
+    subscript(_ coordinate: Coordinate) -> Disk? {
+        // NOTE: all coordinates are bound by 8x8, so it must be success.
+        self.array[coordinate.y.rawValue - 1][coordinate.x.rawValue - 1]
+    }
+
+
+    subscript(_ line: Line) -> LineContents {
+        LineContents(board: self, line: line)
+    }
+
+
+    func forEach(_ block: (Disk?) -> Void) {
+        self.array.forEach { $0.forEach(block) }
     }
 
 
@@ -67,6 +54,23 @@ extension Board where T == Disk? {
         }
 
         return DiskCount(light: light, dark: dark)
+    }
+
+
+    func gameResult() -> GameResult? {
+        let isGameSet = Turn.allCases.allSatisfy { turn in self.availableCoordinates(for: turn).isEmpty }
+        guard isGameSet else { return nil }
+
+        return self.countDisks().currentGameResult()
+    }
+
+
+    private func unsafeReplaced(with disk: Disk, on line: Line) -> Board {
+        var cloneArray = self.array
+        line.coordinates.forEach { coordinate in
+            cloneArray[coordinate.y.rawValue - 1][coordinate.x.rawValue - 1] = disk
+        }
+        return Board(unsafeArray: cloneArray)
     }
 
 
@@ -126,4 +130,7 @@ extension Board where T == Disk? {
 
         return result
     }
+
+
+    // TODO: Serialize/deserialize methods
 }

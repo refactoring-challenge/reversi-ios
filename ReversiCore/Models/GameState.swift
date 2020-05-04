@@ -1,5 +1,5 @@
-struct GameState {
-    let board: Board<Disk?>
+struct GameState: Equatable {
+    let board: Board
     let turn: Turn
 
 
@@ -17,6 +17,7 @@ struct GameState {
 
 
     func placed(at coordinate: Coordinate) -> GameState {
+        // PROBLEM: This type unexpectedly accept illegal operations.
         let nextBoard = self.board.updated(value: self.turn.disk, at: coordinate)
         return GameState(board: nextBoard, turn: self.turn.next)
     }

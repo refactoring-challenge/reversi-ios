@@ -21,6 +21,21 @@ struct Line: Hashable {
     }
 
 
+    var coordinates: Set<Coordinate> {
+        var coordinates = Set<Coordinate>()
+        var shorterLine: Line? = self
+
+        while let currentLine = shorterLine {
+            coordinates.insert(currentLine.end)
+            shorterLine = currentLine.shortened
+        }
+        // BUG2: Missing addition for start.
+        coordinates.insert(self.start)
+
+        return coordinates
+    }
+
+
     var shortened: Line? {
         guard let prevDirectedDistance = self.directedDistance.prev else {
             return nil
@@ -29,7 +44,7 @@ struct Line: Hashable {
     }
 
 
-    var grown: Line? {
+    var extended: Line? {
         guard let nextDirectedDistance = self.directedDistance.next else {
             return nil
         }

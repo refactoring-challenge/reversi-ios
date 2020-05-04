@@ -9,7 +9,7 @@ class BoardTests: XCTestCase {
         struct TestCase {
             let board: Board<Disk?>
             let turn: Turn
-            let expected: Set<Line>
+            let expected: Set<Coordinate>
         }
 
 
@@ -28,29 +28,14 @@ class BoardTests: XCTestCase {
                 ]),
                 turn: .first,
                 expected: Set([
-                    Line(
-                        start: Coordinate(x: .five, y: .four),
-                        unsafeEnd: Coordinate(x: .five, y: .six),
-                        directedDistance: DirectedDistance(direction: .bottom, distance: .two)
-                    ),
-                    Line(
-                        start: Coordinate(x: .five, y: .four),
-                        unsafeEnd: Coordinate(x: .three, y: .four),
-                        directedDistance: DirectedDistance(direction: .left, distance: .two)
-                    ),
-                    Line(
-                        start: Coordinate(x: .four, y: .five),
-                        unsafeEnd: Coordinate(x: .four, y: .three),
-                        directedDistance: DirectedDistance(direction: .top, distance: .two)
-                    ),
-                    Line(
-                        start: Coordinate(x: .four, y: .five),
-                        unsafeEnd: Coordinate(x: .six, y: .five),
-                        directedDistance: DirectedDistance(direction: .right, distance: .two)
-                    ),
+                    Coordinate(x: .e, y: .six),
+                    Coordinate(x: .c, y: .four),
+                    Coordinate(x: .d, y: .three),
+                    Coordinate(x: .f, y: .five),
                 ])
             ),
             #line: TestCase(
+                // XXX: This is not reachable board, but a good example to test board ends.
                 board: Board(unsafeArray: [
                     [nil, .light, .dark, nil, nil, nil, nil, nil],
                     [nil, nil, .dark, nil, nil, nil, nil, nil],
@@ -63,19 +48,30 @@ class BoardTests: XCTestCase {
                 ]),
                 turn: .first,
                 expected: Set([
-                    Line(
-                        start: Coordinate(x: .three, y: .one),
-                        unsafeEnd: Coordinate(x: .one, y: .one),
-                        directedDistance: DirectedDistance(direction: .left, distance: .two)
-                    ),
+                    Coordinate(x: .a, y: .one),
                 ])
+            ),
+            #line: TestCase(
+                // XXX: This is not reachable board, but a good example to test no available coordinates.
+                board: Board(unsafeArray: [
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, .light, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                ]),
+                turn: .first,
+                expected: Set()
             ),
         ]
 
         testCases.forEach {
             let (line, testCase) = $0
 
-            let actual = Set(testCase.board.availableLines(for: testCase.turn))
+            let actual = Set(testCase.board.availableCoordinates(for: testCase.turn))
             XCTAssertEqual(actual, testCase.expected, diff(between: testCase.expected, and: actual), line: line)
         }
     }

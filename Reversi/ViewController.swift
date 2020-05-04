@@ -1,4 +1,6 @@
 import UIKit
+import ReversiCore
+
 
 class ViewController: UIViewController {
     @IBOutlet private var boardView: BoardView!
@@ -137,7 +139,7 @@ extension ViewController {
     /// - Returns: `side` で指定された色のディスクを置ける盤上のすべてのセルの座標の配列です。
     func validMoves(for side: Disk) -> [(x: Int, y: Int)] {
         var coordinates: [(Int, Int)] = []
-        
+
         for y in boardView.yRange {
             for x in boardView.xRange {
                 if canPlaceDisk(side, atX: x, y: y) {
