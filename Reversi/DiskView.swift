@@ -1,4 +1,5 @@
 import UIKit
+import ReversiCore
 
 public class DiskView: UIView {
     /// このビューが表示するディスクの色を決定します。

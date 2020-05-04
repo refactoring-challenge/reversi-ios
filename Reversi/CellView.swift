@@ -1,4 +1,5 @@
 import UIKit
+import ReversiCore
 
 private let animationDuration: TimeInterval = 0.25
 

@@ -56,18 +56,6 @@ struct GameState {
     func reset() -> GameState {
         .initial
     }
-
-
-
-    // NOTE: AvailableCoordinate ensures the coordinate is almost valid.
-    struct AvailableCoordinate: Hashable {
-        let coordinate: Coordinate
-
-
-        fileprivate init(_ coordinate: Coordinate) {
-            self.coordinate = coordinate
-        }
-    }
 }
 
 
@@ -83,4 +71,27 @@ extension GameState: CustomDebugStringConvertible {
         \(self.board.debugDescription)
         """
     }
+}
+
+
+
+struct AvailableCoordinate {
+    let coordinate: Coordinate
+
+
+    // NOTE: AvailableCoordinate ensures the coordinate is almost valid by hiding initializer.
+    //       Only GameState can instantiate AvailableCoordinate.
+    fileprivate init(_ coordinate: Coordinate) {
+        self.coordinate = coordinate
+    }
+}
+
+
+
+extension AvailableCoordinate: Hashable {}
+
+
+
+extension AvailableCoordinate: CustomDebugStringConvertible {
+    var debugDescription: String { self.coordinate.debugDescription }
 }

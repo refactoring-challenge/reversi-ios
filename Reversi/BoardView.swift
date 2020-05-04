@@ -1,4 +1,5 @@
 import UIKit
+import ReversiCore
 
 private let lineWidth: CGFloat = 2
 

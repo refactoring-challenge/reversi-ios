@@ -13,7 +13,10 @@ enum GameCommand {
             case .cannotPass(on: let gameState):
                 return "Cannot pass on:\n\(gameState.debugDescription)"
             case .cannotPlace(at: let coordinate, on: let gameState):
-                return "Cannot place at \(coordinate) on:\n\(gameState.debugDescription)"
+                let availableCoordinateString = gameState.availableCoordinates()
+                    .map { $0.debugDescription }
+                    .joined(separator: ", ")
+                return "Cannot place at \(coordinate).\nAvailable coordinates: \(availableCoordinateString)\n\n\(gameState.debugDescription)"
             }
         }
     }

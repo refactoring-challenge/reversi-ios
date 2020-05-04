@@ -4,7 +4,8 @@ import ReactiveSwift
 
 protocol GameModelProtocol: class {
     var gameStateDidChange: ReactiveSwift.Property<GameState> { get }
-    var availableCoordinatesDidChange: ReactiveSwift.Property<Set<Coordinate>> { get }
+    var availableCoordinatesDidChange: ReactiveSwift.Property<Set<AvailableCoordinate>> { get }
+    var gameResultDidChange: ReactiveSwift.Property<GameResult?> { get }
 
     func pass()
     func place(at: Coordinate)
@@ -16,11 +17,12 @@ protocol GameModelProtocol: class {
 
 class GameModel: GameModelProtocol {
     let gameStateDidChange: ReactiveSwift.Property<GameState>
-    let availableCoordinatesDidChange: ReactiveSwift.Property<Set<Coordinate>>
+    let availableCoordinatesDidChange: ReactiveSwift.Property<Set<AvailableCoordinate>>
+    let gameResultDidChange: ReactiveSwift.Property<GameResult?>
 
 
     private let gameStateDidChangeMutable: ReactiveSwift.MutableProperty<GameState>
-    private var availableCoordinates: Set<GameState.AvailableCoordinate> {
+    private var availableCoordinates: Set<AvailableCoordinate> {
         self.gameState.availableCoordinates()
     }
     private var gameState: GameState {
@@ -35,9 +37,9 @@ class GameModel: GameModelProtocol {
         self.gameStateDidChange = ReactiveSwift.Property(gameStateDidChangeMutable)
 
         self.availableCoordinatesDidChange = gameStateDidChangeMutable
-            .map { gameState in
-            gameState.board.availableCoordinates(for: gameState.turn)
-        }
+            .map { gameState in gameState.availableCoordinates() }
+        self.gameResultDidChange = gameStateDidChangeMutable
+            .map { gameState in gameState.board.gameResult() }
     }
 
 
@@ -69,7 +71,7 @@ class GameModel: GameModelProtocol {
     }
 
 
-    private func getAvailableCoordinate(from coordinate: Coordinate) -> GameState.AvailableCoordinate? {
+    private func getAvailableCoordinate(from coordinate: Coordinate) -> AvailableCoordinate? {
         self.availableCoordinates
             .filter { available in available.coordinate == coordinate }
             .first

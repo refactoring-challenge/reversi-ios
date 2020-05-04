@@ -2,11 +2,17 @@ public enum Disk {
     case dark
     case light
 
+    public static let sides: [Disk] = Disk.allCases
+
     public var flipped: Disk {
         switch self {
         case .dark: return .light
         case .light: return .dark
         }
+    }
+
+    public mutating func flip() {
+        self = self.flipped
     }
 }
 

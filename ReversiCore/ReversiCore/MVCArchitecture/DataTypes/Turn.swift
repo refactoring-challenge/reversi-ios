@@ -25,8 +25,7 @@ enum Turn: CaseIterable {
 
 
 
-extension Turn: Hashable {
-}
+extension Turn: Hashable {}
 
 
 

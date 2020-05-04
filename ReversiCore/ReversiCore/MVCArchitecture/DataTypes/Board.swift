@@ -129,7 +129,8 @@ struct Board {
                         break lineContentsLoop
 
                     case .available:
-                        result.insert(line)
+                        // BUG7: Wrongly use base lines that have constant distance for all search.
+                        result.insert(lineContents.line)
                     }
 
                     nextLineContents = LineContents(expandingTo: lineContents, on: self)
@@ -158,14 +159,16 @@ extension Board: CustomDebugStringConvertible {
             .map {
                 let (y, rowX) = $0
                 let charsX = rowX.map { $0.description }.joined()
-                return "\(y.debugDescription) |\(charsX)"
+                return "\(y.debugDescription) |\(charsX)| \(y.debugDescription)"
             }
             .joined(separator: "\n")
 
         return """
                   \(headerX)
-                 +----------
+                 +--------+
                \(linesY)
+                 +--------+
+                  \(headerX)
                """
     }
 }

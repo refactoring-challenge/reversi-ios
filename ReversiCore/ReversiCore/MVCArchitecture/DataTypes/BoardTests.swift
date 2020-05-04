@@ -66,6 +66,25 @@ class BoardTests: XCTestCase {
                 turn: .first,
                 expected: Set()
             ),
+            #line: TestCase(
+                board: Board(unsafeArray: [
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, .dark, .dark, .dark, nil, nil, nil],
+                    [nil, nil, nil, .dark, .light, .light, .light, nil],
+                    [nil, nil, nil, nil, nil, .light, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                ]),
+                turn: .first,
+                expected: Set([
+                    Coordinate(x: .g, y: .seven),
+                    Coordinate(x: .g, y: .six),
+                    Coordinate(x: .h, y: .five),
+                    Coordinate(x: .e, y: .six),
+                ])
+            ),
             // SEE: Fig.6 of https://ja.wikipedia.org/wiki/%E3%82%AA%E3%82%BB%E3%83%AD_(%E3%83%9C%E3%83%BC%E3%83%89%E3%82%B2%E3%83%BC%E3%83%A0)#%E5%9F%BA%E6%9C%AC%E3%83%AB%E3%83%BC%E3%83%AB
             #line: TestCase(
                 board: Board(unsafeArray: [
