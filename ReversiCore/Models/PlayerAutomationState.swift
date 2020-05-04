@@ -1,9 +1,9 @@
-public enum PlayerAutomationState {
+enum PlayerAutomationState {
     case enabled
     case disabled
 
 
-    public var toggled: PlayerAutomationState {
+    var toggled: PlayerAutomationState {
         switch self {
         case .enabled:
             return .disabled

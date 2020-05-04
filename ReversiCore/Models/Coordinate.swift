@@ -1,15 +1,15 @@
-public struct Coordinate: Hashable {
-    public let x: CoordinateX
-    public let y: CoordinateY
+struct Coordinate: Hashable {
+    let x: CoordinateX
+    let y: CoordinateY
 
 
-    public init(x: CoordinateX, y: CoordinateY) {
+    init(x: CoordinateX, y: CoordinateY) {
         self.x = x
         self.y = y
     }
 
 
-    public func moved(to directedDistance: DirectedDistance) -> Coordinate? {
+    func moved(to directedDistance: DirectedDistance) -> Coordinate? {
         // NOTE: Be nil if the X is out of boards.
         let unsafeX: CoordinateX?
         switch directedDistance.direction {
@@ -41,7 +41,7 @@ public struct Coordinate: Hashable {
     }
 
 
-    public static let allCases: [Coordinate] = CoordinateY.allCases.flatMap { y in
+    static let allCases: [Coordinate] = CoordinateY.allCases.flatMap { y in
         CoordinateX.allCases.map { x in
             Coordinate(x: x, y: y)
         }
@@ -51,14 +51,14 @@ public struct Coordinate: Hashable {
 
 
 extension Coordinate: CustomDebugStringConvertible {
-    public var debugDescription: String {
+    var debugDescription: String {
         "\(self.x.debugDescription)\(self.y.debugDescription)"
     }
 }
 
 
 
-public enum CoordinateX: Int, CaseIterable, Hashable {
+enum CoordinateX: Int, CaseIterable, Hashable {
     case a = 1
     case b
     case c
@@ -72,7 +72,7 @@ public enum CoordinateX: Int, CaseIterable, Hashable {
 
 
 extension CoordinateX: CustomDebugStringConvertible {
-    public var debugDescription: String {
+    var debugDescription: String {
         switch self {
         case .a:
             return "a"
@@ -96,7 +96,7 @@ extension CoordinateX: CustomDebugStringConvertible {
 
 
 
-public enum CoordinateY: Int, CaseIterable, Hashable {
+enum CoordinateY: Int, CaseIterable, Hashable {
     case one = 1
     case two
     case three
@@ -110,7 +110,7 @@ public enum CoordinateY: Int, CaseIterable, Hashable {
 
 
 extension CoordinateY: CustomDebugStringConvertible {
-    public var debugDescription: String {
+    var debugDescription: String {
         self.rawValue.description
     }
 }

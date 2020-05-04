@@ -2,15 +2,15 @@ import ReactiveSwift
 
 
 
-public protocol PlayerAutomationStateModelProtocol {
+protocol PlayerAutomationStateModelProtocol {
     var playerAutomationStateDidChange: ReactiveSwift.Property<PlayerAutomationState> { get }
     func toggle()
 }
 
 
 
-public class PlayerAutomationStateModel: PlayerAutomationStateModelProtocol {
-    public let playerAutomationStateDidChange: ReactiveSwift.Property<PlayerAutomationState>
+class PlayerAutomationStateModel: PlayerAutomationStateModelProtocol {
+    let playerAutomationStateDidChange: ReactiveSwift.Property<PlayerAutomationState>
 
     private let playerAutomationStateDidChangeMutable: ReactiveSwift.MutableProperty<PlayerAutomationState>
     private var playerAutomationState: PlayerAutomationState {
@@ -20,7 +20,7 @@ public class PlayerAutomationStateModel: PlayerAutomationStateModelProtocol {
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
-    public init(gameModel: GameModelProtocol, playerAutomationState: PlayerAutomationState) {
+    init(gameModel: GameModelProtocol, playerAutomationState: PlayerAutomationState) {
         let playerAutomationStateDidChangeMutable = ReactiveSwift.MutableProperty(playerAutomationState)
         self.playerAutomationStateDidChangeMutable = playerAutomationStateDidChangeMutable
         self.playerAutomationStateDidChange = ReactiveSwift.Property(playerAutomationStateDidChangeMutable)
@@ -50,7 +50,7 @@ public class PlayerAutomationStateModel: PlayerAutomationStateModelProtocol {
     }
 
 
-    public func toggle() {
+    func toggle() {
         self.playerAutomationState = self.playerAutomationState.toggled
     }
 }

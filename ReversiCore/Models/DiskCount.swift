@@ -1,9 +1,9 @@
-public struct DiskCount: Hashable {
-    public let light: Int
-    public let dark: Int
+struct DiskCount: Hashable {
+    let light: Int
+    let dark: Int
 
 
-    public func currentGameResult() -> GameResult {
+    func currentGameResult() -> GameResult {
         if self.dark == self.light {
             return .draw
         }

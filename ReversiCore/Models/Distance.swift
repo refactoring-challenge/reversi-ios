@@ -1,4 +1,4 @@
-public enum Distance: Int, CaseIterable, Hashable {
+enum Distance: Int, CaseIterable, Hashable {
     case one = 1
     case two
     case three
@@ -8,12 +8,12 @@ public enum Distance: Int, CaseIterable, Hashable {
     case seven
 
 
-    public var prev: Distance? {
+    var prev: Distance? {
         Distance(rawValue: self.rawValue - 1)
     }
 
 
-    public var next: Distance? {
+    var next: Distance? {
         Distance(rawValue: self.rawValue + 1)
     }
 
@@ -21,8 +21,8 @@ public enum Distance: Int, CaseIterable, Hashable {
     // NOTE: Distance.allCases are ordered by their declaration, so they are ordered by ascendant.
     // > The synthesized allCases collection provides the cases in order of their declaration.
     // > https://developer.apple.com/documentation/swift/caseiterable
-    public static let allCasesByAscendant = Distance.allCases
+    static let allCasesByAscendant = Distance.allCases
 
 
-    public static let AllCasesLongerThan1ByAscendant = Distance.allCasesByAscendant.dropFirst()
+    static let AllCasesLongerThan1ByAscendant = Distance.allCasesByAscendant.dropFirst()
 }

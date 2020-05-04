@@ -2,7 +2,7 @@ import ReactiveSwift
 
 
 
-public protocol GameModelProtocol: class {
+protocol GameModelProtocol: class {
     var gameStateDidChange: ReactiveSwift.Property<GameState> { get }
     var availableCoordinatesDidChange: ReactiveSwift.Property<Set<Coordinate>> { get }
 
@@ -13,14 +13,14 @@ public protocol GameModelProtocol: class {
 
 
 
-public class GameModel: GameModelProtocol {
+class GameModel: GameModelProtocol {
     // NOTE: This model has both a turn and board.
     // WHY: Because valid mutable operations to the board is depends on and affect to the turn and it must be
     //      atomic operations. Separating the properties into several smaller models is possible but it cannot
     //      ensure the atomicity without any aggregation wrapper models. And the wrapper model is not needed in
     //      the complexity.
-    public let gameStateDidChange: ReactiveSwift.Property<GameState>
-    public let availableCoordinatesDidChange: ReactiveSwift.Property<Set<Coordinate>>
+    let gameStateDidChange: ReactiveSwift.Property<GameState>
+    let availableCoordinatesDidChange: ReactiveSwift.Property<Set<Coordinate>>
 
 
     private let gameStateDidChangeMutable: ReactiveSwift.MutableProperty<GameState>
@@ -30,7 +30,7 @@ public class GameModel: GameModelProtocol {
     }
 
 
-    public init(startsWith gameState: GameState) {
+    init(startsWith gameState: GameState) {
         let gameStateDidChangeMutable = ReactiveSwift.MutableProperty<GameState>(gameState)
         self.gameStateDidChangeMutable = gameStateDidChangeMutable
         self.gameStateDidChange = ReactiveSwift.Property(gameStateDidChangeMutable)
@@ -40,17 +40,17 @@ public class GameModel: GameModelProtocol {
     }
 
 
-    public func pass() {
+    func pass() {
         self.gameState = self.gameState.passed()
     }
 
 
-    public func placeDisk(at coordinate: Coordinate) {
+    func placeDisk(at coordinate: Coordinate) {
         self.gameState = self.gameState.placed(at: coordinate)
     }
 
 
-    public func reset() {
+    func reset() {
         self.gameState = self.gameState.reset()
     }
 }

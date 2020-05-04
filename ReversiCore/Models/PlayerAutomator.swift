@@ -1,6 +1,6 @@
-public enum PlayerAutomator {
+enum PlayerAutomator {
     // NOTE: Prohibit illegal pass because players cannot pass if one or more available coordinate exist.
-    public static func select(from availableCoordinates: NonEmptyArray<Coordinate>) -> Coordinate {
+    static func select(from availableCoordinates: NonEmptyArray<Coordinate>) -> Coordinate {
         availableCoordinates.randomElement()
     }
 }

@@ -1,9 +1,9 @@
-public struct DirectedDistance: Hashable {
-    public let direction: Direction
-    public let distance: Distance
+struct DirectedDistance: Hashable {
+    let direction: Direction
+    let distance: Distance
 
 
-    public var next: DirectedDistance? {
+    var next: DirectedDistance? {
         guard let nextDistance = self.distance.next else {
             return nil
         }
@@ -11,7 +11,7 @@ public struct DirectedDistance: Hashable {
     }
 
 
-    public var prev: DirectedDistance? {
+    var prev: DirectedDistance? {
         guard let prevDistance = self.distance.prev else {
             return nil
         }
