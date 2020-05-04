@@ -1,9 +1,9 @@
-struct DirectedDistance: Hashable {
+struct DirectedDistance {
     let direction: Direction
     let distance: Distance
 
 
-    var next: DirectedDistance? {
+    var extended: DirectedDistance? {
         guard let nextDistance = self.distance.next else {
             return nil
         }
@@ -11,7 +11,7 @@ struct DirectedDistance: Hashable {
     }
 
 
-    var prev: DirectedDistance? {
+    var shortened: DirectedDistance? {
         guard let prevDistance = self.distance.prev else {
             return nil
         }
@@ -20,8 +20,5 @@ struct DirectedDistance: Hashable {
 }
 
 
-extension DirectedDistance: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        "direction=\(self.direction), distance=\(self.distance)"
-    }
-}
+
+extension DirectedDistance: Hashable {}

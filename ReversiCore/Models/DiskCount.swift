@@ -1,4 +1,4 @@
-struct DiskCount: Hashable {
+struct DiskCount {
     let light: Int
     let dark: Int
 
@@ -12,3 +12,7 @@ struct DiskCount: Hashable {
             : .win(who: .second)
     }
 }
+
+
+
+extension DiskCount: Hashable {}

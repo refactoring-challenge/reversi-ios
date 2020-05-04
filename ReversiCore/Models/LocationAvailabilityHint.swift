@@ -1,14 +1,16 @@
-enum LocationAvailabilityHint: Equatable {
+enum LocationAvailabilityHint {
     case available
     case unavailable(because: Reason)
 
 
-    enum Reason: Equatable {
+
+    enum Reason {
         case startIsNotSameColor
         case endIsNotEmpty
         case lineIsTooShort
         case disksOnLineIncludingEmptyOrSameColor
     }
+
 
 
     static func from(lineContents: LineContents, turn: Turn) -> LocationAvailabilityHint {
@@ -27,7 +29,7 @@ enum LocationAvailabilityHint: Equatable {
             return .unavailable(because: .endIsNotEmpty)
         }
 
-        let disksBetweenStartAndEnd = lineContents.disks[1..<lineContents.disks.count-1]
+        let disksBetweenStartAndEnd = lineContents.disks[1..<lineContents.disks.count - 1]
         guard disksBetweenStartAndEnd.count > 0 else {
             return .unavailable(because: .lineIsTooShort)
         }
@@ -42,3 +44,11 @@ enum LocationAvailabilityHint: Equatable {
         return .available
     }
 }
+
+
+
+extension LocationAvailabilityHint: Equatable {}
+
+
+
+extension LocationAvailabilityHint.Reason: Equatable {}

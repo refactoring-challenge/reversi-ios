@@ -1,4 +1,4 @@
-struct Coordinate: Hashable {
+struct Coordinate {
     let x: CoordinateX
     let y: CoordinateY
 
@@ -50,6 +50,10 @@ struct Coordinate: Hashable {
 
 
 
+extension Coordinate: Hashable {}
+
+
+
 extension Coordinate: CustomDebugStringConvertible {
     var debugDescription: String {
         "\(self.x.debugDescription)\(self.y.debugDescription)"
@@ -58,7 +62,7 @@ extension Coordinate: CustomDebugStringConvertible {
 
 
 
-enum CoordinateX: Int, CaseIterable, Hashable {
+enum CoordinateX: Int, CaseIterable {
     case a = 1
     case b
     case c
@@ -68,6 +72,10 @@ enum CoordinateX: Int, CaseIterable, Hashable {
     case g
     case h
 }
+
+
+
+extension CoordinateX: Hashable {}
 
 
 
@@ -96,7 +104,7 @@ extension CoordinateX: CustomDebugStringConvertible {
 
 
 
-enum CoordinateY: Int, CaseIterable, Hashable {
+enum CoordinateY: Int, CaseIterable {
     case one = 1
     case two
     case three
@@ -106,6 +114,10 @@ enum CoordinateY: Int, CaseIterable, Hashable {
     case seven
     case eight
 }
+
+
+
+extension CoordinateY: Hashable {}
 
 
 

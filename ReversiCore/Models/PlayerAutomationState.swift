@@ -12,3 +12,7 @@ enum PlayerAutomationState {
         }
     }
 }
+
+
+
+extension PlayerAutomationState: Equatable {}

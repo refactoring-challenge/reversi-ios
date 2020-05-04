@@ -1,30 +1,40 @@
-enum GameCommand: Equatable {
+enum GameCommand {
     case pass
     case place(at: Coordinate)
 
 
-    func unsafeExecute(on gameState: GameState) -> GameState {
-        let availableCoordinates = gameState.availableCoordinates()
 
-        switch self {
-        case .pass:
-            guard availableCoordinates.isEmpty else {
-                fatalError("GameCommand: Cannot pass because available coordinates exist:\n\(formatCoordinate(availableCoordinates))")
-            }
-            return gameState.passed()
+    enum PreconditionFailure: Error, CustomDebugStringConvertible {
+        case cannotPass(on: GameState)
+        case cannotPlace(at: Coordinate, on: GameState)
 
-        case .place(at: let coordinate):
-            guard availableCoordinates.contains(coordinate) else {
-                fatalError("GameCommand: Cannot place at {\(coordinate)} because it is not available:\n\(formatCoordinate(availableCoordinates))")
+        var debugDescription: String {
+            switch self {
+            case .cannotPass(on: let gameState):
+                return "Cannot pass on:\n\(gameState.debugDescription)"
+            case .cannotPlace(at: let coordinate, on: let gameState):
+                return "Cannot place at \(coordinate) on:\n\(gameState.debugDescription)"
             }
-            return gameState.placed(at: coordinate)
         }
     }
-}
 
 
-private func formatCoordinate<S: Sequence>(_ coordinates: S) -> String where S.Element == Coordinate {
-    coordinates
-        .map { "\t\($0.debugDescription)" }
-        .joined(separator: "\n")
+
+    func unsafeExecute(on gameState: GameState) throws -> GameState {
+        switch self {
+        case .pass:
+            guard gameState.availableCoordinates().isEmpty else {
+                throw PreconditionFailure.cannotPass(on: gameState)
+            }
+            return gameState.unsafePass()
+
+        case .place(at: let coordinate):
+            guard let availableCoordinate = gameState.availableCoordinates()
+                .filter({ available in available.coordinate == coordinate })
+                .first else {
+                throw PreconditionFailure.cannotPlace(at: coordinate, on: gameState)
+            }
+            return gameState.unsafeNext(by: availableCoordinate)
+        }
+    }
 }

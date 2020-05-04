@@ -1,4 +1,4 @@
-enum Direction: CaseIterable, Hashable {
+enum Direction: CaseIterable {
     case top
     case topRight
     case right
@@ -8,3 +8,7 @@ enum Direction: CaseIterable, Hashable {
     case left
     case topLeft
 }
+
+
+
+extension Direction: Hashable {}

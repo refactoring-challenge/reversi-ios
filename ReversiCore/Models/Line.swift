@@ -1,4 +1,4 @@
-struct Line: Hashable {
+struct Line {
     let start: Coordinate
     let end: Coordinate
     let directedDistance: DirectedDistance
@@ -21,23 +21,23 @@ struct Line: Hashable {
     }
 
 
-    var coordinates: Set<Coordinate> {
-        var coordinates = Set<Coordinate>()
+    var coordinates: [Coordinate] {
+        var coordinates = [Coordinate]()
         var shorterLine: Line? = self
 
         while let currentLine = shorterLine {
-            coordinates.insert(currentLine.end)
+            coordinates.insert(currentLine.end, at: 0)
             shorterLine = currentLine.shortened
         }
         // BUG2: Missing addition for start.
-        coordinates.insert(self.start)
+        coordinates.insert(self.start, at: 0)
 
         return coordinates
     }
 
 
     var shortened: Line? {
-        guard let prevDirectedDistance = self.directedDistance.prev else {
+        guard let prevDirectedDistance = self.directedDistance.shortened else {
             return nil
         }
         return Line(start: start, directedDistance: prevDirectedDistance)
@@ -45,7 +45,7 @@ struct Line: Hashable {
 
 
     var extended: Line? {
-        guard let nextDirectedDistance = self.directedDistance.next else {
+        guard let nextDirectedDistance = self.directedDistance.extended else {
             return nil
         }
         return Line(start: start, directedDistance: nextDirectedDistance)
@@ -54,8 +54,4 @@ struct Line: Hashable {
 
 
 
-extension Line: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        "{Line: start=\(self.start.debugDescription), end=\(self.end.debugDescription), \(self.directedDistance)}"
-    }
-}
+extension Line: Hashable {}

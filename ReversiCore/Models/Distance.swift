@@ -1,4 +1,4 @@
-enum Distance: Int, CaseIterable, Hashable {
+enum Distance: Int, CaseIterable {
     case one = 1
     case two
     case three
@@ -26,3 +26,7 @@ enum Distance: Int, CaseIterable, Hashable {
 
     static let AllCasesLongerThan1ByAscendant = Distance.allCasesByAscendant.dropFirst()
 }
+
+
+
+extension Distance: Hashable {}

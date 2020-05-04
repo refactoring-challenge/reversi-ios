@@ -1,4 +1,4 @@
-struct Board: Equatable {
+struct Board {
     private let array: [[Disk?]]
 
 
@@ -34,7 +34,9 @@ struct Board: Equatable {
 
 
     func forEach(_ block: (Disk?) -> Void) {
-        self.array.forEach { $0.forEach(block) }
+        self.array.forEach {
+            $0.forEach(block)
+        }
     }
 
 
@@ -58,14 +60,18 @@ struct Board: Equatable {
 
 
     func gameResult() -> GameResult? {
-        let isGameSet = Turn.allCases.allSatisfy { turn in self.availableCoordinates(for: turn).isEmpty }
-        guard isGameSet else { return nil }
+        let isGameSet = Turn.allCases.allSatisfy { turn in
+            self.availableCoordinates(for: turn).isEmpty
+        }
+        guard isGameSet else {
+            return nil
+        }
 
         return self.countDisks().currentGameResult()
     }
 
 
-    private func unsafeReplaced(with disk: Disk, on line: Line) -> Board {
+    func unsafeReplaced(with disk: Disk, on line: Line) -> Board {
         var cloneArray = self.array
         line.coordinates.forEach { coordinate in
             cloneArray[coordinate.y.rawValue - 1][coordinate.x.rawValue - 1] = disk
@@ -98,12 +104,13 @@ struct Board: Equatable {
                 }
 
                 var nextLineContents: LineContents? = self[line]
-                while let lineContents = nextLineContents {
-                    switch LocationAvailabilityHint.from(lineContents: lineContents, turn: turn) {
+                lineContentsLoop: while let lineContents = nextLineContents {
+                    let hint = LocationAvailabilityHint.from(lineContents: lineContents, turn: turn)
+                    switch hint {
                     case .unavailable(because: .startIsNotSameColor), .unavailable(because: .lineIsTooShort):
                         // NOTE: .startIsNotSameColor is not reachable because coordinates to search are already filtered.
                         // NOTE: .lineIsTooShort is not reachable because the distances to search start with 2.
-                        fatalError("unreachable \(line) \(lineContents)")
+                        fatalError("unreachable \(hint)\n\(line) \(lineContents)\n\(self.debugDescription)")
 
                     case .unavailable(because: .endIsNotEmpty):
                         // NOTE: Continue because the longer lines may be available if the end is not empty.
@@ -113,11 +120,13 @@ struct Board: Equatable {
                         // A: start
                         // B: not empty
                         // C: available
-                        continue
+                        // BUG6: Loop forever because using continue cause unchanged nextLineContents.
+                        break
 
                     case .unavailable(because: .disksOnLineIncludingEmptyOrSameColor):
                         // NOTE: Longer lines cannot be available.
-                        break
+                        // BUG5: Misunderstand that the break without any labels break from lineContentsLoop.
+                        break lineContentsLoop
 
                     case .available:
                         result.insert(line)
@@ -133,4 +142,30 @@ struct Board: Equatable {
 
 
     // TODO: Serialize/deserialize methods
+}
+
+
+
+extension Board: Equatable {}
+
+
+
+extension Board: CustomDebugStringConvertible {
+    var debugDescription: String {
+        let headerX = CoordinateX.allCases.map { $0.debugDescription }.joined()
+
+        let linesY = zip(CoordinateY.allCases, self.array)
+            .map {
+                let (y, rowX) = $0
+                let charsX = rowX.map { $0.description }.joined()
+                return "\(y.debugDescription) |\(charsX)"
+            }
+            .joined(separator: "\n")
+
+        return """
+                  \(headerX)
+                 +----------
+               \(linesY)
+               """
+    }
 }

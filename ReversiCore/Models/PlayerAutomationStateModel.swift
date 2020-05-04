@@ -25,26 +25,21 @@ class PlayerAutomationStateModel: PlayerAutomationStateModelProtocol {
         self.playerAutomationStateDidChangeMutable = playerAutomationStateDidChangeMutable
         self.playerAutomationStateDidChange = ReactiveSwift.Property(playerAutomationStateDidChangeMutable)
 
-
         ReactiveSwift.Property
             .combineLatest(gameModel.gameStateDidChange, self.playerAutomationStateDidChange)
             .signal
             .take(during: self.lifetime)
             .observeValues { [weak gameModel] in
                 guard let gameModel = gameModel else { return }
+                let (_, playerAutomationState) = $0
 
-                let (gameState, playerAutomationState) = $0
                 switch playerAutomationState {
                 case .disabled:
                     // Do nothing.
                     return
+
                 case .enabled:
-                    guard let availableCoordinates = NonEmptyArray(gameState.availableCoordinates()) else {
-                        gameModel.pass()
-                        return
-                    }
-                    let coordinateSelectedByAutomator = PlayerAutomator.select(from: availableCoordinates)
-                    gameModel.placeDisk(at: coordinateSelectedByAutomator)
+                    gameModel.next(by: PlayerAutomator.randomSelector)
                 }
             }
     }

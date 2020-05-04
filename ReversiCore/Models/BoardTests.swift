@@ -7,7 +7,7 @@ import MirrorDiffKit
 class BoardTests: XCTestCase {
     func testAvailability() {
         struct TestCase {
-            let board: Board<Disk?>
+            let board: Board
             let turn: Turn
             let expected: Set<Coordinate>
         }
@@ -61,6 +61,21 @@ class BoardTests: XCTestCase {
                     [nil, nil, nil, nil, nil, nil, nil, nil],
                     [nil, nil, nil, nil, nil, nil, nil, nil],
                     [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                ]),
+                turn: .first,
+                expected: Set()
+            ),
+            // SEE: Fig.6 of https://ja.wikipedia.org/wiki/%E3%82%AA%E3%82%BB%E3%83%AD_(%E3%83%9C%E3%83%BC%E3%83%89%E3%82%B2%E3%83%BC%E3%83%A0)#%E5%9F%BA%E6%9C%AC%E3%83%AB%E3%83%BC%E3%83%AB
+            #line: TestCase(
+                board: Board(unsafeArray: [
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                    [nil, nil, .dark, .dark, .dark, nil, nil, .light],
+                    [nil, nil, nil, .dark, .dark, .dark, .light, .light],
+                    [nil, nil, nil, nil, nil, .dark, nil, .light],
+                    [nil, nil, nil, nil, nil, .dark, nil, nil],
                     [nil, nil, nil, nil, nil, nil, nil, nil],
                 ]),
                 turn: .first,

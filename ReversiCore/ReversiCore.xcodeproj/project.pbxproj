@@ -8,22 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		2475E179EC617218113F0DEB /* Turn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB6A807B2C8DF846E859 /* Turn.swift */; };
-		2475E1901DF8253AB9E2A3E8 /* GameCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E653E8D0BC633BC819DC /* GameCommand.swift */; };
 		2475E1A8C321B33F994F1B26 /* NonEmptyArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E821A50DB3FBEA202465 /* NonEmptyArray.swift */; };
 		2475E207203E1DD3D56FAD82 /* Turn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB6A807B2C8DF846E859 /* Turn.swift */; };
 		2475E294CAEF77B09DB09C64 /* PlayerAutomationStateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EA9FA815D35A6C0C79EC /* PlayerAutomationStateModel.swift */; };
 		2475E2AC28D62D2C235E8F69 /* PlayerAutomationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475ED47315D04EBAEF3BFCE /* PlayerAutomationState.swift */; };
+		2475E322AFBA33C5C3D8B5B9 /* CoordinateSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475ECCD8B460C170B9708F0 /* CoordinateSelector.swift */; };
+		2475E3B3208865C1036C1804 /* GameCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E24A52F507ECD51D60FE /* GameCommand.swift */; };
 		2475E53B70BE9938022887AF /* PlayerAutomator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E3689BD2678048543EC5 /* PlayerAutomator.swift */; };
 		2475E5D521E102650D44250F /* NonEmptyArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E821A50DB3FBEA202465 /* NonEmptyArray.swift */; };
 		2475E6254FCF9E7165CDF4A6 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E7C0B00AB5D445B2844A /* GameState.swift */; };
 		2475E66F4206F7610B4764E4 /* GameResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EF840F6D3A3EA59C38BE /* GameResult.swift */; };
 		2475E76C76E11D197E2B4AAE /* DiskCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB7245F8FF240763E4BF /* DiskCount.swift */; };
+		2475E7FF6E8ED46EA72E7E22 /* CoordinateSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475ECCD8B460C170B9708F0 /* CoordinateSelector.swift */; };
 		2475E9C7957A905A262B7B5B /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E7C0B00AB5D445B2844A /* GameState.swift */; };
 		2475EA08DFA1D3F47410512F /* PlayerAutomationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475ED47315D04EBAEF3BFCE /* PlayerAutomationState.swift */; };
 		2475EA5E31DF29CD2A1A085B /* PlayerAutomator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E3689BD2678048543EC5 /* PlayerAutomator.swift */; };
+		2475EA88543C5959CA3387F5 /* GameCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E24A52F507ECD51D60FE /* GameCommand.swift */; };
 		2475EB139882181A6AADCF23 /* DiskCountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E521D78A018A62633528 /* DiskCountModel.swift */; };
 		2475EC020DD3600DA524BACC /* PlayerAutomationStateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EA9FA815D35A6C0C79EC /* PlayerAutomationStateModel.swift */; };
-		2475ED6B29719441057118D8 /* GameCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E653E8D0BC633BC819DC /* GameCommand.swift */; };
 		2475EDA6EC61F8A6C737AA4A /* GameStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E11280E8CBA18D753E72 /* GameStateTests.swift */; };
 		2475EE272133E11F4DA39D76 /* DiskCountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E521D78A018A62633528 /* DiskCountModel.swift */; };
 		2475EEAAA2481F19A3A1AE3F /* GameResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EF840F6D3A3EA59C38BE /* GameResult.swift */; };
@@ -99,14 +101,15 @@
 
 /* Begin PBXFileReference section */
 		2475E11280E8CBA18D753E72 /* GameStateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameStateTests.swift; sourceTree = "<group>"; };
+		2475E24A52F507ECD51D60FE /* GameCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCommand.swift; sourceTree = "<group>"; };
 		2475E3689BD2678048543EC5 /* PlayerAutomator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAutomator.swift; sourceTree = "<group>"; };
 		2475E521D78A018A62633528 /* DiskCountModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskCountModel.swift; sourceTree = "<group>"; };
-		2475E653E8D0BC633BC819DC /* GameCommand.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameCommand.swift; sourceTree = "<group>"; };
 		2475E7C0B00AB5D445B2844A /* GameState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
 		2475E821A50DB3FBEA202465 /* NonEmptyArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonEmptyArray.swift; sourceTree = "<group>"; };
 		2475EA9FA815D35A6C0C79EC /* PlayerAutomationStateModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAutomationStateModel.swift; sourceTree = "<group>"; };
 		2475EB6A807B2C8DF846E859 /* Turn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Turn.swift; sourceTree = "<group>"; };
 		2475EB7245F8FF240763E4BF /* DiskCount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskCount.swift; sourceTree = "<group>"; };
+		2475ECCD8B460C170B9708F0 /* CoordinateSelector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinateSelector.swift; sourceTree = "<group>"; };
 		2475ED47315D04EBAEF3BFCE /* PlayerAutomationState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAutomationState.swift; sourceTree = "<group>"; };
 		2475EF840F6D3A3EA59C38BE /* GameResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameResult.swift; sourceTree = "<group>"; };
 		624D5F1E245E9BF700C3EBFC /* Distance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Distance.swift; sourceTree = "<group>"; };
@@ -195,7 +198,8 @@
 				2475E821A50DB3FBEA202465 /* NonEmptyArray.swift */,
 				2475EF840F6D3A3EA59C38BE /* GameResult.swift */,
 				2475E11280E8CBA18D753E72 /* GameStateTests.swift */,
-				2475E653E8D0BC633BC819DC /* GameCommand.swift */,
+				2475ECCD8B460C170B9708F0 /* CoordinateSelector.swift */,
+				2475E24A52F507ECD51D60FE /* GameCommand.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -402,7 +406,8 @@
 				2475E6254FCF9E7165CDF4A6 /* GameState.swift in Sources */,
 				2475E1A8C321B33F994F1B26 /* NonEmptyArray.swift in Sources */,
 				2475EEAAA2481F19A3A1AE3F /* GameResult.swift in Sources */,
-				2475E1901DF8253AB9E2A3E8 /* GameCommand.swift in Sources */,
+				2475E7FF6E8ED46EA72E7E22 /* CoordinateSelector.swift in Sources */,
+				2475E3B3208865C1036C1804 /* GameCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -429,7 +434,8 @@
 				2475E9C7957A905A262B7B5B /* GameState.swift in Sources */,
 				2475E5D521E102650D44250F /* NonEmptyArray.swift in Sources */,
 				2475E66F4206F7610B4764E4 /* GameResult.swift in Sources */,
-				2475ED6B29719441057118D8 /* GameCommand.swift in Sources */,
+				2475E322AFBA33C5C3D8B5B9 /* CoordinateSelector.swift in Sources */,
+				2475EA88543C5959CA3387F5 /* GameCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

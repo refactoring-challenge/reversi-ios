@@ -1,10 +1,11 @@
-struct LineContents: Equatable {
+struct LineContents {
     let line: Line
     let disks: [Disk?]
 
 
     init(board: Board, line: Line) {
         self.line = line
+        // BUG4: Misunderstood that the line.coordinates is sorted as start to end. But it was a Set.
         self.disks = line.coordinates.map { coordinate in board[coordinate] }
     }
 
@@ -21,3 +22,7 @@ struct LineContents: Equatable {
         self.disks = disks
     }
 }
+
+
+
+extension LineContents: Equatable {}
