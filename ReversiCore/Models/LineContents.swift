@@ -1,15 +1,15 @@
-struct LineContents: Equatable {
-    let line: Line
-    let disks: [Disk?]
+public struct LineContents: Equatable {
+    public let line: Line
+    public let disks: [Disk?]
 
 
-    init(board: Board, line: Line) {
+    public init(board: Board, line: Line) {
         self.line = line
         self.disks = line.coordinates.map { coordinate in board[coordinate] }
     }
 
 
-    init?(expandingTo base: LineContents, on board: Board) {
+    public init?(expandingTo base: LineContents, on board: Board) {
         guard let line = base.line.extended else {
             return nil
         }

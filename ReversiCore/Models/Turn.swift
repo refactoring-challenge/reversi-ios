@@ -1,9 +1,9 @@
-enum Turn: CaseIterable, Hashable {
+public enum Turn: CaseIterable, Hashable {
     case first
     case second
 
 
-    var disk: Disk {
+    public var disk: Disk {
         switch self {
         case .first:
             return .dark
@@ -13,7 +13,7 @@ enum Turn: CaseIterable, Hashable {
     }
 
 
-    var next: Turn {
+    public var next: Turn {
         switch self {
         case .first:
             return .second

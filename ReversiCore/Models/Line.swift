@@ -1,17 +1,17 @@
-struct Line: Hashable {
-    let start: Coordinate
-    let end: Coordinate
-    let directedDistance: DirectedDistance
+public struct Line: Hashable {
+    public let start: Coordinate
+    public let end: Coordinate
+    public let directedDistance: DirectedDistance
 
 
-    init(start: Coordinate, unsafeEnd: Coordinate, directedDistance: DirectedDistance) {
+    public init(start: Coordinate, unsafeEnd: Coordinate, directedDistance: DirectedDistance) {
         self.start = start
         self.end = unsafeEnd
         self.directedDistance = directedDistance
     }
 
 
-    init?(start: Coordinate, directedDistance: DirectedDistance) {
+    public init?(start: Coordinate, directedDistance: DirectedDistance) {
         guard let end = start.moved(to: directedDistance) else {
             return nil
         }
@@ -21,7 +21,7 @@ struct Line: Hashable {
     }
 
 
-    var coordinates: Set<Coordinate> {
+    public var coordinates: Set<Coordinate> {
         var coordinates = Set<Coordinate>()
         var shorterLine: Line? = self
 
@@ -36,7 +36,7 @@ struct Line: Hashable {
     }
 
 
-    var shortened: Line? {
+    public var shortened: Line? {
         guard let prevDirectedDistance = self.directedDistance.prev else {
             return nil
         }
@@ -44,7 +44,7 @@ struct Line: Hashable {
     }
 
 
-    var extended: Line? {
+    public var extended: Line? {
         guard let nextDirectedDistance = self.directedDistance.next else {
             return nil
         }

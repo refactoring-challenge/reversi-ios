@@ -1,9 +1,9 @@
-enum GameCommand: Equatable {
+public enum GameCommand: Equatable {
     case pass
     case place(at: Coordinate)
 
 
-    func unsafeExecute(on gameState: GameState) -> GameState {
+    public func unsafeExecute(on gameState: GameState) -> GameState {
         let availableCoordinates = gameState.availableCoordinates()
 
         switch self {

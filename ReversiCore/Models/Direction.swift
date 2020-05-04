@@ -1,4 +1,4 @@
-enum Direction: CaseIterable, Hashable {
+public enum Direction: CaseIterable, Hashable {
     case top
     case topRight
     case right

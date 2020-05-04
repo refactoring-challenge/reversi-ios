@@ -2,7 +2,7 @@ import ReactiveSwift
 
 
 
-protocol GameModelProtocol: class {
+public protocol GameModelProtocol: class {
     var gameStateDidChange: ReactiveSwift.Property<GameState> { get }
     var availableCoordinatesDidChange: ReactiveSwift.Property<Set<Coordinate>> { get }
 
@@ -13,14 +13,14 @@ protocol GameModelProtocol: class {
 
 
 
-class GameModel: GameModelProtocol {
+public class GameModel: GameModelProtocol {
     // NOTE: This model has both a turn and board.
     // WHY: Because valid mutable operations to the board is depends on and affect to the turn and it must be
     //      atomic operations. Separating the properties into several smaller models is possible but it cannot
     //      ensure the atomicity without any aggregation wrapper models. And the wrapper model is not needed in
     //      the complexity.
-    let gameStateDidChange: ReactiveSwift.Property<GameState>
-    let availableCoordinatesDidChange: ReactiveSwift.Property<Set<Coordinate>>
+    public let gameStateDidChange: ReactiveSwift.Property<GameState>
+    public let availableCoordinatesDidChange: ReactiveSwift.Property<Set<Coordinate>>
 
 
     private let gameStateDidChangeMutable: ReactiveSwift.MutableProperty<GameState>
@@ -30,7 +30,7 @@ class GameModel: GameModelProtocol {
     }
 
 
-    init(startsWith gameState: GameState) {
+    public init(startsWith gameState: GameState) {
         let gameStateDidChangeMutable = ReactiveSwift.MutableProperty<GameState>(gameState)
         self.gameStateDidChangeMutable = gameStateDidChangeMutable
         self.gameStateDidChange = ReactiveSwift.Property(gameStateDidChangeMutable)
@@ -40,17 +40,17 @@ class GameModel: GameModelProtocol {
     }
 
 
-    func pass() {
+    public func pass() {
         self.gameState = self.gameState.passed()
     }
 
 
-    func placeDisk(at coordinate: Coordinate) {
+    public func placeDisk(at coordinate: Coordinate) {
         self.gameState = self.gameState.placed(at: coordinate)
     }
 
 
-    func reset() {
+    public func reset() {
         self.gameState = self.gameState.reset()
     }
 }

@@ -1,29 +1,44 @@
-struct GameState: Equatable {
-    let board: Board
-    let turn: Turn
+public struct GameState<L: GameLife>: Equatable {
+    public let board: Board
 
 
-    static let initial = GameState(board: .initial(), turn: .first)
+    public static func initial() -> GameState<Zero> { GameState<Zero>(board: .initial()) }
 
 
-    func availableCoordinates() -> Set<Coordinate> {
-        self.board.availableCoordinates(for: self.turn)
+    public func availableCoordinates() -> Set<AvailableLine<L>> {
+        Set(self.board.availableLines(for: L.turn).map(AvailableLine<L>.init(_:)))
     }
 
 
-    func passed() -> GameState {
-        GameState(board: self.board, turn: self.turn.next)
+    public func next(by selector: (NonEmptySet<AvailableLine<L>>) -> AvailableLine<L>) -> GameState<Succ<L>> {
+        guard let availableLines = NonEmptySet(self.availableCoordinates()) else {
+            // NOTE: It can do only pass
+            return GameState<Succ<L>>(board: self.board)
+        }
+
+        let selectedLine = selector(availableLines)
+        // NOTE: It must be safe because the line is selected on the board in the same game life.
+        let nextBoard = self.board.unsafeReplaced(with: L.turn.disk, on: selectedLine.line)
+        return GameState<Succ<L>>(board: nextBoard)
     }
 
 
-    func placed(at coordinate: Coordinate) -> GameState {
-        // PROBLEM: This type unexpectedly accept illegal operations.
-        let nextBoard = self.board.updated(value: self.turn.disk, at: coordinate)
-        return GameState(board: nextBoard, turn: self.turn.next)
+    public func reset() -> GameState<Zero> {
+        .initial()
     }
 
 
-    func reset() -> GameState {
-        .initial
+
+    // NOTE: This class has a lifetime type to prevent several illegal operations.
+    //       To prohibit illegal operations such as illegal pass or illegal placement,
+    //       the AvailableLine can exist if ensured whether the line is available by GameState.
+    //       But there is a loophole that using stored old AvailableLine, so a lifetime type is needed to prohibit it.
+    public struct AvailableLine<L: GameLife>: Hashable {
+        public let line: Line
+
+
+        fileprivate init(_ line: Line) {
+            self.line = line
+        }
     }
 }

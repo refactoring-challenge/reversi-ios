@@ -1,8 +1,8 @@
-struct Board: Equatable {
+public struct Board: Equatable {
     private let array: [[Disk?]]
 
 
-    static func initial() -> Board {
+    public static func initial() -> Board {
         Board(unsafeArray: [
             [nil, nil, nil, nil, nil, nil, nil, nil],
             [nil, nil, nil, nil, nil, nil, nil, nil],
@@ -16,29 +16,29 @@ struct Board: Equatable {
     }
 
 
-    init(unsafeArray: [[Disk?]]) {
+    public init(unsafeArray: [[Disk?]]) {
         self.array = unsafeArray
     }
 
 
     // BUG1: Missing -1 for rawValue (CoordinateX and Y is 1-based)
-    subscript(_ coordinate: Coordinate) -> Disk? {
+    public subscript(_ coordinate: Coordinate) -> Disk? {
         // NOTE: all coordinates are bound by 8x8, so it must be success.
         self.array[coordinate.y.rawValue - 1][coordinate.x.rawValue - 1]
     }
 
 
-    subscript(_ line: Line) -> LineContents {
+    public subscript(_ line: Line) -> LineContents {
         LineContents(board: self, line: line)
     }
 
 
-    func forEach(_ block: (Disk?) -> Void) {
+    public func forEach(_ block: (Disk?) -> Void) {
         self.array.forEach { $0.forEach(block) }
     }
 
 
-    func countDisks() -> DiskCount {
+    public func countDisks() -> DiskCount {
         var light = 0
         var dark = 0
 
@@ -57,15 +57,15 @@ struct Board: Equatable {
     }
 
 
-    func gameResult() -> GameResult? {
-        let isGameSet = Turn.allCases.allSatisfy { turn in self.availableCoordinates(for: turn).isEmpty }
+    public func gameResult() -> GameResult? {
+        let isGameSet = Turn.allCases.allSatisfy { turn in self.availableLines(for: turn).isEmpty }
         guard isGameSet else { return nil }
 
         return self.countDisks().currentGameResult()
     }
 
 
-    private func unsafeReplaced(with disk: Disk, on line: Line) -> Board {
+    public func unsafeReplaced(with disk: Disk, on line: Line) -> Board {
         var cloneArray = self.array
         line.coordinates.forEach { coordinate in
             cloneArray[coordinate.y.rawValue - 1][coordinate.x.rawValue - 1] = disk
@@ -74,12 +74,7 @@ struct Board: Equatable {
     }
 
 
-    func availableCoordinates(for turn: Turn) -> Set<Coordinate> {
-        Set(self.availableLines(for: turn).map { line in line.end })
-    }
-
-
-    func availableLines(for turn: Turn) -> Set<Line> {
+    public func availableLines(for turn: Turn) -> Set<Line> {
         var result = Set<Line>()
 
         for coordinate in Coordinate.allCases {

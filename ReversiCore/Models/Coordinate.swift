@@ -1,15 +1,15 @@
-struct Coordinate: Hashable {
-    let x: CoordinateX
-    let y: CoordinateY
+public struct Coordinate: Hashable {
+    public let x: CoordinateX
+    public let y: CoordinateY
 
 
-    init(x: CoordinateX, y: CoordinateY) {
+    public init(x: CoordinateX, y: CoordinateY) {
         self.x = x
         self.y = y
     }
 
 
-    func moved(to directedDistance: DirectedDistance) -> Coordinate? {
+    public func moved(to directedDistance: DirectedDistance) -> Coordinate? {
         // NOTE: Be nil if the X is out of boards.
         let unsafeX: CoordinateX?
         switch directedDistance.direction {
@@ -41,7 +41,7 @@ struct Coordinate: Hashable {
     }
 
 
-    static let allCases: [Coordinate] = CoordinateY.allCases.flatMap { y in
+    public static let allCases: [Coordinate] = CoordinateY.allCases.flatMap { y in
         CoordinateX.allCases.map { x in
             Coordinate(x: x, y: y)
         }
@@ -51,14 +51,14 @@ struct Coordinate: Hashable {
 
 
 extension Coordinate: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         "\(self.x.debugDescription)\(self.y.debugDescription)"
     }
 }
 
 
 
-enum CoordinateX: Int, CaseIterable, Hashable {
+public enum CoordinateX: Int, CaseIterable, Hashable {
     case a = 1
     case b
     case c
@@ -72,7 +72,7 @@ enum CoordinateX: Int, CaseIterable, Hashable {
 
 
 extension CoordinateX: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         switch self {
         case .a:
             return "a"
@@ -96,7 +96,7 @@ extension CoordinateX: CustomDebugStringConvertible {
 
 
 
-enum CoordinateY: Int, CaseIterable, Hashable {
+public enum CoordinateY: Int, CaseIterable, Hashable {
     case one = 1
     case two
     case three
@@ -110,7 +110,7 @@ enum CoordinateY: Int, CaseIterable, Hashable {
 
 
 extension CoordinateY: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         self.rawValue.description
     }
 }

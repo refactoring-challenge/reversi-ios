@@ -1,0 +1,14 @@
+#!/bin/bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "$0")/.."; pwd)"
+GYB="${ROOT_DIR}/tools/gyb/gyb"
+
+
+find "$ROOT_DIR/ReversiCore" -name '*.gyb' | while read gyb_filepath; do
+	gyb_dirname="$(dirname "$gyb_filepath")"
+	origin_basename="$(basename -s '.gyb' "$gyb_filepath")"
+	origin_filepath="${gyb_dirname}/${origin_basename}"
+
+	"$GYB" -o "$origin_filepath" "$gyb_filepath"
+done 

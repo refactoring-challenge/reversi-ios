@@ -1,9 +1,9 @@
-struct NonEmptyArray<T> {
-    let first: T
-    let rest: [T]
+public struct NonEmptySet<T> {
+    public let first: T
+    public let rest: [T]
 
 
-    init?<S: Collection>(_ array: S) where S.Element == T {
+    public init?<S: Collection>(_ array: S) where S.Element == T {
         guard let first = array.first else {
             return nil
         }
@@ -12,13 +12,13 @@ struct NonEmptyArray<T> {
     }
 
 
-    func randomElement() -> T {
+    public func randomElement() -> T {
         // NOTE: toArray must return non-empty array, so the randomElement must return an element.
         self.toArray().randomElement()!
     }
 
 
-    func toArray() -> [T] {
+    public func toArray() -> [T] {
         var result = self.rest
         result.insert(self.first, at: 0)
         return result

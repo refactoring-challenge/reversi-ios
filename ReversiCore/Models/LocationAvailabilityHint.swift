@@ -1,9 +1,9 @@
-enum LocationAvailabilityHint: Equatable {
+public enum LocationAvailabilityHint: Equatable {
     case available
     case unavailable(because: Reason)
 
 
-    enum Reason: Equatable {
+    public enum Reason: Equatable {
         case startIsNotSameColor
         case endIsNotEmpty
         case lineIsTooShort
@@ -11,7 +11,7 @@ enum LocationAvailabilityHint: Equatable {
     }
 
 
-    static func from(lineContents: LineContents, turn: Turn) -> LocationAvailabilityHint {
+    public static func from(lineContents: LineContents, turn: Turn) -> LocationAvailabilityHint {
         // NOTE: Placable if the line contents satisfies all of the conditions:
         //
         //   1. the start coordinate has the same color as the disk on the board
