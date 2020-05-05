@@ -1,3 +1,4 @@
+import Dispatch
 import ReactiveSwift
 
 
@@ -11,13 +12,14 @@ class GameWithPlayerAutomatorModel {
 
     convenience init() {
         self.init(
+            strategy: PlayerAutomator.randomSelector,
             gameModel: GameModel(startsWith: GameState.initial),
             playersAutomationAvailabilityModel: PlayersAutomationAvailabilityModel(startsWith: .initial)
         )
     }
 
 
-    init(gameModel: GameModelProtocol, playersAutomationAvailabilityModel: PlayersAutomationAvailabilityModelProtocol) {
+    init(strategy coordinateSelector: @escaping CoordinateSelector, gameModel: GameModelProtocol, playersAutomationAvailabilityModel: PlayersAutomationAvailabilityModelProtocol) {
         self.gameModel = gameModel
         self.playersAutomationAvailabilityModel = playersAutomationAvailabilityModel
 
@@ -38,7 +40,9 @@ class GameWithPlayerAutomatorModel {
                     case .disabled:
                         return
                     case .enabled:
-                        gameModel.next(by: PlayerAutomator.randomSelector)
+                        DispatchQueue.global(qos: .background).async {
+                            gameModel.next(by: coordinateSelector)
+                        }
                     }
                 }
             }

@@ -90,6 +90,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2475E1D7FC01E81F9D2045F1 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		2475E25ED91F236C19DD123B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		2475E77B8CDE76F7FB3A7A35 /* MVCArchitecture */ = {
+			isa = PBXGroup;
+			children = (
+				2475E25ED91F236C19DD123B /* Views */,
+				2475E1D7FC01E81F9D2045F1 /* Controllers */,
+			);
+			path = MVCArchitecture;
+			sourceTree = "<group>";
+		};
 		62D97B2124530022008513D3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -140,6 +163,7 @@
 				D642BDBE23A9FE4700396732 /* LaunchScreen.storyboard */,
 				D642BDC123A9FE4700396732 /* Info.plist */,
 				D636B3A123D43203007F370F /* Views */,
+				2475E77B8CDE76F7FB3A7A35 /* MVCArchitecture */,
 			);
 			path = Reversi;
 			sourceTree = "<group>";

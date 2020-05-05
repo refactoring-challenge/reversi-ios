@@ -16,27 +16,6 @@ enum GameModelState {
     }
 
 
-    func canPass() -> Bool {
-        switch self {
-        case .processing, .completed:
-            return false
-
-        case .ready(_, let availableCoordinate):
-            return availableCoordinate.isEmpty
-        }
-    }
-
-
-    func canReset() -> Bool {
-        switch self {
-        case .completed, .ready:
-            return true
-
-        case .processing:
-            return false
-        }
-    }
-
 
     static func next(by gameState: GameState) -> GameModelState {
         if let gameResult = gameState.gameResult() {
@@ -53,13 +32,31 @@ extension GameModelState: Equatable {}
 
 
 
+// NOTE: For testing.
+enum GameModelCommandResult {
+    case accepted
+    case ignored
+}
+
+
+extension GameModelCommandResult: Equatable {}
+
+
+
 protocol GameModelProtocol: class {
     var stateDidChange: ReactiveSwift.Property<GameModelState> { get }
 
-    func pass()
-    func place(at: Coordinate)
-    func next(by: CoordinateSelector)
-    func reset()
+    @discardableResult
+    func pass() -> GameModelCommandResult
+
+    @discardableResult
+    func place(at: Coordinate) -> GameModelCommandResult
+
+    @discardableResult
+    func next(by: CoordinateSelector) -> GameModelCommandResult
+
+    @discardableResult
+    func reset() -> GameModelCommandResult
 }
 
 
@@ -88,48 +85,51 @@ class GameModel: GameModelProtocol {
     }
 
 
-    func pass() {
+    func pass() -> GameModelCommandResult {
         switch self.gameModelState {
         case .completed, .processing:
             // NOTE: Ignore illegal operations from views.
-            return
+            return .ignored
 
         case .ready(let gameState, let availableCoordinates):
             // NOTE: Ignore illegal operations from views.
-            guard availableCoordinates.isEmpty else { return }
+            guard availableCoordinates.isEmpty else { return .ignored }
+            self.gameModelState = .processing(previous: gameState)
 
             // NOTE: It is safe if the availableCoordinates is calculated on the gameState.
             let nextGameState = gameState.unsafePass()
             self.gameModelState = .next(by: nextGameState)
+            return .accepted
         }
     }
 
 
-    func place(at unsafeCoordinate: Coordinate) {
+    func place(at unsafeCoordinate: Coordinate) -> GameModelCommandResult {
         switch self.gameModelState {
         case .processing, .completed:
             // NOTE: Ignore illegal operations from views.
-            return
+            return .ignored
 
         case .ready(let gameState, let availableCoordinates):
             guard let selected = availableCoordinates.first(
                 where: { available in available.coordinate == unsafeCoordinate }) else {
                 // NOTE: Ignore illegal operations from views.
-                return
+                return .ignored
             }
 
             // NOTE: It is safe if the availableCoordinates is calculated on the gameState.
             let nextGameState = gameState.unsafeNext(by: selected)
             self.gameModelState = .next(by: nextGameState)
+            return .accepted
         }
     }
 
 
-    func next(by selector: CoordinateSelector) {
+    func next(by selector: CoordinateSelector) -> GameModelCommandResult {
         switch self.gameModelState {
         case .processing, .completed:
             // NOTE: Ignore illegal operations from views.
-            return
+            return .ignored
 
         case .ready(let gameState, _):
             self.gameModelState = .processing(previous: gameState)
@@ -139,18 +139,21 @@ class GameModel: GameModelProtocol {
                     guard let self = self else { return }
                     self.gameModelState = .next(by: nextGameState)
                 }
+
+            return .accepted
         }
     }
 
 
-    func reset() {
+    func reset() -> GameModelCommandResult {
         switch self.gameModelState {
         case .processing:
-            return
+            return .ignored
 
         case .ready(let gameState, _), .completed(let gameState, _):
             let nextGameState = gameState.reset()
             self.gameModelState = .next(by: nextGameState)
+            return .accepted
         }
     }
 }
