@@ -285,9 +285,9 @@
 				62B7C512246048BB006F58CE /* DiskCountModel.swift */,
 				62B7C513246048BB006F58CE /* GameModel.swift */,
 				2475E491D414030C65271663 /* GameWithPlayerAutomatorModel.swift */,
+				2475EDCED691F92C93D2AC26 /* GameWithPlayerAutomatorModelTests.swift */,
 				2475ECB80570053C43616EF9 /* PlayerAutomationProgressModel.swift */,
 				62B7C50A246048BB006F58CE /* PlayersAutomationAvailabilityModel.swift */,
-				2475EDCED691F92C93D2AC26 /* GameWithPlayerAutomatorModelTests.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";

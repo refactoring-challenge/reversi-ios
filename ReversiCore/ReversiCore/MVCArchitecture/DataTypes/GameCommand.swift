@@ -1,29 +1,17 @@
-enum GameCommand {
+public enum GameCommand {
     case pass
     case place(at: Coordinate)
 
 
 
-    enum PreconditionFailure: Error, CustomDebugStringConvertible {
+    public enum PreconditionFailure: Error {
         case cannotPass(on: GameState)
         case cannotPlace(at: Coordinate, on: GameState)
-
-        var debugDescription: String {
-            switch self {
-            case .cannotPass(on: let gameState):
-                return "Cannot pass on:\n\(gameState.debugDescription)"
-            case .cannotPlace(at: let coordinate, on: let gameState):
-                let availableCoordinateString = gameState.availableCoordinates()
-                    .map { $0.debugDescription }
-                    .joined(separator: ", ")
-                return "Cannot place at \(coordinate).\nAvailable coordinates: \(availableCoordinateString)\n\n\(gameState.debugDescription)"
-            }
-        }
     }
 
 
 
-    func unsafeExecute(on gameState: GameState) throws -> GameState {
+    public func unsafeExecute(on gameState: GameState) throws -> GameState {
         switch self {
         case .pass:
             guard gameState.availableCoordinates().isEmpty else {
@@ -38,6 +26,22 @@ enum GameCommand {
                 throw PreconditionFailure.cannotPlace(at: coordinate, on: gameState)
             }
             return gameState.unsafeNext(by: availableCoordinate)
+        }
+    }
+}
+
+
+
+extension GameCommand.PreconditionFailure: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .cannotPass(on: let gameState):
+            return "Cannot pass on:\n\(gameState.debugDescription)"
+        case .cannotPlace(at: let coordinate, on: let gameState):
+            let availableCoordinateString = gameState.availableCoordinates()
+                .map { $0.debugDescription }
+                .joined(separator: ", ")
+            return "Cannot place at \(coordinate).\nAvailable coordinates: \(availableCoordinateString)\n\n\(gameState.debugDescription)"
         }
     }
 }

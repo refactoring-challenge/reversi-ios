@@ -2,16 +2,21 @@ import Dispatch
 import ReactiveSwift
 
 
+public protocol GameWithPlayerAutomatorModelProtocol: class {
+    var gameModel: GameModelProtocol { get }
+    var playersAutomationAvailabilityModel: PlayersAutomationAvailabilityModelProtocol { get }
+}
 
-class GameWithPlayerAutomatorModel {
-    let gameModel: GameModelProtocol
-    let playersAutomationAvailabilityModel: PlayersAutomationAvailabilityModelProtocol
+
+public class GameWithPlayerAutomatorModel: GameWithPlayerAutomatorModelProtocol {
+    public let gameModel: GameModelProtocol
+    public let playersAutomationAvailabilityModel: PlayersAutomationAvailabilityModelProtocol
 
     private let coordinateSelector: CoordinateSelector
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
-    convenience init() {
+    public convenience init() {
         self.init(
             strategy: PlayerAutomator.delayed(selector: PlayerAutomator.randomSelector, 2.0),
             gameModel: GameModel(startsWith: GameState.initial),
@@ -20,7 +25,11 @@ class GameWithPlayerAutomatorModel {
     }
 
 
-    init(strategy coordinateSelector: @escaping CoordinateSelector, gameModel: GameModelProtocol, playersAutomationAvailabilityModel: PlayersAutomationAvailabilityModelProtocol) {
+    public init(
+        strategy coordinateSelector: @escaping CoordinateSelector,
+        gameModel: GameModelProtocol,
+        playersAutomationAvailabilityModel: PlayersAutomationAvailabilityModelProtocol
+    ) {
         self.gameModel = gameModel
         self.playersAutomationAvailabilityModel = playersAutomationAvailabilityModel
         self.coordinateSelector = coordinateSelector

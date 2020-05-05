@@ -1,4 +1,4 @@
-enum GameResult {
+public enum GameResult {
     case win(who: Turn)
     case draw
 }

@@ -1,9 +1,9 @@
-struct NonEmptyArray<T> {
-    let first: T
-    let rest: [T]
+public struct NonEmptyArray<T> {
+    public let first: T
+    public let rest: [T]
 
 
-    var last: T {
+    public var last: T {
         guard let last = self.rest.last else {
             return self.first
         }
@@ -11,13 +11,13 @@ struct NonEmptyArray<T> {
     }
 
 
-    init<S: Collection>(first: T, rest: S) where S.Element == T {
+    public init<S: Collection>(first: T, rest: S) where S.Element == T {
         self.first = first
         self.rest = Array(rest)
     }
 
 
-    init?<S: Collection>(_ array: S) where S.Element == T {
+    public init?<S: Collection>(_ array: S) where S.Element == T {
         guard let first = array.first else {
             return nil
         }
@@ -25,18 +25,18 @@ struct NonEmptyArray<T> {
     }
 
 
-    func randomElement() -> T {
+    public func randomElement() -> T {
         // NOTE: toArray must return non-empty array, so the randomElement must return an element.
         self.toArray().randomElement()!
     }
 
 
-    func map<S>(_ block: (T) throws -> S) rethrows -> NonEmptyArray<S> {
+    public func map<S>(_ block: (T) throws -> S) rethrows -> NonEmptyArray<S> {
         NonEmptyArray<S>(first: try block(self.first), rest: try self.rest.map(block))
     }
 
 
-    func toArray() -> [T] {
+    public func toArray() -> [T] {
         var result = self.rest
         result.insert(self.first, at: 0)
         return result

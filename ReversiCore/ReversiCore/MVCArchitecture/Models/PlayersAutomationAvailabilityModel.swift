@@ -2,15 +2,15 @@ import ReactiveSwift
 
 
 
-protocol PlayersAutomationAvailabilityModelProtocol: class {
+public protocol PlayersAutomationAvailabilityModelProtocol: class {
     var availabilityDidChange: ReactiveSwift.Property<PlayersAutomationAvailability> { get }
     func toggle(for turn: Turn)
 }
 
 
 
-class PlayersAutomationAvailabilityModel: PlayersAutomationAvailabilityModelProtocol {
-    let availabilityDidChange: ReactiveSwift.Property<PlayersAutomationAvailability>
+public class PlayersAutomationAvailabilityModel: PlayersAutomationAvailabilityModelProtocol {
+    public let availabilityDidChange: ReactiveSwift.Property<PlayersAutomationAvailability>
 
     private let stateDidChangeMutable: ReactiveSwift.MutableProperty<PlayersAutomationAvailability>
     private var state: PlayersAutomationAvailability {
@@ -19,14 +19,14 @@ class PlayersAutomationAvailabilityModel: PlayersAutomationAvailabilityModelProt
     }
 
 
-    init(startsWith initialState: PlayersAutomationAvailability) {
+    public init(startsWith initialState: PlayersAutomationAvailability) {
         let stateDidChangeMutable = ReactiveSwift.MutableProperty(initialState)
         self.stateDidChangeMutable = stateDidChangeMutable
         self.availabilityDidChange = ReactiveSwift.Property(stateDidChangeMutable)
     }
 
 
-    func toggle(for turn: Turn) {
+    public func toggle(for turn: Turn) {
         self.state = self.state.toggled(for: turn)
     }
 }

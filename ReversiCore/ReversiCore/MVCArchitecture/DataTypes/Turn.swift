@@ -1,9 +1,9 @@
-enum Turn: CaseIterable {
+public enum Turn: CaseIterable {
     case first
     case second
 
 
-    var disk: Disk {
+    public var disk: Disk {
         switch self {
         case .first:
             return .dark
@@ -13,7 +13,7 @@ enum Turn: CaseIterable {
     }
 
 
-    var next: Turn {
+    public var next: Turn {
         switch self {
         case .first:
             return .second
@@ -30,7 +30,7 @@ extension Turn: Hashable {}
 
 
 extension Turn: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         switch self {
         case .first:
             return "x"

@@ -2,13 +2,13 @@ import ReactiveSwift
 
 
 
-enum GameModelState {
+public enum GameModelState {
     case ready(GameState, Set<AvailableCoordinate>)
     case completed(GameState, GameResult)
     case processing(previous: GameState)
 
 
-    var gameState: GameState {
+    public var gameState: GameState {
         switch self {
         case .processing(previous: let gameState), .completed(let gameState, _), .ready(let gameState, _):
             return gameState
@@ -17,7 +17,7 @@ enum GameModelState {
 
 
 
-    static func next(by gameState: GameState) -> GameModelState {
+    public static func next(by gameState: GameState) -> GameModelState {
         if let gameResult = gameState.gameResult() {
             return .completed(gameState, gameResult)
         }
@@ -33,7 +33,7 @@ extension GameModelState: Equatable {}
 
 
 // NOTE: For testing.
-enum GameModelCommandResult {
+public enum GameModelCommandResult {
     case accepted
     case ignored
 }
@@ -43,7 +43,7 @@ extension GameModelCommandResult: Equatable {}
 
 
 
-protocol GameModelProtocol: class {
+public protocol GameModelProtocol: class {
     var stateDidChange: ReactiveSwift.Property<GameModelState> { get }
 
     @discardableResult
@@ -61,8 +61,8 @@ protocol GameModelProtocol: class {
 
 
 
-class GameModel: GameModelProtocol {
-    let stateDidChange: ReactiveSwift.Property<GameModelState>
+public class GameModel: GameModelProtocol {
+    public let stateDidChange: ReactiveSwift.Property<GameModelState>
 
 
     private let gameModelStateDidChangeMutable: ReactiveSwift.MutableProperty<GameModelState>
@@ -72,20 +72,20 @@ class GameModel: GameModelProtocol {
     }
 
 
-    init(initialState: GameModelState) {
+    public init(initialState: GameModelState) {
         let gameModelStateDidChangeMutable = ReactiveSwift.MutableProperty<GameModelState>(initialState)
         self.gameModelStateDidChangeMutable = gameModelStateDidChangeMutable
         self.stateDidChange = ReactiveSwift.Property(gameModelStateDidChangeMutable)
     }
 
 
-    convenience init(startsWith gameState: GameState) {
+    public convenience init(startsWith gameState: GameState) {
         let initialState: GameModelState = .ready(gameState, gameState.availableCoordinates())
         self.init(initialState: initialState)
     }
 
 
-    func pass() -> GameModelCommandResult {
+    public func pass() -> GameModelCommandResult {
         switch self.gameModelState {
         case .completed, .processing:
             // NOTE: Ignore illegal operations from views.
@@ -104,7 +104,7 @@ class GameModel: GameModelProtocol {
     }
 
 
-    func place(at unsafeCoordinate: Coordinate) -> GameModelCommandResult {
+    public func place(at unsafeCoordinate: Coordinate) -> GameModelCommandResult {
         switch self.gameModelState {
         case .processing, .completed:
             // NOTE: Ignore illegal operations from views.
@@ -125,7 +125,7 @@ class GameModel: GameModelProtocol {
     }
 
 
-    func next(by selector: CoordinateSelector) -> GameModelCommandResult {
+    public func next(by selector: CoordinateSelector) -> GameModelCommandResult {
         switch self.gameModelState {
         case .processing, .completed:
             // NOTE: Ignore illegal operations from views.
@@ -145,7 +145,7 @@ class GameModel: GameModelProtocol {
     }
 
 
-    func reset() -> GameModelCommandResult {
+    public func reset() -> GameModelCommandResult {
         switch self.gameModelState {
         case .processing:
             return .ignored

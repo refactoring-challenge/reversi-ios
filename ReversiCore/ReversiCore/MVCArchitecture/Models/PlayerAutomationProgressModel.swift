@@ -2,7 +2,7 @@ import ReactiveSwift
 
 
 
-enum PlayerAutomationProgressModelState {
+public enum PlayerAutomationProgressModelState {
     case working(for: Turn)
     case sleeping
 }
@@ -13,17 +13,17 @@ extension PlayerAutomationProgressModelState: Equatable {}
 
 
 
-protocol PlayerAutomationProgressModelProtocol {
+public protocol PlayerAutomationProgressModelProtocol: class {
     var progressDidChange: ReactiveSwift.Property<PlayerAutomationProgressModelState> { get }
 }
 
 
 
-class PlayerAutomationProgressModel: PlayerAutomationProgressModelProtocol {
-    let progressDidChange: ReactiveSwift.Property<PlayerAutomationProgressModelState>
+public class PlayerAutomationProgressModel: PlayerAutomationProgressModelProtocol {
+    public let progressDidChange: ReactiveSwift.Property<PlayerAutomationProgressModelState>
 
 
-    init(observing gameModel: GameModelProtocol) {
+    public init(observing gameModel: GameModelProtocol) {
         self.progressDidChange = gameModel.stateDidChange
             .map { gameModelState in
                 switch gameModelState {

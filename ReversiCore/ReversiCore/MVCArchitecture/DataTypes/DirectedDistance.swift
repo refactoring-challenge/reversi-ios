@@ -1,9 +1,9 @@
-struct DirectedDistance {
-    let direction: Direction
-    let distance: Distance
+public struct DirectedDistance {
+    public let direction: Direction
+    public let distance: Distance
 
 
-    var extended: DirectedDistance? {
+    public var extended: DirectedDistance? {
         guard let nextDistance = self.distance.next else {
             return nil
         }
@@ -11,7 +11,7 @@ struct DirectedDistance {
     }
 
 
-    var shortened: DirectedDistance? {
+    public var shortened: DirectedDistance? {
         guard let prevDistance = self.distance.prev else {
             return nil
         }

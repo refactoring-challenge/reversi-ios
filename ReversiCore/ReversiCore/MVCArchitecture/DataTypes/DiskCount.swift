@@ -1,9 +1,9 @@
-struct DiskCount {
-    let light: Int
-    let dark: Int
+public struct DiskCount {
+    public let light: Int
+    public let dark: Int
 
 
-    func currentGameResult() -> GameResult {
+    public func currentGameResult() -> GameResult {
         if self.dark == self.light {
             return .draw
         }

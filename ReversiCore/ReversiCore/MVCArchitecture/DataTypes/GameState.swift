@@ -6,28 +6,34 @@ import Hydra
 //      atomic operations. Separating the properties into several smaller models is possible but it cannot
 //      ensure the atomicity without any aggregation wrapper models. And the wrapper model is not needed in
 //      the complexity.
-struct GameState {
-    let board: Board
-    let turn: Turn
+public struct GameState {
+    public let board: Board
+    public let turn: Turn
 
 
-    static let initial = GameState(board: .initial(), turn: .first)
+    public static let initial = GameState(board: .initial(), turn: .first)
 
 
-    func gameResult() -> GameResult? { self.board.gameResult() }
+    public init(board: Board, turn: Turn) {
+        self.board = board
+        self.turn = turn
+    }
 
 
-    func availableLines() -> Set<Line> {
+    public func gameResult() -> GameResult? { self.board.gameResult() }
+
+
+    public func availableLines() -> Set<Line> {
         Set(self.board.availableLines(for: self.turn))
     }
 
 
-    func availableCoordinates() -> Set<AvailableCoordinate> {
+    public func availableCoordinates() -> Set<AvailableCoordinate> {
         Set(self.board.availableCoordinates(for: self.turn).map(AvailableCoordinate.init(_:)))
     }
 
 
-    func next(by selector: CoordinateSelector) -> Hydra.Promise<GameState> {
+    public func next(by selector: CoordinateSelector) -> Hydra.Promise<GameState> {
         guard let availableCoordinates = NonEmptyArray(self.availableCoordinates()) else {
             // NOTE: Must pass if no coordinates are available.
             return Hydra.Promise(resolved: self.unsafePass())
@@ -41,7 +47,7 @@ struct GameState {
 
 
     // NOTE: It is unsafe because the available coordinate is possibly no longer available.
-    func unsafeNext(by available: AvailableCoordinate) -> GameState {
+    public func unsafeNext(by available: AvailableCoordinate) -> GameState {
         let linesShouldBeReplaced = self.availableLines()
             .filter { availableLine in
                 availableLine.end == available.coordinate
@@ -56,12 +62,12 @@ struct GameState {
 
 
     // NOTE: It is unsafe because pass may be unavailable.
-    func unsafePass() -> GameState {
+    public func unsafePass() -> GameState {
         GameState(board: self.board, turn: self.turn.next)
     }
 
 
-    func reset() -> GameState {
+    public func reset() -> GameState {
         .initial
     }
 }
@@ -73,7 +79,7 @@ extension GameState: Equatable {}
 
 
 extension GameState: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         """
         turn: \(self.turn.debugDescription)
         \(self.board.debugDescription)
@@ -83,8 +89,8 @@ extension GameState: CustomDebugStringConvertible {
 
 
 
-struct AvailableCoordinate {
-    let coordinate: Coordinate
+public struct AvailableCoordinate {
+    public let coordinate: Coordinate
 
 
     // NOTE: AvailableCoordinate ensures the coordinate is almost valid by hiding initializer.
@@ -101,5 +107,5 @@ extension AvailableCoordinate: Hashable {}
 
 
 extension AvailableCoordinate: CustomDebugStringConvertible {
-    var debugDescription: String { self.coordinate.debugDescription }
+    public var debugDescription: String { self.coordinate.debugDescription }
 }

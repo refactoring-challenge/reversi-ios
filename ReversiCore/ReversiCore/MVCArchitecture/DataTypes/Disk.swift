@@ -1,8 +1,10 @@
-public enum Disk {
+public enum Disk: CaseIterable {
     case dark
     case light
 
+
     public static let sides: [Disk] = Disk.allCases
+
 
     public var flipped: Disk {
         switch self {
@@ -11,6 +13,7 @@ public enum Disk {
         }
     }
 
+
     public mutating func flip() {
         self = self.flipped
     }
@@ -18,13 +21,7 @@ public enum Disk {
 
 
 
-extension Disk: Hashable {
-}
-
-
-
-extension Disk: CaseIterable {
-}
+extension Disk: Hashable {}
 
 
 

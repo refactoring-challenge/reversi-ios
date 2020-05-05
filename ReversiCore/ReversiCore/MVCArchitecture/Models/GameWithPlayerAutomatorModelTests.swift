@@ -2,7 +2,7 @@ import XCTest
 import Hydra
 import ReactiveSwift
 import MirrorDiffKit
-@testable import ReversiCore
+import ReversiCore
 
 
 

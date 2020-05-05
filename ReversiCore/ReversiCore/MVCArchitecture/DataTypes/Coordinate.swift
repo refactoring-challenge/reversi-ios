@@ -1,15 +1,15 @@
-struct Coordinate {
-    let x: CoordinateX
-    let y: CoordinateY
+public struct Coordinate {
+    public let x: CoordinateX
+    public let y: CoordinateY
 
 
-    init(x: CoordinateX, y: CoordinateY) {
+    public init(x: CoordinateX, y: CoordinateY) {
         self.x = x
         self.y = y
     }
 
 
-    func moved(to directedDistance: DirectedDistance) -> Coordinate? {
+    public func moved(to directedDistance: DirectedDistance) -> Coordinate? {
         // NOTE: Be nil if the X is out of boards.
         let unsafeX: CoordinateX?
         switch directedDistance.direction {
@@ -41,7 +41,7 @@ struct Coordinate {
     }
 
 
-    static let allCases: [Coordinate] = CoordinateY.allCases.flatMap { y in
+    public static let allCases: [Coordinate] = CoordinateY.allCases.flatMap { y in
         CoordinateX.allCases.map { x in
             Coordinate(x: x, y: y)
         }
@@ -55,14 +55,14 @@ extension Coordinate: Hashable {}
 
 
 extension Coordinate: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         "\(self.x.debugDescription)\(self.y.debugDescription)"
     }
 }
 
 
 
-enum CoordinateX: Int, CaseIterable {
+public enum CoordinateX: Int, CaseIterable {
     case a = 1
     case b
     case c
@@ -80,7 +80,7 @@ extension CoordinateX: Hashable {}
 
 
 extension CoordinateX: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         switch self {
         case .a:
             return "a"
@@ -104,7 +104,7 @@ extension CoordinateX: CustomDebugStringConvertible {
 
 
 
-enum CoordinateY: Int, CaseIterable {
+public enum CoordinateY: Int, CaseIterable {
     case one = 1
     case two
     case three
@@ -122,7 +122,7 @@ extension CoordinateY: Hashable {}
 
 
 extension CoordinateY: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         self.rawValue.description
     }
 }
