@@ -1,3 +1,6 @@
+import Hydra
+
+
 // NOTE: This type has both a turn and board.
 // WHY: Because valid mutable operations to the board is depends on and affect to the turn and it must be
 //      atomic operations. Separating the properties into several smaller models is possible but it cannot
@@ -11,6 +14,9 @@ struct GameState {
     static let initial = GameState(board: .initial(), turn: .first)
 
 
+    func gameResult() -> GameResult? { self.board.gameResult() }
+
+
     func availableLines() -> Set<Line> {
         Set(self.board.availableLines(for: self.turn))
     }
@@ -21,14 +27,16 @@ struct GameState {
     }
 
 
-    func next(by selector: CoordinateSelector) -> GameState {
+    func next(by selector: CoordinateSelector) -> Hydra.Promise<GameState> {
         guard let availableCoordinates = NonEmptyArray(self.availableCoordinates()) else {
             // NOTE: Must pass if no coordinates are available.
-            return self.unsafePass()
+            return Hydra.Promise(resolved: self.unsafePass())
         }
 
-        let selectedAvailableCoordinate = selector(availableCoordinates)
-        return self.unsafeNext(by: selectedAvailableCoordinate)
+        return selector(availableCoordinates)
+            .then { selectedAvailableCoordinate in
+                self.unsafeNext(by: selectedAvailableCoordinate)
+            }
     }
 
 

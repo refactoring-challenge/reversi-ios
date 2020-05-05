@@ -1,9 +1,9 @@
-enum PlayerAutomationState {
+enum PlayerAutomationAvailability {
     case enabled
     case disabled
 
 
-    var toggled: PlayerAutomationState {
+    var toggled: PlayerAutomationAvailability {
         switch self {
         case .enabled:
             return .disabled
@@ -15,4 +15,4 @@ enum PlayerAutomationState {
 
 
 
-extension PlayerAutomationState: Equatable {}
+extension PlayerAutomationAvailability: Equatable {}

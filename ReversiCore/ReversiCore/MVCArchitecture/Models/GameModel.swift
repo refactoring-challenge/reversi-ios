@@ -2,78 +2,155 @@ import ReactiveSwift
 
 
 
+enum GameModelState {
+    case ready(GameState, Set<AvailableCoordinate>)
+    case completed(GameState, GameResult)
+    case processing(previous: GameState)
+
+
+    var gameState: GameState {
+        switch self {
+        case .processing(previous: let gameState), .completed(let gameState, _), .ready(let gameState, _):
+            return gameState
+        }
+    }
+
+
+    func canPass() -> Bool {
+        switch self {
+        case .processing, .completed:
+            return false
+
+        case .ready(_, let availableCoordinate):
+            return availableCoordinate.isEmpty
+        }
+    }
+
+
+    func canReset() -> Bool {
+        switch self {
+        case .completed, .ready:
+            return true
+
+        case .processing:
+            return false
+        }
+    }
+
+
+    static func next(by gameState: GameState) -> GameModelState {
+        if let gameResult = gameState.gameResult() {
+            return .completed(gameState, gameResult)
+        }
+        // FIXME: Memoize to prevent calling availableCoordinates because it is expensive.
+        return .ready(gameState, gameState.availableCoordinates())
+    }
+}
+
+
+
+extension GameModelState: Equatable {}
+
+
+
 protocol GameModelProtocol: class {
-    var gameStateDidChange: ReactiveSwift.Property<GameState> { get }
-    var availableCoordinatesDidChange: ReactiveSwift.Property<Set<AvailableCoordinate>> { get }
-    var gameResultDidChange: ReactiveSwift.Property<GameResult?> { get }
+    var stateDidChange: ReactiveSwift.Property<GameModelState> { get }
 
     func pass()
     func place(at: Coordinate)
-    func next(by selector: CoordinateSelector)
+    func next(by: CoordinateSelector)
     func reset()
 }
 
 
 
 class GameModel: GameModelProtocol {
-    let gameStateDidChange: ReactiveSwift.Property<GameState>
-    let availableCoordinatesDidChange: ReactiveSwift.Property<Set<AvailableCoordinate>>
-    let gameResultDidChange: ReactiveSwift.Property<GameResult?>
+    let stateDidChange: ReactiveSwift.Property<GameModelState>
 
 
-    private let gameStateDidChangeMutable: ReactiveSwift.MutableProperty<GameState>
-    private var availableCoordinates: Set<AvailableCoordinate> {
-        self.gameState.availableCoordinates()
-    }
-    private var gameState: GameState {
-        get { self.gameStateDidChangeMutable.value }
-        set { self.gameStateDidChangeMutable.value = newValue }
+    private let gameModelStateDidChangeMutable: ReactiveSwift.MutableProperty<GameModelState>
+    private var gameModelState: GameModelState {
+        get { self.gameModelStateDidChangeMutable.value }
+        set { self.gameModelStateDidChangeMutable.value = newValue }
     }
 
 
-    init(startsWith gameState: GameState) {
-        let gameStateDidChangeMutable = ReactiveSwift.MutableProperty<GameState>(gameState)
-        self.gameStateDidChangeMutable = gameStateDidChangeMutable
-        self.gameStateDidChange = ReactiveSwift.Property(gameStateDidChangeMutable)
+    init(initialState: GameModelState) {
+        let gameModelStateDidChangeMutable = ReactiveSwift.MutableProperty<GameModelState>(initialState)
+        self.gameModelStateDidChangeMutable = gameModelStateDidChangeMutable
+        self.stateDidChange = ReactiveSwift.Property(gameModelStateDidChangeMutable)
+    }
 
-        self.availableCoordinatesDidChange = gameStateDidChangeMutable
-            .map { gameState in gameState.availableCoordinates() }
-        self.gameResultDidChange = gameStateDidChangeMutable
-            .map { gameState in gameState.board.gameResult() }
+
+    convenience init(startsWith gameState: GameState) {
+        let initialState: GameModelState = .ready(gameState, gameState.availableCoordinates())
+        self.init(initialState: initialState)
     }
 
 
     func pass() {
-        guard self.availableCoordinates.isEmpty else {
+        switch self.gameModelState {
+        case .completed, .processing:
             // NOTE: Ignore illegal operations from views.
             return
+
+        case .ready(let gameState, let availableCoordinates):
+            // NOTE: Ignore illegal operations from views.
+            guard availableCoordinates.isEmpty else { return }
+
+            // NOTE: It is safe if the availableCoordinates is calculated on the gameState.
+            let nextGameState = gameState.unsafePass()
+            self.gameModelState = .next(by: nextGameState)
         }
-        self.gameState = self.gameState.unsafePass()
     }
 
 
-    func place(at coordinate: Coordinate) {
-        guard let availableCoordinate = self.getAvailableCoordinate(from: coordinate) else {
+    func place(at unsafeCoordinate: Coordinate) {
+        switch self.gameModelState {
+        case .processing, .completed:
             // NOTE: Ignore illegal operations from views.
             return
+
+        case .ready(let gameState, let availableCoordinates):
+            guard let selected = availableCoordinates.first(
+                where: { available in available.coordinate == unsafeCoordinate }) else {
+                // NOTE: Ignore illegal operations from views.
+                return
+            }
+
+            // NOTE: It is safe if the availableCoordinates is calculated on the gameState.
+            let nextGameState = gameState.unsafeNext(by: selected)
+            self.gameModelState = .next(by: nextGameState)
         }
-        self.gameState = self.gameState.unsafeNext(by: availableCoordinate)
     }
 
 
     func next(by selector: CoordinateSelector) {
-        self.gameState = self.gameState.next(by: selector)
+        switch self.gameModelState {
+        case .processing, .completed:
+            // NOTE: Ignore illegal operations from views.
+            return
+
+        case .ready(let gameState, _):
+            self.gameModelState = .processing(previous: gameState)
+
+            gameState.next(by: selector)
+                .then { [weak self] nextGameState in
+                    guard let self = self else { return }
+                    self.gameModelState = .next(by: nextGameState)
+                }
+        }
     }
 
 
     func reset() {
-        self.gameState = self.gameState.reset()
-    }
+        switch self.gameModelState {
+        case .processing:
+            return
 
-
-    private func getAvailableCoordinate(from coordinate: Coordinate) -> AvailableCoordinate? {
-        self.availableCoordinates
-            .filter { available in available.coordinate == coordinate }
-            .first
+        case .ready(let gameState, _), .completed(let gameState, _):
+            let nextGameState = gameState.reset()
+            self.gameModelState = .next(by: nextGameState)
+        }
     }
 }

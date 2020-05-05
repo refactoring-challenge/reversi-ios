@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Carthage/Checkouts/Hydra" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Carthage/Checkouts/MirrorDiffKit" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Carthage/Checkouts/ReactiveSwift" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Carthage/Checkouts/ReactiveSwift/Carthage/Checkouts/Nimble" vcs="Git" />

@@ -7,7 +7,7 @@ class DiskCountModel {
 
 
     init(observing boardModel: GameModel) {
-        self.diskCountDidChange = boardModel.gameStateDidChange
-            .map { gameState in gameState.board.countDisks() }
+        self.diskCountDidChange = boardModel.stateDidChange
+            .map { gameModelState in gameModelState.gameState.board.countDisks() }
     }
 }
