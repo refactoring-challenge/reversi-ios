@@ -135,7 +135,7 @@ class GameModel: GameModelProtocol {
             self.gameModelState = .processing(previous: gameState)
 
             gameState.next(by: selector)
-                .then { [weak self] nextGameState in
+                .then(in: .background) { [weak self] nextGameState in
                     guard let self = self else { return }
                     self.gameModelState = .next(by: nextGameState)
                 }

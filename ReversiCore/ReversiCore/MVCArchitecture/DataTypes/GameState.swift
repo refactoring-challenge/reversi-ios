@@ -34,7 +34,7 @@ struct GameState {
         }
 
         return selector(availableCoordinates)
-            .then { selectedAvailableCoordinate -> GameState in
+            .then(in: .background) { selectedAvailableCoordinate -> GameState in
                 self.unsafeNext(by: selectedAvailableCoordinate)
             }
     }

@@ -1,4 +1,5 @@
 import Hydra
+import Foundation
 
 
 
@@ -6,6 +7,11 @@ enum PlayerAutomator {
     // NOTE: Prohibit illegal pass because players cannot pass if one or more available coordinate exist.
     static let randomSelector: CoordinateSelector = { availableCoordinates in
         Hydra.Promise(resolved: availableCoordinates.randomElement())
+    }
+
+
+    static func delayed(selector: @escaping CoordinateSelector, _ duration: TimeInterval) -> CoordinateSelector {
+        { availableCoordinates in selector(availableCoordinates).defer(in: .background, duration) }
     }
 
 
