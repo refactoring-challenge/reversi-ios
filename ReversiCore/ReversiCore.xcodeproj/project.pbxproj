@@ -201,8 +201,8 @@
 				2475E2662BBF14E5110EEBBA /* NonEmptyArray.swift */,
 				2475EB1AD0D1719F0D0B6A52 /* PlayerAutomationAvailability.swift */,
 				62B7C50B246048BB006F58CE /* PlayerAutomator.swift */,
-				2475EEF0C7D7A2BC67CF46B1 /* Turn.swift */,
 				2475E4AB3D00FDDF1C537BCC /* PlayersAutomationAvailability.swift */,
+				2475EEF0C7D7A2BC67CF46B1 /* Turn.swift */,
 			);
 			path = DataTypes;
 			sourceTree = "<group>";
@@ -260,8 +260,8 @@
 		62B7C4FD246048BB006F58CE /* MVCArchitecture */ = {
 			isa = PBXGroup;
 			children = (
-				62B7C4FE246048BB006F58CE /* Models */,
 				2475E4F1544B3A9B91B240DF /* DataTypes */,
+				62B7C4FE246048BB006F58CE /* Models */,
 			);
 			path = MVCArchitecture;
 			sourceTree = "<group>";
@@ -271,9 +271,9 @@
 			children = (
 				62B7C512246048BB006F58CE /* DiskCountModel.swift */,
 				62B7C513246048BB006F58CE /* GameModel.swift */,
-				62B7C50A246048BB006F58CE /* PlayersAutomationAvailabilityModel.swift */,
-				2475ECB80570053C43616EF9 /* PlayerAutomationProgressModel.swift */,
 				2475E491D414030C65271663 /* GameWithPlayerAutomatorModel.swift */,
+				2475ECB80570053C43616EF9 /* PlayerAutomationProgressModel.swift */,
+				62B7C50A246048BB006F58CE /* PlayersAutomationAvailabilityModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
