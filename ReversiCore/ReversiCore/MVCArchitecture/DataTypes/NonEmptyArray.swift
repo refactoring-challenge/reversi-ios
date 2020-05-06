@@ -54,6 +54,11 @@ public struct NonEmptyArray<T> {
     }
 
 
+    public func reversed() -> NonEmptyArray<T> {
+        NonEmptyArray(first: self.last, rest: self.rest.reversed())
+    }
+
+
     public func forEach(_ block: (T) throws -> Void) rethrows {
         try block(self.first)
         try self.rest.forEach(block)
