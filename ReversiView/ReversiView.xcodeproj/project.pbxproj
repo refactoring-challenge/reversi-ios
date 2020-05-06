@@ -38,11 +38,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2475E1C1B6D211D68FFC7E08 /* ReversiView.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = ReversiView.plist; sourceTree = "<group>"; };
+		2475E26625B10428F65DAA8B /* ReversiViewTests.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = ReversiViewTests.plist; sourceTree = "<group>"; };
 		62B7C58724625DC3006F58CE /* ReversiView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ReversiView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62B7C58A24625DC3006F58CE /* ReversiView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReversiView.h; sourceTree = "<group>"; };
-		62B7C58B24625DC3006F58CE /* ReversiView.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ReversiView.plist; sourceTree = "<group>"; };
 		62B7C59024625DC3006F58CE /* ReversiViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReversiViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		62B7C59724625DC3006F58CE /* ReversiViewTests.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ReversiViewTests.plist; sourceTree = "<group>"; };
 		62B7C5A224625DE0006F58CE /* ReversiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReversiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -66,6 +66,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2475ED7BE4E6FE864B715F82 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2475E26625B10428F65DAA8B /* ReversiViewTests.plist */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		2475EDC31A9515B7567C7BCA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2475E1C1B6D211D68FFC7E08 /* ReversiView.plist */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
 		62B7C57D24625DC3006F58CE = {
 			isa = PBXGroup;
 			children = (
@@ -104,8 +120,8 @@
 		62B7C5A624625DFB006F58CE /* Configs */ = {
 			isa = PBXGroup;
 			children = (
-				62B7C58B24625DC3006F58CE /* ReversiView.plist */,
-				62B7C59724625DC3006F58CE /* ReversiViewTests.plist */,
+				2475EDC31A9515B7567C7BCA /* Frameworks */,
+				2475ED7BE4E6FE864B715F82 /* Tests */,
 			);
 			path = Configs;
 			sourceTree = "<group>";
@@ -369,7 +385,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Configs/ReversiView.plist;
+				INFOPLIST_FILE = Configs/Frameworks/ReversiView.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -392,7 +408,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Configs/ReversiView.plist;
+				INFOPLIST_FILE = Configs/Frameworks/ReversiView.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -411,7 +427,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = Configs/ReversiViewTests.plist;
+				INFOPLIST_FILE = Configs/Tests/ReversiViewTests.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -428,7 +444,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = Configs/ReversiViewTests.plist;
+				INFOPLIST_FILE = Configs/Tests/ReversiViewTests.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

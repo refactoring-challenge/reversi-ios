@@ -1,11 +1,3 @@
-//
-//  ReversiView.h
-//  ReversiView
-//
-//  Created by Yuki Kokubun on 2020/05/06.
-//  Copyright © 2020 Kuniwak. All rights reserved.
-//
-
 #import <Foundation/Foundation.h>
 
 //! Project version number for ReversiView.
