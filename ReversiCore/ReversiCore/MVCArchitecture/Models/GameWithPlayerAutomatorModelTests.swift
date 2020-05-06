@@ -52,6 +52,7 @@ class GameWithPlayerAutomatorModelTests: XCTestCase {
 
     func testPvC() throws {
         let model = GameWithPlayerAutomatorModel(
+            // NOTE: Use topLeftSelector to make the last board consistent.
             strategy: PlayerAutomator.topLeftSelector,
             gameModel: GameModel(startsWith: .initial),
             playersAutomationAvailabilityModel: PlayersAutomationAvailabilityModel(
