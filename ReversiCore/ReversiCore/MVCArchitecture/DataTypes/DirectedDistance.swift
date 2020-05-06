@@ -3,6 +3,12 @@ public struct DirectedDistance {
     public let distance: Distance
 
 
+    public init(direction: Direction, distance: Distance) {
+        self.direction = direction
+        self.distance = distance
+    }
+
+
     public var extended: DirectedDistance? {
         guard let nextDistance = self.distance.next else {
             return nil

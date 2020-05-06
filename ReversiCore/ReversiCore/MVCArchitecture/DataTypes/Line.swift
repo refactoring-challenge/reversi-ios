@@ -21,7 +21,7 @@ public struct Line {
     }
 
 
-    public var coordinates: [Coordinate] {
+    public var coordinatesStartToEnd: NonEmptyArray<Coordinate> {
         var coordinates = [Coordinate]()
         var shorterLine: Line? = self
 
@@ -30,9 +30,7 @@ public struct Line {
             shorterLine = currentLine.shortened
         }
         // BUG2: Missing addition for start.
-        coordinates.insert(self.start, at: 0)
-
-        return coordinates
+        return NonEmptyArray(first: self.start, rest: coordinates)
     }
 
 

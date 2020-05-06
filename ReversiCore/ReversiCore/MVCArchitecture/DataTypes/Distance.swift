@@ -1,4 +1,5 @@
 public enum Distance: Int, CaseIterable {
+    // BUG9: Removing .one to limit line lengths caused that users of .allCases or .init(rawValue:_) get broken.
     case one = 1
     case two
     case three

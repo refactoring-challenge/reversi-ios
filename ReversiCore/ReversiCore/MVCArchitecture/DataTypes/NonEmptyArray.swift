@@ -30,14 +30,27 @@ public struct NonEmptyArray<T> {
     }
 
 
+    public var count: Int { self.rest.count + 1 }
+
+
+    public subscript(range: Range<Int>) -> ArraySlice<T> {
+        self.toArray()[range]
+    }
+
+
     public func randomElement() -> T {
         // NOTE: toArray must return non-empty array, so the randomElement must return an element.
-        self.toSequence().randomElement()!
+        self.toArray().randomElement()!
     }
 
 
     public func map<S>(_ block: (T) throws -> S) rethrows -> NonEmptyArray<S> {
         NonEmptyArray<S>(first: try block(self.first), rest: try self.rest.map(block))
+    }
+
+
+    public func flatMap<S: Sequence>(_ block: (T) throws -> S) rethrows -> [S.Element] {
+        try self.toArray().flatMap(block)
     }
 
 
@@ -54,7 +67,26 @@ public struct NonEmptyArray<T> {
     }
 
 
-    public func toSequence() -> [T] {
+    public func dropFirst() -> [T] {
+        self.rest
+    }
+
+
+    public func allSatisfy(_ condition: (T) throws -> Bool) rethrows -> Bool {
+        guard try condition(self.first) else { return false }
+        return try self.rest.allSatisfy(condition)
+    }
+
+
+    public func sorted(by ordering: (T, T) throws -> Bool) rethrows -> NonEmptyArray<T> {
+        var newArray = self.toArray()
+        try newArray.sort(by: ordering)
+        // NOTE: It is safe because sort does not change the length.
+        return NonEmptyArray(newArray)!
+    }
+
+
+    public func toArray() -> [T] {
         var result = self.rest
         result.insert(self.first, at: 0)
         return result

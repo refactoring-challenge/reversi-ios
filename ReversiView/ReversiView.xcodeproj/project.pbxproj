@@ -11,6 +11,8 @@
 		62B7C59824625DC3006F58CE /* ReversiView.h in Headers */ = {isa = PBXBuildFile; fileRef = 62B7C58A24625DC3006F58CE /* ReversiView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		62B7C5A324625DE0006F58CE /* ReversiCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62B7C5A224625DE0006F58CE /* ReversiCore.framework */; };
 		62B7C5A424625DE0006F58CE /* ReversiCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62B7C5A224625DE0006F58CE /* ReversiCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		62B7C5A924629809006F58CE /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62B7C5A824629809006F58CE /* ReactiveSwift.framework */; };
+		62B7C5AA24629809006F58CE /* ReactiveSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62B7C5A824629809006F58CE /* ReactiveSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +33,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				62B7C5A424625DE0006F58CE /* ReversiCore.framework in Embed Frameworks */,
+				62B7C5AA24629809006F58CE /* ReactiveSwift.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -44,6 +47,7 @@
 		62B7C58A24625DC3006F58CE /* ReversiView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReversiView.h; sourceTree = "<group>"; };
 		62B7C59024625DC3006F58CE /* ReversiViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReversiViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		62B7C5A224625DE0006F58CE /* ReversiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReversiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		62B7C5A824629809006F58CE /* ReactiveSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReactiveSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +56,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				62B7C5A324625DE0006F58CE /* ReversiCore.framework in Frameworks */,
+				62B7C5A924629809006F58CE /* ReactiveSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				62B7C5A224625DE0006F58CE /* ReversiCore.framework */,
+				62B7C5A824629809006F58CE /* ReactiveSwift.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

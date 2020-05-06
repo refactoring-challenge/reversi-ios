@@ -73,7 +73,7 @@ public struct Board {
 
     public func unsafeReplaced(with disk: Disk, on line: Line) -> Board {
         var cloneArray = self.array
-        line.coordinates.forEach { coordinate in
+        line.coordinatesStartToEnd.forEach { coordinate in
             cloneArray[coordinate.y.rawValue - 1][coordinate.x.rawValue - 1] = disk
         }
         return Board(unsafeArray: cloneArray)
@@ -81,12 +81,12 @@ public struct Board {
 
 
     public func availableCoordinates(for turn: Turn) -> Set<Coordinate> {
-        Set(self.availableLines(for: turn).map { line in line.end })
+        Set(self.availableLines(for: turn).map { line in line.coordinateToPlace })
     }
 
 
-    public func availableLines(for turn: Turn) -> Set<Line> {
-        var result = Set<Line>()
+    public func availableLines(for turn: Turn) -> Set<FlippableLine> {
+        var result = Set<FlippableLine>()
 
         for coordinate in Coordinate.allCases {
             guard self[coordinate] == turn.disk else {
@@ -105,12 +105,12 @@ public struct Board {
 
                 var nextLineContents: LineContents? = self[line]
                 lineContentsLoop: while let lineContents = nextLineContents {
-                    let hint = LocationAvailabilityHint.from(lineContents: lineContents, turn: turn)
-                    switch hint {
+                    let validationResult = FlippableLine.validate(lineContents: lineContents, turn: turn)
+                    switch validationResult {
                     case .unavailable(because: .startIsNotSameColor), .unavailable(because: .lineIsTooShort):
                         // NOTE: .startIsNotSameColor is not reachable because coordinates to search are already filtered.
                         // NOTE: .lineIsTooShort is not reachable because the distances to search start with 2.
-                        fatalError("unreachable \(hint)\n\(line) \(lineContents)\n\(self.debugDescription)")
+                        fatalError("unreachable \(validationResult)\n\(line) \(lineContents)\n\(self.debugDescription)")
 
                     case .unavailable(because: .endIsNotEmpty):
                         // NOTE: Continue because the longer lines may be available if the end is not empty.
@@ -128,9 +128,9 @@ public struct Board {
                         // BUG5: Misunderstand that the break without any labels break from lineContentsLoop.
                         break lineContentsLoop
 
-                    case .available:
+                    case .available(let flippableLine):
                         // BUG7: Wrongly use base lines that have constant distance for all search.
-                        result.insert(lineContents.line)
+                        result.insert(flippableLine)
                     }
 
                     nextLineContents = LineContents(expandingTo: lineContents, on: self)

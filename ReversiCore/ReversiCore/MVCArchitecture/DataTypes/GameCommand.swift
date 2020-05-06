@@ -17,7 +17,7 @@ public enum GameCommand {
             guard gameState.availableCandidates().isEmpty else {
                 throw PreconditionFailure.cannotPass(on: gameState)
             }
-            return gameState.unsafePass()
+            return gameState.unsafePass().afterState
 
         case .place(at: let coordinate):
             guard let availableCoordinate = gameState.availableCandidates()
@@ -25,7 +25,7 @@ public enum GameCommand {
                 .first else {
                 throw PreconditionFailure.cannotPlace(at: coordinate, on: gameState)
             }
-            return gameState.unsafeNext(by: availableCoordinate)
+            return gameState.unsafeNext(by: availableCoordinate).afterState
         }
     }
 }

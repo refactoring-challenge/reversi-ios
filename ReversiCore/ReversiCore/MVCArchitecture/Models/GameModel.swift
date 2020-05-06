@@ -45,8 +45,7 @@ extension GameModelCommandResult: Equatable {}
 
 public protocol GameModelProtocol: class {
     var stateDidChange: ReactiveSwift.Property<GameModelState> { get }
-    var linesDidFlip: ReactiveSwift.Signal<NonEmptyArray<Line>, Never> { get }
-    var coordinateDidPlace: ReactiveSwift.Signal<Coordinate, Never> { get }
+    var commandDidAccepted: ReactiveSwift.Signal<GameState.AcceptedCommand, Never> { get }
 
     @discardableResult
     func pass() -> GameModelCommandResult
@@ -65,12 +64,10 @@ public protocol GameModelProtocol: class {
 
 public class GameModel: GameModelProtocol {
     public let stateDidChange: ReactiveSwift.Property<GameModelState>
-    public let linesDidFlip: ReactiveSwift.Signal<NonEmptyArray<Line>, Never>
-    public let coordinateDidPlace: ReactiveSwift.Signal<Coordinate, Never>
+    public let commandDidAccepted: ReactiveSwift.Signal<GameState.AcceptedCommand, Never>
 
     private let stateDidChangeMutable: ReactiveSwift.MutableProperty<GameModelState>
-    private let linesDidFlipObserver: ReactiveSwift.Signal<NonEmptyArray<Line>, Never>.Observer
-    private let coordinateDidPlaceObserver: ReactiveSwift.Signal<Coordinate, Never>.Observer
+    private let commandDidAcceptedObserver: ReactiveSwift.Signal<GameState.AcceptedCommand, Never>.Observer
 
     private var gameModelState: GameModelState {
         get { self.stateDidChangeMutable.value }
@@ -83,8 +80,7 @@ public class GameModel: GameModelProtocol {
         self.stateDidChangeMutable = stateDidChangeMutable
         self.stateDidChange = ReactiveSwift.Property(stateDidChangeMutable)
 
-        (self.linesDidFlip, self.linesDidFlipObserver) = ReactiveSwift.Signal<NonEmptyArray<Line>, Never>.pipe()
-        (self.coordinateDidPlace, self.coordinateDidPlaceObserver) = ReactiveSwift.Signal<Coordinate, Never>.pipe()
+        (self.commandDidAccepted, self.commandDidAcceptedObserver) = ReactiveSwift.Signal<GameState.AcceptedCommand, Never>.pipe()
     }
 
 
@@ -105,8 +101,8 @@ public class GameModel: GameModelProtocol {
             self.gameModelState = .processing(previous: gameState)
 
             // NOTE: It is safe if the availableCoordinates is calculated on the gameState.
-            let nextGameState = gameState.unsafePass()
-            self.gameModelState = .next(by: nextGameState)
+            let (nextGameState, accepted) = gameState.unsafePass()
+            self.transit(to: .next(by: nextGameState), by: accepted)
             return .accepted
         }
     }
@@ -126,12 +122,8 @@ public class GameModel: GameModelProtocol {
             }
 
             // NOTE: It is safe if the availableCoordinates is calculated on the gameState.
-            let nextGameState = gameState.unsafeNext(by: selected)
-            self.gameModelState = .next(by: nextGameState)
-
-            self.coordinateDidPlaceObserver.send(value: selected.coordinate)
-            self.linesDidFlipObserver.send(value: selected.linesWillFlip)
-
+            let (nextGameState, accepted) = gameState.unsafeNext(by: selected)
+            self.transit(to: .next(by: nextGameState), by: accepted)
             return .accepted
         }
     }
@@ -149,17 +141,8 @@ public class GameModel: GameModelProtocol {
             gameState.next(by: selector)
                 .then(in: .background) { [weak self] in
                     guard let self = self else { return }
-                    let (nextGameState, diff) = $0
-
-                    self.gameModelState = .next(by: nextGameState)
-
-                    switch diff {
-                    case .passed:
-                        return
-                    case .placed(by: let selected):
-                        self.coordinateDidPlaceObserver.send(value: selected.coordinate)
-                        self.linesDidFlipObserver.send(value: selected.linesWillFlip)
-                    }
+                    let (nextGameState, accepted) = $0
+                    self.transit(to: .next(by: nextGameState), by: accepted)
                 }
 
             return .accepted
@@ -173,9 +156,15 @@ public class GameModel: GameModelProtocol {
             return .ignored
 
         case .ready(let gameState, _), .completed(let gameState, _):
-            let nextGameState = gameState.reset()
-            self.gameModelState = .next(by: nextGameState)
+            let (nextGameState, accepted) = gameState.reset()
+            self.transit(to: .next(by: nextGameState), by: accepted)
             return .accepted
         }
+    }
+
+
+    private func transit(to nextState: GameModelState, by accepted: GameState.AcceptedCommand) {
+        self.gameModelState = nextState
+        self.commandDidAcceptedObserver.send(value: accepted)
     }
 }

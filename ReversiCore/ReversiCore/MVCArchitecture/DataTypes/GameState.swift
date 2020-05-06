@@ -26,49 +26,61 @@ public struct GameState {
 
     public func availableCandidates() -> Set<AvailableCandidate> {
         let availableLines = self.board.availableLines(for: self.turn)
-        return AvailableCandidate.from(availableLines: availableLines)
+        return AvailableCandidate.from(flippableLines: availableLines)
     }
 
 
-    public func next(by selector: CoordinateSelector) -> Hydra.Promise<(next: GameState, diff: Diff)> {
+    public func next(by selector: CoordinateSelector) -> Hydra.Promise<(afterState: GameState, accepted: AcceptedCommand)> {
         guard let availableCandidates = NonEmptyArray(self.availableCandidates()) else {
             // NOTE: Must pass if no coordinates are available.
-            return Hydra.Promise(resolved: (next: self.unsafePass(), diff: .passed))
+            return Hydra.Promise(resolved: self.unsafePass())
         }
 
         return selector(availableCandidates)
-            .then(in: .background) { selected -> (next: GameState, diff: Diff) in
-                let nextBoard = self.unsafeNext(by: selected)
-                return (next: nextBoard, diff: .placed(by: selected))
-            }
+            .then(in: .background) { selected in self.unsafeNext(by: selected) }
     }
 
 
     // NOTE: It is unsafe because the available coordinate is possibly no longer available.
-    public func unsafeNext(by available: AvailableCandidate) -> GameState {
+    public func unsafeNext(by selected: AvailableCandidate) -> (afterState: GameState, accepted: AcceptedCommand) {
+        let currentTurn = self.turn
+        let nextTurn = self.turn.next
+
         var nextBoard = self.board
-        for lineShouldBeReplaced in available.linesWillFlip.toSequence() {
-            nextBoard = nextBoard.unsafeReplaced(with: self.turn.disk, on: lineShouldBeReplaced)
+        for shouldBeFlipped in selected.linesShouldFlip.toArray() {
+            nextBoard = nextBoard.unsafeReplaced(with: currentTurn.disk, on: shouldBeFlipped.line)
         }
-        return GameState(board: nextBoard, turn: self.turn.next)
+
+        return (
+            afterState: GameState(board: nextBoard, turn: nextTurn),
+            accepted: .placed(by: selected, who: currentTurn)
+        )
     }
 
 
     // NOTE: It is unsafe because pass may be unavailable.
-    public func unsafePass() -> GameState {
-        GameState(board: self.board, turn: self.turn.next)
+    public func unsafePass() -> (afterState: GameState, accepted: AcceptedCommand) {
+        let currentTurn = self.turn
+        let nextTurn = self.turn.next
+        return (
+            afterState: GameState(board: self.board, turn: nextTurn),
+            accepted: .passed(who: currentTurn)
+        )
     }
 
 
-    public func reset() -> GameState {
-        .initial
+    public func reset() -> (afterState: GameState, accepted: AcceptedCommand) {
+        (
+            afterState: .initial,
+            accepted: .reset
+        )
     }
 
 
-
-    public enum Diff {
-        case passed
-        case placed(by: AvailableCandidate)
+    public enum AcceptedCommand {
+        case passed(who: Turn)
+        case placed(by: AvailableCandidate, who: Turn)
+        case reset
     }
 }
 
@@ -89,37 +101,33 @@ extension GameState: CustomDebugStringConvertible {
 
 
 
-extension GameState.Diff: Equatable {}
-
-
-
 public struct AvailableCandidate {
     public let coordinate: Coordinate
-    public let linesWillFlip: NonEmptyArray<Line>
+    public let linesShouldFlip: NonEmptyArray<FlippableLine>
 
 
     private init(
         unsafeSelected selectedCoordinate: Coordinate,
-        willFlip linesWillFlip: NonEmptyArray<Line>
+        willFlip linesWillFlip: NonEmptyArray<FlippableLine>
     ) {
         self.coordinate = selectedCoordinate
-        self.linesWillFlip = linesWillFlip
+        self.linesShouldFlip = linesWillFlip
     }
 
 
     // NOTE: AvailableCoordinate ensures the coordinate is almost valid by hiding initializer.
     //       This is based on only GameState can instantiate AvailableCoordinate.
     fileprivate static func from<Lines: Sequence>(
-        availableLines: Lines
-    ) -> Set<AvailableCandidate> where Lines.Element == Line {
-        var result: [Coordinate: NonEmptyArray<Line>] = [:]
+        flippableLines: Lines
+    ) -> Set<AvailableCandidate> where Lines.Element == FlippableLine {
+        var result: [Coordinate: NonEmptyArray<FlippableLine>] = [:]
 
-        availableLines.forEach { line in
-            if let linesWillFlip = result[line.end] {
-                result[line.end] = linesWillFlip.appended(line)
+        flippableLines.forEach { flippableLine in
+            if let linesWillFlip = result[flippableLine.coordinateToPlace] {
+                result[flippableLine.coordinateToPlace] = linesWillFlip.appended(flippableLine)
             }
             else {
-                result[line.end] = NonEmptyArray<Line>(first: line)
+                result[flippableLine.coordinateToPlace] = NonEmptyArray<FlippableLine>(first: flippableLine)
                 return
             }
         }
