@@ -14,13 +14,13 @@ public enum GameCommand {
     public func unsafeExecute(on gameState: GameState) throws -> GameState {
         switch self {
         case .pass:
-            guard gameState.availableCoordinates().isEmpty else {
+            guard gameState.availableCandidates().isEmpty else {
                 throw PreconditionFailure.cannotPass(on: gameState)
             }
             return gameState.unsafePass()
 
         case .place(at: let coordinate):
-            guard let availableCoordinate = gameState.availableCoordinates()
+            guard let availableCoordinate = gameState.availableCandidates()
                 .filter({ available in available.coordinate == coordinate })
                 .first else {
                 throw PreconditionFailure.cannotPlace(at: coordinate, on: gameState)
@@ -38,7 +38,7 @@ extension GameCommand.PreconditionFailure: CustomDebugStringConvertible {
         case .cannotPass(on: let gameState):
             return "Cannot pass on:\n\(gameState.debugDescription)"
         case .cannotPlace(at: let coordinate, on: let gameState):
-            let availableCoordinateString = gameState.availableCoordinates()
+            let availableCoordinateString = gameState.availableCandidates()
                 .map { $0.debugDescription }
                 .joined(separator: ", ")
             return "Cannot place at \(coordinate).\nAvailable coordinates: \(availableCoordinateString)\n\n\(gameState.debugDescription)"

@@ -3,7 +3,7 @@ import ReactiveSwift
 
 
 public enum GameModelState {
-    case ready(GameState, Set<AvailableCoordinate>)
+    case ready(GameState, Set<AvailableCandidate>)
     case completed(GameState, GameResult)
     case processing(previous: GameState)
 
@@ -16,13 +16,12 @@ public enum GameModelState {
     }
 
 
-
     public static func next(by gameState: GameState) -> GameModelState {
         if let gameResult = gameState.gameResult() {
             return .completed(gameState, gameResult)
         }
         // FIXME: Memoize to prevent calling availableCoordinates because it is expensive.
-        return .ready(gameState, gameState.availableCoordinates())
+        return .ready(gameState, gameState.availableCandidates())
     }
 }
 
@@ -39,12 +38,15 @@ public enum GameModelCommandResult {
 }
 
 
+
 extension GameModelCommandResult: Equatable {}
 
 
 
 public protocol GameModelProtocol: class {
     var stateDidChange: ReactiveSwift.Property<GameModelState> { get }
+    var linesDidFlip: ReactiveSwift.Signal<NonEmptyArray<Line>, Never> { get }
+    var coordinateDidPlace: ReactiveSwift.Signal<Coordinate, Never> { get }
 
     @discardableResult
     func pass() -> GameModelCommandResult
@@ -63,25 +65,31 @@ public protocol GameModelProtocol: class {
 
 public class GameModel: GameModelProtocol {
     public let stateDidChange: ReactiveSwift.Property<GameModelState>
+    public let linesDidFlip: ReactiveSwift.Signal<NonEmptyArray<Line>, Never>
+    public let coordinateDidPlace: ReactiveSwift.Signal<Coordinate, Never>
 
+    private let stateDidChangeMutable: ReactiveSwift.MutableProperty<GameModelState>
+    private let linesDidFlipObserver: ReactiveSwift.Signal<NonEmptyArray<Line>, Never>.Observer
+    private let coordinateDidPlaceObserver: ReactiveSwift.Signal<Coordinate, Never>.Observer
 
-    private let gameModelStateDidChangeMutable: ReactiveSwift.MutableProperty<GameModelState>
     private var gameModelState: GameModelState {
-        get { self.gameModelStateDidChangeMutable.value }
-        set { self.gameModelStateDidChangeMutable.value = newValue }
+        get { self.stateDidChangeMutable.value }
+        set { self.stateDidChangeMutable.value = newValue }
     }
 
 
     public init(initialState: GameModelState) {
-        let gameModelStateDidChangeMutable = ReactiveSwift.MutableProperty<GameModelState>(initialState)
-        self.gameModelStateDidChangeMutable = gameModelStateDidChangeMutable
-        self.stateDidChange = ReactiveSwift.Property(gameModelStateDidChangeMutable)
+        let stateDidChangeMutable = ReactiveSwift.MutableProperty<GameModelState>(initialState)
+        self.stateDidChangeMutable = stateDidChangeMutable
+        self.stateDidChange = ReactiveSwift.Property(stateDidChangeMutable)
+
+        (self.linesDidFlip, self.linesDidFlipObserver) = ReactiveSwift.Signal<NonEmptyArray<Line>, Never>.pipe()
+        (self.coordinateDidPlace, self.coordinateDidPlaceObserver) = ReactiveSwift.Signal<Coordinate, Never>.pipe()
     }
 
 
     public convenience init(startsWith gameState: GameState) {
-        let initialState: GameModelState = .ready(gameState, gameState.availableCoordinates())
-        self.init(initialState: initialState)
+        self.init(initialState: .next(by: gameState))
     }
 
 
@@ -120,6 +128,10 @@ public class GameModel: GameModelProtocol {
             // NOTE: It is safe if the availableCoordinates is calculated on the gameState.
             let nextGameState = gameState.unsafeNext(by: selected)
             self.gameModelState = .next(by: nextGameState)
+
+            self.coordinateDidPlaceObserver.send(value: selected.coordinate)
+            self.linesDidFlipObserver.send(value: selected.linesWillFlip)
+
             return .accepted
         }
     }
@@ -135,9 +147,19 @@ public class GameModel: GameModelProtocol {
             self.gameModelState = .processing(previous: gameState)
 
             gameState.next(by: selector)
-                .then(in: .background) { [weak self] nextGameState in
+                .then(in: .background) { [weak self] in
                     guard let self = self else { return }
+                    let (nextGameState, diff) = $0
+
                     self.gameModelState = .next(by: nextGameState)
+
+                    switch diff {
+                    case .passed:
+                        return
+                    case .placed(by: let selected):
+                        self.coordinateDidPlaceObserver.send(value: selected.coordinate)
+                        self.linesDidFlipObserver.send(value: selected.linesWillFlip)
+                    }
                 }
 
             return .accepted

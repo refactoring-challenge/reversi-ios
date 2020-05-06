@@ -33,7 +33,7 @@ public enum PlayerAutomator {
 
 
 
-private func minCoordinate(_ a: AvailableCoordinate, _ b: AvailableCoordinate) -> AvailableCoordinate {
+private func minCoordinate(_ a: AvailableCandidate, _ b: AvailableCandidate) -> AvailableCandidate {
     let aIndex = coordinateIndex(a.coordinate)
     let bIndex = coordinateIndex(b.coordinate)
     return aIndex == bIndex

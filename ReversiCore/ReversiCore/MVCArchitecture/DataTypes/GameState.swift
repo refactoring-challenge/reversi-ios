@@ -1,6 +1,7 @@
 import Hydra
 
 
+
 // NOTE: This type has both a turn and board.
 // WHY: Because valid mutable operations to the board is depends on and affect to the turn and it must be
 //      atomic operations. Separating the properties into several smaller models is possible but it cannot
@@ -23,38 +24,30 @@ public struct GameState {
     public func gameResult() -> GameResult? { self.board.gameResult() }
 
 
-    public func availableLines() -> Set<Line> {
-        Set(self.board.availableLines(for: self.turn))
+    public func availableCandidates() -> Set<AvailableCandidate> {
+        let availableLines = self.board.availableLines(for: self.turn)
+        return AvailableCandidate.from(availableLines: availableLines)
     }
 
 
-    public func availableCoordinates() -> Set<AvailableCoordinate> {
-        Set(self.board.availableCoordinates(for: self.turn).map(AvailableCoordinate.init(_:)))
-    }
-
-
-    public func next(by selector: CoordinateSelector) -> Hydra.Promise<GameState> {
-        guard let availableCoordinates = NonEmptyArray(self.availableCoordinates()) else {
+    public func next(by selector: CoordinateSelector) -> Hydra.Promise<(next: GameState, diff: Diff)> {
+        guard let availableCandidates = NonEmptyArray(self.availableCandidates()) else {
             // NOTE: Must pass if no coordinates are available.
-            return Hydra.Promise(resolved: self.unsafePass())
+            return Hydra.Promise(resolved: (next: self.unsafePass(), diff: .passed))
         }
 
-        return selector(availableCoordinates)
-            .then(in: .background) { selectedAvailableCoordinate -> GameState in
-                self.unsafeNext(by: selectedAvailableCoordinate)
+        return selector(availableCandidates)
+            .then(in: .background) { selected -> (next: GameState, diff: Diff) in
+                let nextBoard = self.unsafeNext(by: selected)
+                return (next: nextBoard, diff: .placed(by: selected))
             }
     }
 
 
     // NOTE: It is unsafe because the available coordinate is possibly no longer available.
-    public func unsafeNext(by available: AvailableCoordinate) -> GameState {
-        let linesShouldBeReplaced = self.availableLines()
-            .filter { availableLine in
-                availableLine.end == available.coordinate
-            }
-
+    public func unsafeNext(by available: AvailableCandidate) -> GameState {
         var nextBoard = self.board
-        for lineShouldBeReplaced in linesShouldBeReplaced {
+        for lineShouldBeReplaced in available.linesWillFlip.toSequence() {
             nextBoard = nextBoard.unsafeReplaced(with: self.turn.disk, on: lineShouldBeReplaced)
         }
         return GameState(board: nextBoard, turn: self.turn.next)
@@ -69,6 +62,13 @@ public struct GameState {
 
     public func reset() -> GameState {
         .initial
+    }
+
+
+
+    public enum Diff {
+        case passed
+        case placed(by: AvailableCandidate)
     }
 }
 
@@ -89,23 +89,55 @@ extension GameState: CustomDebugStringConvertible {
 
 
 
-public struct AvailableCoordinate {
+extension GameState.Diff: Equatable {}
+
+
+
+public struct AvailableCandidate {
     public let coordinate: Coordinate
+    public let linesWillFlip: NonEmptyArray<Line>
+
+
+    private init(
+        unsafeSelected selectedCoordinate: Coordinate,
+        willFlip linesWillFlip: NonEmptyArray<Line>
+    ) {
+        self.coordinate = selectedCoordinate
+        self.linesWillFlip = linesWillFlip
+    }
 
 
     // NOTE: AvailableCoordinate ensures the coordinate is almost valid by hiding initializer.
-    //       Only GameState can instantiate AvailableCoordinate.
-    fileprivate init(_ coordinate: Coordinate) {
-        self.coordinate = coordinate
+    //       This is based on only GameState can instantiate AvailableCoordinate.
+    fileprivate static func from<Lines: Sequence>(
+        availableLines: Lines
+    ) -> Set<AvailableCandidate> where Lines.Element == Line {
+        var result: [Coordinate: NonEmptyArray<Line>] = [:]
+
+        availableLines.forEach { line in
+            if let linesWillFlip = result[line.end] {
+                result[line.end] = linesWillFlip.appended(line)
+            }
+            else {
+                result[line.end] = NonEmptyArray<Line>(first: line)
+                return
+            }
+        }
+
+        return Set<AvailableCandidate>(result.map {
+            let (coordinate, linesWillFlip) = $0
+            // NOTE: It is safe because the linesWillFlip must have the coordinate as the end.
+            return AvailableCandidate(unsafeSelected: coordinate, willFlip: linesWillFlip)
+        })
     }
 }
 
 
 
-extension AvailableCoordinate: Hashable {}
+extension AvailableCandidate: Hashable {}
 
 
 
-extension AvailableCoordinate: CustomDebugStringConvertible {
+extension AvailableCandidate: CustomDebugStringConvertible {
     public var debugDescription: String { self.coordinate.debugDescription }
 }

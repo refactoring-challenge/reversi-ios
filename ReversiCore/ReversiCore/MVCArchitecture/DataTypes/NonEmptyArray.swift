@@ -17,6 +17,11 @@ public struct NonEmptyArray<T> {
     }
 
 
+    public init(first: T) {
+        self.init(first: first, rest: [])
+    }
+
+
     public init?<S: Collection>(_ array: S) where S.Element == T {
         guard let first = array.first else {
             return nil
@@ -27,7 +32,7 @@ public struct NonEmptyArray<T> {
 
     public func randomElement() -> T {
         // NOTE: toArray must return non-empty array, so the randomElement must return an element.
-        self.toArray().randomElement()!
+        self.toSequence().randomElement()!
     }
 
 
@@ -36,9 +41,39 @@ public struct NonEmptyArray<T> {
     }
 
 
-    public func toArray() -> [T] {
+    public func forEach(_ block: (T) throws -> Void) rethrows {
+        try block(self.first)
+        try self.rest.forEach(block)
+    }
+
+
+    public func appended(_ value: T) -> NonEmptyArray<T> {
+        var newRest = self.rest
+        newRest.append(value)
+        return NonEmptyArray(first: self.first, rest: newRest)
+    }
+
+
+    public func toSequence() -> [T] {
         var result = self.rest
         result.insert(self.first, at: 0)
         return result
+    }
+}
+
+
+
+extension NonEmptyArray: Equatable where T: Equatable {
+    public static func ==(lhs: NonEmptyArray<T>, rhs: NonEmptyArray<T>) -> Bool {
+        lhs.first == rhs.first && lhs.rest == rhs.rest
+    }
+}
+
+
+
+extension NonEmptyArray: Hashable where T: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.first)
+        hasher.combine(self.rest)
     }
 }
