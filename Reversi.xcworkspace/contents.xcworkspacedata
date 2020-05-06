@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:ReversiView/ReversiView.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Carthage/Checkouts/ReactiveSwift/../../../ReversiCore/ReversiCore.xcodeproj">
    </FileRef>
    <FileRef
