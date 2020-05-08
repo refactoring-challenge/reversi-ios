@@ -7,3 +7,6 @@
 [submodule "Carthage/Checkouts/Hydra"]
 	path = Carthage/Checkouts/Hydra
 	url = https://github.com/malcommac/Hydra.git
+[submodule "Carthage/Checkouts/UIKitTestable"]
+	path = Carthage/Checkouts/UIKitTestable
+	url = https://github.com/Kuniwak/UIKitTestable.git

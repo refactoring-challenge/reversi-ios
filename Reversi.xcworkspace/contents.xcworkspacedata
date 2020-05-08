@@ -16,4 +16,7 @@
    <FileRef
       location = "group:Carthage/Checkouts/Hydra/Hydra.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:Carthage/Checkouts/UIKitTestable/UIKitTestable/UIKitTestable.xcodeproj">
+   </FileRef>
 </Workspace>

@@ -1,3 +1,4 @@
 github "Kuniwak/MirrorDiffKit" "5.0.1"
+github "Kuniwak/UIKitTestable" "1.0.0"
 github "ReactiveCocoa/ReactiveSwift" "6.2.1"
 github "malcommac/Hydra" "2.0.2"
