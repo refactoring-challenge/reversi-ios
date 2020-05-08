@@ -33,7 +33,7 @@ public struct Board {
     }
 
 
-    public func forEach(_ block: (Disk?) throws -> Void) rethrows {
+    public func forEach(disk block: (Disk?) throws -> Void) rethrows {
         try self.array.forEach {
             try $0.forEach(block)
         }

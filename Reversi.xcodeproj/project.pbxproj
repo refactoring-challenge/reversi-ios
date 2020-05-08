@@ -7,6 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2475E2D2C0E775D33AB4ED5E /* UserConfirmationViewHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E3497324581DD033385E /* UserConfirmationViewHandle.swift */; };
+		2475E5622D1545B2A483152B /* ResetConfirmationViewHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB5E202BCDEA6ACFCDD9 /* ResetConfirmationViewHandle.swift */; };
+		2475E65920589CE0329425A7 /* BoardViewBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EC31645FE4A4402CC583 /* BoardViewBinding.swift */; };
+		2475E6F83CC4E3706080D5AE /* BoardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E6D9B1B380FF762BB7A8 /* BoardController.swift */; };
+		2475E7494B8308D3A433CF18 /* PlayerAutomatorProgressViewHandleProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E3064E22952BD593098D /* PlayerAutomatorProgressViewHandleProtocol.swift */; };
+		2475E782E24EB0100095F9C6 /* PlayerAutomatorProgressViewBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EFAB82099EC18C58B45C /* PlayerAutomatorProgressViewBinding.swift */; };
+		2475E8D38D1B7FB0DC45D505 /* BoardAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E8AC934583F127EDBA14 /* BoardAnimationController.swift */; };
+		2475E9C673F7B148E4CAD89F /* BoardViewHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EA20B8A60D78D639DB8C /* BoardViewHandle.swift */; };
+		2475EC50251456A73F5DBB66 /* PassButtonHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E0A093E9FA51B4A53A34 /* PassButtonHandle.swift */; };
+		2475EC7656389F4D2FF37371 /* BoardMVCComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E72A8BF4ACD322490087 /* BoardMVCComposer.swift */; };
+		2475EF6C0907E13AA8C83C80 /* BoardAutomationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EBE7C5148ED3A35739FC /* BoardAutomationController.swift */; };
+		62AE60FB2463AD2D00751115 /* UIKitTestable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62AE60FA2463AD2D00751115 /* UIKitTestable.framework */; };
+		62AE60FC2463AD2D00751115 /* UIKitTestable.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62AE60FA2463AD2D00751115 /* UIKitTestable.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		62AE60FE2463AD3800751115 /* UIKitTestable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62AE60FD2463AD3800751115 /* UIKitTestable.framework */; };
+		62AE60FF2463AD3800751115 /* UIKitTestable.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62AE60FD2463AD3800751115 /* UIKitTestable.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		62B7C4AD245EDBE8006F58CE /* ReversiCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62B7C4AC245EDBE8006F58CE /* ReversiCore.framework */; };
 		62B7C4AE245EDBE8006F58CE /* ReversiCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62B7C4AC245EDBE8006F58CE /* ReversiCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		62D97B2424530022008513D3 /* MirrorDiffKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62D97B2224530022008513D3 /* MirrorDiffKit.framework */; };
@@ -53,6 +68,21 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2475E0A093E9FA51B4A53A34 /* PassButtonHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassButtonHandle.swift; sourceTree = "<group>"; };
+		2475E3064E22952BD593098D /* PlayerAutomatorProgressViewHandleProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAutomatorProgressViewHandleProtocol.swift; sourceTree = "<group>"; };
+		2475E3497324581DD033385E /* UserConfirmationViewHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConfirmationViewHandle.swift; sourceTree = "<group>"; };
+		2475E6D9B1B380FF762BB7A8 /* BoardController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardController.swift; sourceTree = "<group>"; };
+		2475E72A8BF4ACD322490087 /* BoardMVCComposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardMVCComposer.swift; sourceTree = "<group>"; };
+		2475E8AC934583F127EDBA14 /* BoardAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardAnimationController.swift; sourceTree = "<group>"; };
+		2475E956166C4B7CD4BD773D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		2475EA20B8A60D78D639DB8C /* BoardViewHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardViewHandle.swift; sourceTree = "<group>"; };
+		2475EB5E202BCDEA6ACFCDD9 /* ResetConfirmationViewHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetConfirmationViewHandle.swift; sourceTree = "<group>"; };
+		2475EBE7C5148ED3A35739FC /* BoardAutomationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardAutomationController.swift; sourceTree = "<group>"; };
+		2475EC31645FE4A4402CC583 /* BoardViewBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardViewBinding.swift; sourceTree = "<group>"; };
+		2475EF5ACB7DFE190D6A8E98 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		2475EFAB82099EC18C58B45C /* PlayerAutomatorProgressViewBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAutomatorProgressViewBinding.swift; sourceTree = "<group>"; };
+		62AE60FA2463AD2D00751115 /* UIKitTestable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = UIKitTestable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		62AE60FD2463AD3800751115 /* UIKitTestable.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = UIKitTestable.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62B7C4AC245EDBE8006F58CE /* ReversiCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReversiCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62D97B2224530022008513D3 /* MirrorDiffKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MirrorDiffKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62D97B2324530022008513D3 /* ReactiveSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReactiveSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +127,9 @@
 		2475E1D7FC01E81F9D2045F1 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				2475E8AC934583F127EDBA14 /* BoardAnimationController.swift */,
+				2475EBE7C5148ED3A35739FC /* BoardAutomationController.swift */,
+				2475E6D9B1B380FF762BB7A8 /* BoardController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -104,6 +137,8 @@
 		2475E25ED91F236C19DD123B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2475EEEE1F5942145B4EF3A7 /* ViewBindings */,
+				2475E8A961A5CD4DBCFD6046 /* ViewHandles */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -111,39 +146,65 @@
 		2475E77B8CDE76F7FB3A7A35 /* MVCArchitecture */ = {
 			isa = PBXGroup;
 			children = (
-				2475E25ED91F236C19DD123B /* Views */,
 				2475E1D7FC01E81F9D2045F1 /* Controllers */,
+				2475E25ED91F236C19DD123B /* Views */,
+				2475E72A8BF4ACD322490087 /* BoardMVCComposer.swift */,
 			);
 			path = MVCArchitecture;
+			sourceTree = "<group>";
+		};
+		2475E8A961A5CD4DBCFD6046 /* ViewHandles */ = {
+			isa = PBXGroup;
+			children = (
+				2475EA20B8A60D78D639DB8C /* BoardViewHandle.swift */,
+				2475E0A093E9FA51B4A53A34 /* PassButtonHandle.swift */,
+				2475E3064E22952BD593098D /* PlayerAutomatorProgressViewHandleProtocol.swift */,
+				2475EF5ACB7DFE190D6A8E98 /* README.md */,
+				2475EB5E202BCDEA6ACFCDD9 /* ResetConfirmationViewHandle.swift */,
+				2475E3497324581DD033385E /* UserConfirmationViewHandle.swift */,
+			);
+			path = ViewHandles;
+			sourceTree = "<group>";
+		};
+		2475EEEE1F5942145B4EF3A7 /* ViewBindings */ = {
+			isa = PBXGroup;
+			children = (
+				2475EC31645FE4A4402CC583 /* BoardViewBinding.swift */,
+				2475EFAB82099EC18C58B45C /* PlayerAutomatorProgressViewBinding.swift */,
+				2475E956166C4B7CD4BD773D /* README.md */,
+			);
+			path = ViewBindings;
 			sourceTree = "<group>";
 		};
 		62D97B2124530022008513D3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				62AE60FA2463AD2D00751115 /* UIKitTestable.framework */,
 				62D97B2224530022008513D3 /* MirrorDiffKit.framework */,
 				62D97B2324530022008513D3 /* ReactiveSwift.framework */,
+				62AE60FD2463AD3800751115 /* UIKitTestable.framework */,
 				62B7C4AC245EDBE8006F58CE /* ReversiCore.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		D636B3A123D43203007F370F /* Views */ = {
+		D636B3A123D43203007F370F /* ThirdPartyViews */ = {
 			isa = PBXGroup;
 			children = (
 				D642BDDB23AA137C00396732 /* BoardView.swift */,
 				D642BDD523AA0B3900396732 /* CellView.swift */,
 				D636B39E23D35043007F370F /* DiskView.swift */,
 			);
-			name = Views;
+			path = ThirdPartyViews;
 			sourceTree = "<group>";
 		};
 		D642BDA723A9FE4500396732 = {
 			isa = PBXGroup;
 			children = (
+				62D97B2124530022008513D3 /* Frameworks */,
+				D642BDB123A9FE4500396732 /* Products */,
 				D642BDB223A9FE4500396732 /* Reversi */,
 				D642BDC923A9FE4700396732 /* ReversiTests */,
-				D642BDB123A9FE4500396732 /* Products */,
-				62D97B2124530022008513D3 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -159,15 +220,15 @@
 		D642BDB223A9FE4500396732 /* Reversi */ = {
 			isa = PBXGroup;
 			children = (
+				2475E77B8CDE76F7FB3A7A35 /* MVCArchitecture */,
+				D636B3A123D43203007F370F /* ThirdPartyViews */,
 				D642BDB323A9FE4500396732 /* AppDelegate.swift */,
+				D642BDBC23A9FE4700396732 /* Assets.xcassets */,
+				D642BDC123A9FE4700396732 /* Info.plist */,
+				D642BDBE23A9FE4700396732 /* LaunchScreen.storyboard */,
+				D642BDB923A9FE4500396732 /* Main.storyboard */,
 				D642BDB523A9FE4500396732 /* SceneDelegate.swift */,
 				D642BDB723A9FE4500396732 /* ViewController.swift */,
-				D642BDB923A9FE4500396732 /* Main.storyboard */,
-				D642BDBC23A9FE4700396732 /* Assets.xcassets */,
-				D642BDBE23A9FE4700396732 /* LaunchScreen.storyboard */,
-				D642BDC123A9FE4700396732 /* Info.plist */,
-				D636B3A123D43203007F370F /* Views */,
-				2475E77B8CDE76F7FB3A7A35 /* MVCArchitecture */,
 			);
 			path = Reversi;
 			sourceTree = "<group>";
@@ -288,6 +349,17 @@
 				D642BDDC23AA137C00396732 /* BoardView.swift in Sources */,
 				D642BDB423A9FE4500396732 /* AppDelegate.swift in Sources */,
 				D642BDB623A9FE4500396732 /* SceneDelegate.swift in Sources */,
+				2475E8D38D1B7FB0DC45D505 /* BoardAnimationController.swift in Sources */,
+				2475E6F83CC4E3706080D5AE /* BoardController.swift in Sources */,
+				2475EF6C0907E13AA8C83C80 /* BoardAutomationController.swift in Sources */,
+				2475EC7656389F4D2FF37371 /* BoardMVCComposer.swift in Sources */,
+				2475E782E24EB0100095F9C6 /* PlayerAutomatorProgressViewBinding.swift in Sources */,
+				2475E65920589CE0329425A7 /* BoardViewBinding.swift in Sources */,
+				2475E5622D1545B2A483152B /* ResetConfirmationViewHandle.swift in Sources */,
+				2475E2D2C0E775D33AB4ED5E /* UserConfirmationViewHandle.swift in Sources */,
+				2475E9C673F7B148E4CAD89F /* BoardViewHandle.swift in Sources */,
+				2475EC50251456A73F5DBB66 /* PassButtonHandle.swift in Sources */,
+				2475E7494B8308D3A433CF18 /* PlayerAutomatorProgressViewHandleProtocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -315,6 +387,7 @@
 				D642BDBA23A9FE4500396732 /* Base */,
 			);
 			name = Main.storyboard;
+			path = .;
 			sourceTree = "<group>";
 		};
 		D642BDBE23A9FE4700396732 /* LaunchScreen.storyboard */ = {
@@ -323,6 +396,7 @@
 				D642BDBF23A9FE4700396732 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			path = .;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

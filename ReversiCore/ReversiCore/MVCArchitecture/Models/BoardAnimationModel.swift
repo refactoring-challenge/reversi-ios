@@ -49,7 +49,8 @@ import ReactiveSwift
 //                                                          |                               |
 //                                                          +-------------------------------+
 public protocol BoardAnimationModelProtocol: class {
-    var stateDidChange: ReactiveSwift.Property<BoardAnimationModelState> { get }
+    var animationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState> { get }
+    var animationState: BoardAnimationModelState { get }
 
     func requestAnimation(to board: Board, by accepted: GameState.AcceptedCommand)
 
@@ -63,10 +64,10 @@ public protocol BoardAnimationModelProtocol: class {
 public class BoardAnimationModel: BoardAnimationModelProtocol {
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
-    public let stateDidChange: ReactiveSwift.Property<BoardAnimationModelState>
+    public let animationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState>
     private let stateDidChangeMutable: ReactiveSwift.MutableProperty<BoardAnimationModelState>
 
-    public private(set) var state: BoardAnimationModelState {
+    public private(set) var animationState: BoardAnimationModelState {
         get { self.stateDidChangeMutable.value }
         set { self.stateDidChangeMutable.value = newValue }
     }
@@ -75,25 +76,25 @@ public class BoardAnimationModel: BoardAnimationModelProtocol {
     public init(startsWith board: Board) {
         let stateDidChangeMutable = ReactiveSwift.MutableProperty<BoardAnimationModelState>(.resetting(to: board))
         self.stateDidChangeMutable = stateDidChangeMutable
-        self.stateDidChange = ReactiveSwift.Property(stateDidChangeMutable)
+        self.animationStateDidChange = ReactiveSwift.Property(stateDidChangeMutable)
     }
 
 
     public func requestAnimation(to board: Board, by accepted: GameState.AcceptedCommand) {
-        switch (self.state, accepted) {
+        switch (self.animationState, accepted) {
         case (.placing, _), (.flipping, _), (.resetting, _):
             // NOTE: Stop animations and sync immediately to prevent mismatch between BoardModel and BoardView.
-            self.state = .resetting(to: board)
+            self.animationState = .resetting(to: board)
 
         case (_, .passed):
             // NOTE: Do nothing.
             return
 
         case (_, .reset):
-            self.state = .resetting(to: board)
+            self.animationState = .resetting(to: board)
 
         case (.notAnimating, .placed(by: let selected, who: let turn)):
-            self.state = .placing(
+            self.animationState = .placing(
                 at: selected.coordinate,
                 with: turn.disk,
                 restLines: selected.linesShouldFlip.sorted(by: shouldAnimateBefore)
@@ -103,14 +104,14 @@ public class BoardAnimationModel: BoardAnimationModelProtocol {
 
 
     public func markAnimationAsCompleted() {
-        guard let nextState = self.state.nextForAnimationCompletion else { return }
-        self.state = nextState
+        guard let nextState = self.animationState.nextForAnimationCompletion else { return }
+        self.animationState = nextState
     }
 
 
     public func markResetAsCompleted() {
-        guard let nextState = self.state.nextForResetCompletion else { return }
-        self.state = nextState
+        guard let nextState = self.animationState.nextForResetCompletion else { return }
+        self.animationState = nextState
     }
 }
 
@@ -202,7 +203,8 @@ public enum BoardAnimationModelState {
     }
 
 
-    public static func flipping(lineToFlip: FlippableLine, disk: Disk, restLines: [FlippableLine]) -> BoardAnimationModelState {
+    public static func flipping(lineToFlip: FlippableLine, disk: Disk, restLines: [FlippableLine]
+    ) -> BoardAnimationModelState {
         // NOTE: Nearest coordinate from where to place is highest animation priority (see README.md).
         let coordinatesShouldFlipEndToStart = lineToFlip.coordinatesShouldFlipStartToEnd.reversed()
         let coordinateToFlip = coordinatesShouldFlipEndToStart.first

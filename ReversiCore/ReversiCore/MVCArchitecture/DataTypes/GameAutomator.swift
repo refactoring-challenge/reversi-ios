@@ -3,7 +3,7 @@ import Hydra
 
 
 
-public enum PlayerAutomator {
+public enum GameAutomator {
     // NOTE: Prohibit illegal pass because players cannot pass if one or more available coordinate exist.
     public static let randomSelector: CoordinateSelector = { availableCoordinates in
         Hydra.Promise(resolved: availableCoordinates.randomElement())
@@ -11,7 +11,7 @@ public enum PlayerAutomator {
 
 
     public static func delayed(selector: @escaping CoordinateSelector, _ duration: TimeInterval) -> CoordinateSelector {
-        { availableCoordinates in selector(availableCoordinates).defer(in: .background, duration) }
+        { availableCoordinates in selector(availableCoordinates).defer(in: .utility, duration) }
     }
 
 

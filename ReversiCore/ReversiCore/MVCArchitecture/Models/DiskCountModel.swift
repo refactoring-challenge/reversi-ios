@@ -13,7 +13,7 @@ public class DiskCountModel: DiskCountModelProtocol {
 
 
     public init(observing boardModel: GameModel) {
-        self.diskCountDidChange = boardModel.stateDidChange
+        self.diskCountDidChange = boardModel.gameModelStateDidChange
             .map { gameModelState in gameModelState.gameState.board.countDisks() }
     }
 }

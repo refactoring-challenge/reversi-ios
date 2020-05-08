@@ -37,7 +37,7 @@ public struct GameState {
         }
 
         return selector(availableCandidates)
-            .then(in: .background) { selected in self.unsafeNext(by: selected) }
+            .then(in: .utility) { selected in self.unsafeNext(by: selected) }
     }
 
 
