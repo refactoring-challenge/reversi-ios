@@ -4,14 +4,14 @@ import ReactiveSwift
 
 
 public class BoardAutomationController {
-    private let model: AutomationAvailabilityModelProtocol
+    private let model: GameAutomatorAvailabilitiesModelProtocol
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(
-        observing firstPlayerAutomationAvailabilityDidChange: ReactiveSwift.Signal<AutomationAvailability, Never>,
-        observing secondPlayerAutomationAvailabilityDidChange: ReactiveSwift.Signal<AutomationAvailability, Never>,
-        requestingTo model: AutomationAvailabilityModelProtocol
+        observing firstPlayerAutomationAvailabilityDidChange: ReactiveSwift.Signal<GameAutomatorAvailability, Never>,
+        observing secondPlayerAutomationAvailabilityDidChange: ReactiveSwift.Signal<GameAutomatorAvailability, Never>,
+        requestingTo model: GameAutomatorAvailabilitiesModelProtocol
     ) {
         self.model = model
 

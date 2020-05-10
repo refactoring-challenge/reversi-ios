@@ -3,14 +3,9 @@ import ReactiveSwift
 
 
 
-public protocol GameWithAutomatorsModelProtocol: AutomationAvailabilityModelProtocol {
+public protocol GameWithAutomatorsModelProtocol: GameCommandReceivable, GameAutomatorAvailabilitiesModelProtocol, GameAutomatorProgressModelProtocol {
     var gameWithAutomatorsModelStateDidChange: ReactiveSwift.Property<GameWithAutomatorsModelState> { get }
-    var automatorDidProgress: ReactiveSwift.Property<AutomatorProgressModelState> { get }
-
-    @discardableResult func pass() -> AutomatableGameCommandResult
-    @discardableResult func place(at coordinate: Coordinate) -> AutomatableGameCommandResult
-    @discardableResult func reset() -> AutomatableGameCommandResult
-    @discardableResult func cancel() -> AutomatableGameCommandResult
+    @discardableResult func cancel() -> GameCommandResult
 }
 
 
@@ -26,13 +21,13 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
     public var gameWithAutomatorsModelState: GameWithAutomatorsModelState {
         self.gameWithAutomatorsModelStateDidChange.value
     }
-    public var automatorDidProgress: ReactiveSwift.Property<AutomatorProgressModelState> {
-        self.automatorProgressModel.automatorDidProgress
+    public var automatorDidProgress: ReactiveSwift.Property<GameAutomatorProgress> {
+        self.automatorModel.automatorDidProgress
     }
 
     private let automatableGameModel: AutomatableGameModelProtocol
-    private let automationAvailabilityModel: AutomationAvailabilityModelProtocol
-    private let automatorProgressModel: AutomatorProgressModelProtocol
+    private let automationAvailabilityModel: GameAutomatorAvailabilitiesModelProtocol
+    private let automatorModel: GameAutomatorModelProtocol
     private let automatorDidFail: ReactiveSwift.MutableProperty<GameWithAutomatorsModelState.FailureReason?>
 
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
@@ -40,12 +35,12 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
 
     public init(
         automatableGameModel: AutomatableGameModelProtocol,
-        automatorProgressModel: AutomatorProgressModelProtocol,
-        automationAvailabilityModel: AutomationAvailabilityModelProtocol
+        automatorModel: GameAutomatorModelProtocol,
+        automationAvailabilityModel: GameAutomatorAvailabilitiesModelProtocol
     ) {
         self.automatableGameModel = automatableGameModel
         self.automationAvailabilityModel = automationAvailabilityModel
-        self.automatorProgressModel = automatorProgressModel
+        self.automatorModel = automatorModel
 
         let automatorDidFail = ReactiveSwift.MutableProperty<GameWithAutomatorsModelState.FailureReason?>(nil)
         self.automatorDidFail = automatorDidFail
@@ -54,7 +49,7 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
             .combineLatest(
                 automatableGameModel.automatableGameStateDidChange,
                 automationAvailabilityModel.availabilitiesDidChange,
-                automatorProgressModel.automatorDidProgress,
+                automatorModel.automatorDidProgress,
                 automatorDidFail
             )
             .map {
@@ -75,13 +70,13 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
         // BUG8: Signal from Property does not receive the current value at first.
         ReactiveSwift.Property
             .combineLatest(
-                self.automatableGameModel.automatableGameStateDidChange,
-                self.automationAvailabilityModel.availabilitiesDidChange
-            )
+            self.automatableGameModel.automatableGameStateDidChange,
+            self.automationAvailabilityModel.availabilitiesDidChange
+        )
             .producer
             .take(during: self.lifetime)
             .observe(on: QueueScheduler(qos: .userInitiated))
-            .on(value: { [weak self] (pair: (AutomatableGameModelState, AutomationAvailabilities)) in
+            .on(value: { [weak self] (pair: (AutomatableGameModelState, GameAutomatorAvailabilities)) in
                 guard let self = self else { return }
                 let (boardAvailability, automationAvailabilities) = pair
                 switch boardAvailability {
@@ -104,13 +99,13 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
                             }
                         }
 
-                        self.automatorProgressModel.runAutomatorInThisTurn(for: nonEmptyAvailableCandidates)
+                        self.automatorModel.runAutomator(inThisTurn: gameState.turn, for: nonEmptyAvailableCandidates)
                     }
                 }
             })
             .start()
 
-        automatorProgressModel.automatorDidChoice
+        automatorModel.automatorDidChoice
             .producer
             .take(during: self.lifetime)
             .observe(on: QueueScheduler(qos: .userInitiated))
@@ -129,7 +124,21 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
 
 
     @discardableResult
-    public func pass() -> AutomatableGameCommandResult {
+    public func cancel() -> GameCommandResult {
+        switch self.automatorModel.cancel() {
+        case .ignored:
+            return .ignored
+        case .accepted:
+            return .accepted
+        }
+    }
+}
+
+
+
+extension GameWithAutomatorsModel: GameCommandReceivable {
+    @discardableResult
+    public func pass() -> GameCommandResult {
         switch self.gameWithAutomatorsModelState {
         case .automatorThinking, .failed:
             return .ignored
@@ -141,7 +150,7 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
 
 
     @discardableResult
-    public func place(at coordinate: Coordinate) -> AutomatableGameCommandResult {
+    public func place(at coordinate: Coordinate) -> GameCommandResult {
         switch self.gameWithAutomatorsModelState {
         case .automatorThinking, .failed:
             return .ignored
@@ -153,32 +162,21 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
 
 
     @discardableResult
-    public func reset() -> AutomatableGameCommandResult {
+    public func reset() -> GameCommandResult {
         self.cancel()
         return self.automatableGameModel.reset()
-    }
-
-
-    @discardableResult
-    public func cancel() -> AutomatableGameCommandResult {
-        switch self.automatorProgressModel.cancel() {
-        case .ignored:
-            return .ignored
-        case .accepted:
-            return .accepted
-        }
     }
 }
 
 
 
-extension GameWithAutomatorsModel: AutomationAvailabilityModelProtocol {
-    public var availabilitiesDidChange: Property<AutomationAvailabilities> {
+extension GameWithAutomatorsModel: GameAutomatorAvailabilitiesModelProtocol {
+    public var availabilitiesDidChange: Property<GameAutomatorAvailabilities> {
         self.automationAvailabilityModel.availabilitiesDidChange
     }
 
 
-    public func update(availability newAvailability: AutomationAvailability, for requestedTurn: Turn) {
+    public func update(availability newAvailability: GameAutomatorAvailability, for requestedTurn: Turn) {
         switch self.gameWithAutomatorsModelState {
         case .failed:
             return
@@ -190,7 +188,7 @@ extension GameWithAutomatorsModel: AutomationAvailabilityModelProtocol {
             // NOTE: Should cancel if the availability to update is processing.
             let shouldCancelCurrentAutomatorTask = prevGameState.turn.next == requestedTurn && newAvailability == .disabled
             if shouldCancelCurrentAutomatorTask {
-                self.automatorProgressModel.cancel()
+                self.automatorModel.cancel()
             }
         }
 
@@ -224,8 +222,8 @@ public enum GameWithAutomatorsModelState {
 
     public static func from(
         automatableGameState: AutomatableGameModelState,
-        automatorAvailabilities: AutomationAvailabilities,
-        automatorProgress: AutomatorProgressModelState,
+        automatorAvailabilities: GameAutomatorAvailabilities,
+        automatorProgress: GameAutomatorProgress,
         lastFailureReason: FailureReason?
     ) -> GameWithAutomatorsModelState {
         if let failureReason = lastFailureReason {
@@ -233,7 +231,7 @@ public enum GameWithAutomatorsModelState {
         }
 
         switch automatorProgress {
-        case .working(within: let availableCandidates, cancelToken: _):
+        case .thinking(in: _, within: let availableCandidates, cancelToken: _):
             return .automatorThinking(
                 previousGameState: automatableGameState.gameState,
                 previousAvailableCandidates: Set(availableCandidates.toArray())

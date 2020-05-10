@@ -4,7 +4,7 @@ import ReversiCore
 
 
 public class BoardMVCComposer {
-    private let animatedGameWithPlayerAutomationModel: AnimatedGameWithPlayerAutomatorModelProtocol
+    private let animatedGameWithAutomatorsModel: AnimatedGameWithAutomatorsModelProtocol
 
     private let boardViewBinding: BoardViewBinding
     private let playerAutomatorProgressViewBinding: PlayerAutomatorProgressViewBinding
@@ -14,22 +14,29 @@ public class BoardMVCComposer {
 
 
     public init(
-        animatedGameWithPlayerAutomationModel: AnimatedGameWithPlayerAutomatorModelProtocol,
         boardViewHandle: BoardViewHandleProtocol,
         playerAutomatorProgressViewHandle: PlayerAutomatorProgressViewHandleProtocol,
         passConfirmationViewHandle: PassButtonHandleProtocol,
         resetConfirmationViewHandle: ResetConfirmationViewHandleProtocol
     ) {
         // STEP-1: Holding Models and Model Decorators that are needed by the screen.
-        self.animatedGameWithPlayerAutomationModel = animatedGameWithPlayerAutomationModel
+        let animatedGameWithAutomatorsModel = AnimatedGameWithAutomatorsModel(
+            startsWith: .initial,
+            automatorAvailabilities: GameAutomatorAvailabilities(
+                first: .disabled,
+                second: .disabled
+            ),
+            automatorStrategy: GameAutomator.delayed(selector: GameAutomator.randomSelector, 2.0)
+        )
+        self.animatedGameWithAutomatorsModel = animatedGameWithAutomatorsModel
 
         // STEP-2: Constructing ViewBindings.
         self.boardViewBinding = BoardViewBinding(
-            observing: animatedGameWithPlayerAutomationModel,
+            observing: animatedGameWithAutomatorsModel,
             updating: boardViewHandle
         )
         self.playerAutomatorProgressViewBinding = PlayerAutomatorProgressViewBinding(
-            observing: animatedGameWithPlayerAutomationModel,
+            observing: animatedGameWithAutomatorsModel,
             updating: playerAutomatorProgressViewHandle
         )
 
@@ -37,11 +44,11 @@ public class BoardMVCComposer {
         self.boardController = BoardController(
             observingPassConfirmationDidAccept: passConfirmationViewHandle.passDidAccept,
             observingResetConfirmationDidAccept: resetConfirmationViewHandle.resetDidAccept,
-            requestingTo: animatedGameWithPlayerAutomationModel
+            requestingTo: animatedGameWithAutomatorsModel
         )
         self.boardAnimationController = BoardAnimationController(
             observingAnimationDidComplete: boardViewBinding.animationDidComplete,
-            requestingTo: animatedGameWithPlayerAutomationModel
+            requestingTo: animatedGameWithAutomatorsModel
         )
     }
 }

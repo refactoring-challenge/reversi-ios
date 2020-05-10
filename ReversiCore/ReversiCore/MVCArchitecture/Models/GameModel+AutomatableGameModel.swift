@@ -15,7 +15,7 @@ extension GameModelState {
 
 
 extension GameCommandResult {
-    public func toAutomatableGameCommandResult() -> AutomatableGameCommandResult {
+    public func toAutomatableGameCommandResult() -> GameCommandResult {
        switch self {
        case .accepted:
            return .accepted
@@ -30,20 +30,5 @@ extension GameCommandResult {
 extension GameModel: AutomatableGameModelProtocol {
     public var automatableGameStateDidChange: ReactiveSwift.Property<AutomatableGameModelState> {
         self.gameModelStateDidChange.map { $0.toAutomatableGameState() }
-    }
-
-
-    public func pass() -> AutomatableGameCommandResult {
-        self.pass().toAutomatableGameCommandResult()
-    }
-
-
-    public func place(at coordinate: Coordinate) -> AutomatableGameCommandResult {
-        self.place(at: coordinate).toAutomatableGameCommandResult()
-    }
-
-
-    public func reset() -> AutomatableGameCommandResult {
-        self.reset().toAutomatableGameCommandResult()
     }
 }

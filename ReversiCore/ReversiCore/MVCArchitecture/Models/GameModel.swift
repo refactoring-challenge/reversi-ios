@@ -2,18 +2,9 @@ import ReactiveSwift
 
 
 
-public protocol GameModelProtocol: class {
+public protocol GameModelProtocol: GameCommandReceivable {
     var gameModelStateDidChange: ReactiveSwift.Property<GameModelState> { get }
     var gameCommandDidAccepted: ReactiveSwift.Signal<GameState.AcceptedCommand, Never> { get }
-
-    @discardableResult
-    func pass() -> GameCommandResult
-
-    @discardableResult
-    func place(at coordinate: Coordinate) -> GameCommandResult
-
-    @discardableResult
-    func reset() -> GameCommandResult
 }
 
 
@@ -52,6 +43,14 @@ public class GameModel: GameModelProtocol {
     }
 
 
+    fileprivate func transit(to nextState: GameModelState, by accepted: GameState.AcceptedCommand) {
+        self.gameModelState = nextState
+        self.commandDidAcceptedObserver.send(value: accepted)
+    }
+}
+
+
+extension GameModel: GameCommandReceivable {
     public func pass() -> GameCommandResult {
         switch self.gameModelState {
         case .completed:
@@ -95,12 +94,6 @@ public class GameModel: GameModelProtocol {
         let (nextGameState, accepted) = self.gameModelState.gameState.reset()
         self.transit(to: .next(by: nextGameState), by: accepted)
         return .accepted
-    }
-
-
-    private func transit(to nextState: GameModelState, by accepted: GameState.AcceptedCommand) {
-        self.gameModelState = nextState
-        self.commandDidAcceptedObserver.send(value: accepted)
     }
 }
 

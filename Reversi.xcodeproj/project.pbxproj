@@ -19,7 +19,6 @@
 		2475EC7656389F4D2FF37371 /* BoardMVCComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E72A8BF4ACD322490087 /* BoardMVCComposer.swift */; };
 		2475EF6C0907E13AA8C83C80 /* BoardAutomationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EBE7C5148ED3A35739FC /* BoardAutomationController.swift */; };
 		62AE60FB2463AD2D00751115 /* UIKitTestable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62AE60FA2463AD2D00751115 /* UIKitTestable.framework */; };
-		62AE60FC2463AD2D00751115 /* UIKitTestable.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62AE60FA2463AD2D00751115 /* UIKitTestable.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		62AE60FE2463AD3800751115 /* UIKitTestable.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62AE60FD2463AD3800751115 /* UIKitTestable.framework */; };
 		62AE60FF2463AD3800751115 /* UIKitTestable.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 62AE60FD2463AD3800751115 /* UIKitTestable.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		62B7C4AD245EDBE8006F58CE /* ReversiCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62B7C4AC245EDBE8006F58CE /* ReversiCore.framework */; };
@@ -57,7 +56,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				62D97B2524530022008513D3 /* MirrorDiffKit.framework in Embed Frameworks */,
-				62AE60FC2463AD2D00751115 /* UIKitTestable.framework in Embed Frameworks */,
 				62D97B2724530022008513D3 /* ReactiveSwift.framework in Embed Frameworks */,
 				62B7C4AE245EDBE8006F58CE /* ReversiCore.framework in Embed Frameworks */,
 				62AE60FF2463AD3800751115 /* UIKitTestable.framework in Embed Frameworks */,

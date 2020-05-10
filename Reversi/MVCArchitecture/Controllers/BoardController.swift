@@ -4,14 +4,14 @@ import ReactiveSwift
 
 
 public class BoardController {
-    private let model: GameModelProtocol
+    private let model: GameCommandReceivable
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(
         observingPassConfirmationDidAccept passConfirmationDidAccept: ReactiveSwift.Signal<Void, Never>,
         observingResetConfirmationDidAccept resetConfirmationDidAccept: ReactiveSwift.Signal<Bool, Never>,
-        requestingTo model: GameModelProtocol
+        requestingTo model: GameCommandReceivable
     ) {
         self.model = model
 

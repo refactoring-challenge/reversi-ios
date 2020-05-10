@@ -49,8 +49,7 @@ import ReactiveSwift
 //                                                          |                               |
 //                                                          +-------------------------------+
 public protocol BoardAnimationModelProtocol: class {
-    var animationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState> { get }
-    var animationState: BoardAnimationModelState { get }
+    var boardAnimationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState> { get }
 
     func requestAnimation(to board: Board, by accepted: GameState.AcceptedCommand)
 
@@ -61,13 +60,19 @@ public protocol BoardAnimationModelProtocol: class {
 
 
 
+public extension BoardAnimationModelProtocol {
+    var boardAnimationState: BoardAnimationModelState { self.boardAnimationStateDidChange.value }
+}
+
+
+
 public class BoardAnimationModel: BoardAnimationModelProtocol {
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
-    public let animationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState>
+    public let boardAnimationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState>
     private let stateDidChangeMutable: ReactiveSwift.MutableProperty<BoardAnimationModelState>
 
-    public private(set) var animationState: BoardAnimationModelState {
+    public private(set) var boardAnimationState: BoardAnimationModelState {
         get { self.stateDidChangeMutable.value }
         set { self.stateDidChangeMutable.value = newValue }
     }
@@ -76,25 +81,25 @@ public class BoardAnimationModel: BoardAnimationModelProtocol {
     public init(startsWith board: Board) {
         let stateDidChangeMutable = ReactiveSwift.MutableProperty<BoardAnimationModelState>(.resetting(to: board))
         self.stateDidChangeMutable = stateDidChangeMutable
-        self.animationStateDidChange = ReactiveSwift.Property(stateDidChangeMutable)
+        self.boardAnimationStateDidChange = ReactiveSwift.Property(stateDidChangeMutable)
     }
 
 
     public func requestAnimation(to board: Board, by accepted: GameState.AcceptedCommand) {
-        switch (self.animationState, accepted) {
+        switch (self.boardAnimationState, accepted) {
         case (.placing, _), (.flipping, _), (.resetting, _):
             // NOTE: Stop animations and sync immediately to prevent mismatch between BoardModel and BoardView.
-            self.animationState = .resetting(to: board)
+            self.boardAnimationState = .resetting(to: board)
 
         case (_, .passed):
             // NOTE: Do nothing.
             return
 
         case (_, .reset):
-            self.animationState = .resetting(to: board)
+            self.boardAnimationState = .resetting(to: board)
 
         case (.notAnimating, .placed(by: let selected, who: let turn)):
-            self.animationState = .placing(
+            self.boardAnimationState = .placing(
                 at: selected.coordinate,
                 with: turn.disk,
                 restLines: selected.linesShouldFlip.sorted(by: shouldAnimateBefore)
@@ -104,14 +109,14 @@ public class BoardAnimationModel: BoardAnimationModelProtocol {
 
 
     public func markAnimationAsCompleted() {
-        guard let nextState = self.animationState.nextForAnimationCompletion else { return }
-        self.animationState = nextState
+        guard let nextState = self.boardAnimationState.nextForAnimationCompletion else { return }
+        self.boardAnimationState = nextState
     }
 
 
     public func markResetAsCompleted() {
-        guard let nextState = self.animationState.nextForResetCompletion else { return }
-        self.animationState = nextState
+        guard let nextState = self.boardAnimationState.nextForResetCompletion else { return }
+        self.boardAnimationState = nextState
     }
 }
 

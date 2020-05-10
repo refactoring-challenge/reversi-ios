@@ -2,18 +2,9 @@ import ReactiveSwift
 
 
 
-public protocol AnimatedGameModelProtocol: BoardAnimationModelProtocol {
+public protocol AnimatedGameModelProtocol: GameCommandReceivable, BoardAnimationModelProtocol {
     var animatedGameStateDidChange: ReactiveSwift.Property<AnimatedGameModelState> { get }
     var animatedGameCommandDidAccept: ReactiveSwift.Signal<GameState.AcceptedCommand, Never> { get }
-
-    @discardableResult
-    func pass() -> AnimatedGameModelCommandResult
-
-    @discardableResult
-    func place(at coordinate: Coordinate) -> AnimatedGameModelCommandResult
-
-    @discardableResult
-    func reset() -> AnimatedGameModelCommandResult
 }
 
 
@@ -39,36 +30,38 @@ public class AnimatedGameModel: AnimatedGameModelProtocol {
         self.boardAnimationModel = boardAnimationModel
 
         self.animatedGameStateDidChange = ReactiveSwift.Property
-            .combineLatest(gameModel.gameModelStateDidChange, boardAnimationModel.animationStateDidChange)
+            .combineLatest(gameModel.gameModelStateDidChange, boardAnimationModel.boardAnimationStateDidChange)
             .map(AnimatedGameModelState.from(_:))
     }
+}
 
 
-    public func pass() -> AnimatedGameModelCommandResult {
+extension AnimatedGameModel: GameCommandReceivable {
+    public func pass() -> GameCommandResult {
         // NOTE: Should not accept any user-initiated command that updating the board during animations except resets.
-        guard !self.boardAnimationModel.animationState.isAnimating else { return .ignored }
-        return .from(gameCommandResult: self.gameModel.pass())
+        guard !self.boardAnimationModel.boardAnimationState.isAnimating else { return .ignored }
+        return self.gameModel.pass()
     }
 
 
-    public func place(at coordinate: Coordinate) -> AnimatedGameModelCommandResult {
+    public func place(at coordinate: Coordinate) -> GameCommandResult {
         // NOTE: Should not accept any user-initiated command that updating the board during animations except resets.
-        guard !self.boardAnimationModel.animationState.isAnimating else { return .ignored }
-        return .from(gameCommandResult: self.gameModel.place(at: coordinate))
+        guard !self.boardAnimationModel.boardAnimationState.isAnimating else { return .ignored }
+        return self.gameModel.place(at: coordinate)
     }
 
 
-    public func reset() -> AnimatedGameModelCommandResult {
+    public func reset() -> GameCommandResult {
         // NOTE: Reset must be accepted during animations (see README.md).
-        .from(gameCommandResult: self.gameModel.reset())
+        self.gameModel.reset()
     }
 }
 
 
 
 extension AnimatedGameModel: BoardAnimationModelProtocol {
-    public var animationState: BoardAnimationModelState { self.boardAnimationModel.animationState }
-    public var animationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState> { self.boardAnimationModel.animationStateDidChange }
+    public var boardAnimationState: BoardAnimationModelState { self.boardAnimationModel.boardAnimationState }
+    public var boardAnimationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState> { self.boardAnimationModel.boardAnimationStateDidChange }
 
 
     public func requestAnimation(to board: Board, by accepted: GameState.AcceptedCommand) {
@@ -161,24 +154,3 @@ public enum AnimatedGameModelState {
         self.from(gameModelState: tuple.gameState, animationState: tuple.animationState)
     }
 }
-
-
-
-public enum AnimatedGameModelCommandResult {
-    case accepted
-    case ignored
-
-
-    public static func from(gameCommandResult: GameCommandResult) -> AnimatedGameModelCommandResult {
-        switch gameCommandResult {
-        case .accepted:
-            return .accepted
-        case .ignored:
-            return .ignored
-        }
-    }
-}
-
-
-
-extension AnimatedGameModelCommandResult: Equatable {}

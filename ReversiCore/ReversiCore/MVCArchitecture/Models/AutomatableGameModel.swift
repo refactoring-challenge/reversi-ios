@@ -2,11 +2,8 @@ import ReactiveSwift
 
 
 
-public protocol AutomatableGameModelProtocol: class {
+public protocol AutomatableGameModelProtocol: GameCommandReceivable {
     var automatableGameStateDidChange: ReactiveSwift.Property<AutomatableGameModelState> { get }
-    func pass() -> AutomatableGameCommandResult
-    func place(at: Coordinate) -> AutomatableGameCommandResult
-    func reset() -> AutomatableGameCommandResult
 }
 
 
@@ -46,14 +43,3 @@ public enum AutomatableGameModelState {
 
     var turn: Turn { self.gameState.turn }
 }
-
-
-
-public enum AutomatableGameCommandResult {
-    case accepted
-    case ignored
-}
-
-
-
-extension AutomatableGameCommandResult: Equatable {}

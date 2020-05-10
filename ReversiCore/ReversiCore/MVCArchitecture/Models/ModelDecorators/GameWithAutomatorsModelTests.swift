@@ -16,11 +16,11 @@ class GameWithAutomatorsModelTests: XCTestCase {
         let model = GameWithAutomatorsModel(
             automatableGameModel: GameModel(startsWith: .initial),
             // NOTE: Use topLeftSelector to make deterministic.
-            automatorProgressModel: AutomatorProgressModel(
+            automatorModel: GameAutomatorModel(
                 strategy: GameAutomator.topLeftSelector
             ),
-            automationAvailabilityModel: AutomationAvailabilityModel(
-                startsWith: AutomationAvailabilities(
+            automationAvailabilityModel: GameAutomatorAvailabilitiesModel(
+                startsWith: GameAutomatorAvailabilities(
                     first: .disabled,
                     second: .disabled
                 )
@@ -60,12 +60,12 @@ class GameWithAutomatorsModelTests: XCTestCase {
 
         let model = GameWithAutomatorsModel(
             automatableGameModel: GameModel(startsWith: .initial),
-            automatorProgressModel: AutomatorProgressModel(
+            automatorModel: GameAutomatorModel(
                 // NOTE: Use topLeftSelector to make deterministic.
                 strategy: GameAutomator.topLeftSelector
             ),
-            automationAvailabilityModel: AutomationAvailabilityModel(
-                startsWith: AutomationAvailabilities(
+            automationAvailabilityModel: GameAutomatorAvailabilitiesModel(
+                startsWith: GameAutomatorAvailabilities(
                     first: .disabled,
                     second: .enabled
                 )
@@ -106,12 +106,12 @@ class GameWithAutomatorsModelTests: XCTestCase {
 
         let model = GameWithAutomatorsModel(
             automatableGameModel: GameModel(startsWith: .initial),
-            automatorProgressModel: AutomatorProgressModel(
+            automatorModel: GameAutomatorModel(
                 // NOTE: Use topLeftSelector to make deterministic.
                 strategy: GameAutomator.topLeftSelector
             ),
-            automationAvailabilityModel: AutomationAvailabilityModel(
-                startsWith: AutomationAvailabilities(
+            automationAvailabilityModel: GameAutomatorAvailabilitiesModel(
+                startsWith: GameAutomatorAvailabilities(
                     first: .enabled,
                     second: .enabled
                 )

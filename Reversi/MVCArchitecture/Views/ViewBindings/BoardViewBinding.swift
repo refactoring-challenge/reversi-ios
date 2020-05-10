@@ -24,7 +24,7 @@ public class BoardViewBinding {
             ReactiveSwift.Signal<BoardAnimationRequest, Never>.pipe()
 
         boardAnimationModel
-            .animationStateDidChange
+            .boardAnimationStateDidChange
             .producer
             .take(during: self.lifetime)
             .observe(on: UIScheduler())
