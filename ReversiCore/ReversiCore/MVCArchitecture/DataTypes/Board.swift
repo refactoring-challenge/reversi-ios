@@ -41,21 +41,21 @@ public struct Board {
 
 
     public func countDisks() -> DiskCount {
-        var light = 0
-        var dark = 0
+        var first = 0
+        var second = 0
 
         self.forEach { diskOrNil in
             switch diskOrNil {
             case .none:
                 return
             case .some(.dark):
-                dark += 1
+                first += 1
             case .some(.light):
-                light += 1
+                second += 1
             }
         }
 
-        return DiskCount(light: light, dark: dark)
+        return DiskCount(first: first, second: second)
     }
 
 

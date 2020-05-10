@@ -1,13 +1,19 @@
 public struct DiskCount {
-    public let light: Int
-    public let dark: Int
+    public let first: Int
+    public let second: Int
+
+
+    public init(first: Int, second: Int) {
+        self.first = first
+        self.second = second
+    }
 
 
     public func currentGameResult() -> GameResult {
-        if self.dark == self.light {
+        if self.first == self.second {
             return .draw
         }
-        return self.dark > self.light
+        return self.first > self.second
             ? .win(who: .first)
             : .win(who: .second)
     }

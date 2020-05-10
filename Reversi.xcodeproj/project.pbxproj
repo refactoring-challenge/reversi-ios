@@ -13,6 +13,8 @@
 		2475E6F83CC4E3706080D5AE /* BoardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E6D9B1B380FF762BB7A8 /* BoardController.swift */; };
 		2475E7494B8308D3A433CF18 /* PlayerAutomatorProgressViewHandleProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E3064E22952BD593098D /* PlayerAutomatorProgressViewHandleProtocol.swift */; };
 		2475E782E24EB0100095F9C6 /* PlayerAutomatorProgressViewBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EFAB82099EC18C58B45C /* PlayerAutomatorProgressViewBinding.swift */; };
+		2475E7C1D556CFB682B91BE0 /* DiskCountViewHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E280E67AC3327959449C /* DiskCountViewHandle.swift */; };
+		2475E7FF0B8529DB34AB9DFE /* DiskCountViewBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E435E67DF68DC40E73F3 /* DiskCountViewBinding.swift */; };
 		2475E8D38D1B7FB0DC45D505 /* BoardAnimationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E8AC934583F127EDBA14 /* BoardAnimationController.swift */; };
 		2475E9C673F7B148E4CAD89F /* BoardViewHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EA20B8A60D78D639DB8C /* BoardViewHandle.swift */; };
 		2475EC50251456A73F5DBB66 /* PassButtonHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E0A093E9FA51B4A53A34 /* PassButtonHandle.swift */; };
@@ -67,8 +69,10 @@
 
 /* Begin PBXFileReference section */
 		2475E0A093E9FA51B4A53A34 /* PassButtonHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassButtonHandle.swift; sourceTree = "<group>"; };
+		2475E280E67AC3327959449C /* DiskCountViewHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskCountViewHandle.swift; sourceTree = "<group>"; };
 		2475E3064E22952BD593098D /* PlayerAutomatorProgressViewHandleProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerAutomatorProgressViewHandleProtocol.swift; sourceTree = "<group>"; };
 		2475E3497324581DD033385E /* UserConfirmationViewHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConfirmationViewHandle.swift; sourceTree = "<group>"; };
+		2475E435E67DF68DC40E73F3 /* DiskCountViewBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskCountViewBinding.swift; sourceTree = "<group>"; };
 		2475E6D9B1B380FF762BB7A8 /* BoardController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardController.swift; sourceTree = "<group>"; };
 		2475E72A8BF4ACD322490087 /* BoardMVCComposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardMVCComposer.swift; sourceTree = "<group>"; };
 		2475E8AC934583F127EDBA14 /* BoardAnimationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardAnimationController.swift; sourceTree = "<group>"; };
@@ -155,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				2475EA20B8A60D78D639DB8C /* BoardViewHandle.swift */,
+				2475E280E67AC3327959449C /* DiskCountViewHandle.swift */,
 				2475E0A093E9FA51B4A53A34 /* PassButtonHandle.swift */,
 				2475E3064E22952BD593098D /* PlayerAutomatorProgressViewHandleProtocol.swift */,
 				2475EF5ACB7DFE190D6A8E98 /* README.md */,
@@ -168,6 +173,7 @@
 			isa = PBXGroup;
 			children = (
 				2475EC31645FE4A4402CC583 /* BoardViewBinding.swift */,
+				2475E435E67DF68DC40E73F3 /* DiskCountViewBinding.swift */,
 				2475EFAB82099EC18C58B45C /* PlayerAutomatorProgressViewBinding.swift */,
 				2475E956166C4B7CD4BD773D /* README.md */,
 			);
@@ -358,6 +364,8 @@
 				2475E9C673F7B148E4CAD89F /* BoardViewHandle.swift in Sources */,
 				2475EC50251456A73F5DBB66 /* PassButtonHandle.swift in Sources */,
 				2475E7494B8308D3A433CF18 /* PlayerAutomatorProgressViewHandleProtocol.swift in Sources */,
+				2475E7FF0B8529DB34AB9DFE /* DiskCountViewBinding.swift in Sources */,
+				2475E7C1D556CFB682B91BE0 /* DiskCountViewHandle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

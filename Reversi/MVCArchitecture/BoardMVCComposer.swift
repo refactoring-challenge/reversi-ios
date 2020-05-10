@@ -5,9 +5,11 @@ import ReversiCore
 
 public class BoardMVCComposer {
     private let animatedGameWithAutomatorsModel: AnimatedGameWithAutomatorsModelProtocol
+    private let diskCountModel: DiskCountModelProtocol
 
     private let boardViewBinding: BoardViewBinding
     private let playerAutomatorProgressViewBinding: PlayerAutomatorProgressViewBinding
+    private let diskCountViewBinding: DiskCountViewBinding
 
     private let boardController: BoardController
     private let boardAnimationController: BoardAnimationController
@@ -17,9 +19,11 @@ public class BoardMVCComposer {
         boardViewHandle: BoardViewHandleProtocol,
         playerAutomatorProgressViewHandle: PlayerAutomatorProgressViewHandleProtocol,
         passConfirmationViewHandle: PassButtonHandleProtocol,
-        resetConfirmationViewHandle: ResetConfirmationViewHandleProtocol
+        resetConfirmationViewHandle: ResetConfirmationViewHandleProtocol,
+        diskCountViewHandle: DiskCountViewHandleProtocol
     ) {
-        // STEP-1: Holding Models and Model Decorators that are needed by the screen.
+        // STEP-1: Constructing Models and Model Aggregates that are needed by the screen.
+        //         And models should be shared across multiple screens will arrive as parameters.
         let animatedGameWithAutomatorsModel = AnimatedGameWithAutomatorsModel(
             startsWith: .initial,
             automatorAvailabilities: GameAutomatorAvailabilities(
@@ -29,6 +33,7 @@ public class BoardMVCComposer {
             automatorStrategy: GameAutomator.delayed(selector: GameAutomator.randomSelector, 2.0)
         )
         self.animatedGameWithAutomatorsModel = animatedGameWithAutomatorsModel
+        self.diskCountModel = DiskCountModel(observing: animatedGameWithAutomatorsModel)
 
         // STEP-2: Constructing ViewBindings.
         self.boardViewBinding = BoardViewBinding(
@@ -38,6 +43,10 @@ public class BoardMVCComposer {
         self.playerAutomatorProgressViewBinding = PlayerAutomatorProgressViewBinding(
             observing: animatedGameWithAutomatorsModel,
             updating: playerAutomatorProgressViewHandle
+        )
+        self.diskCountViewBinding = DiskCountViewBinding(
+            observing: diskCountModel,
+            updating: diskCountViewHandle
         )
 
         // STEP-3: Constructing Controllers.
