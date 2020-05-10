@@ -134,6 +134,17 @@ public enum BoardAnimationModelState {
     case resetting(to: Board)
 
 
+    public var animatingCoordinate: Coordinate? {
+        switch self {
+        case .notAnimating, .resetting:
+            return nil
+        case .placing(at: let coordinate, with: _, restLines: _),
+            .flipping(at: let coordinate, with: _, restCoordinates: _, restLines: _):
+            return coordinate
+        }
+    }
+
+
     public var animationRequest: BoardAnimationRequest? {
         switch self {
         case .notAnimating:

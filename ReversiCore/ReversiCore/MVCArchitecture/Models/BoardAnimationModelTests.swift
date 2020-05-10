@@ -8,7 +8,7 @@ class BoardAnimationModelTests: XCTestCase {
     func testNext() {
         struct TestCase {
             let start: BoardAnimationModelState
-            let expectedHistoryUntilNotAnimating: [BoardAnimationModelState]
+            let expectedHistoryUntilNotAnimating: [Coordinate]
         }
 
 
@@ -33,8 +33,7 @@ class BoardAnimationModelTests: XCTestCase {
                     ])!
                 ),
                 expectedHistoryUntilNotAnimating: [
-                    .flipping(at: Coordinate(x: .b, y: .one), with: .dark, restCoordinates: [], restLines: []),
-                    .notAnimating,
+                    Coordinate(x: .b, y: .one),
                 ]
             ),
             #line: TestCase(
@@ -67,21 +66,34 @@ class BoardAnimationModelTests: XCTestCase {
                     ])!
                 ),
                 expectedHistoryUntilNotAnimating: [
-                    .flipping(at: Coordinate(x: .b, y: .one), with: .dark, restCoordinates: [], restLines: [
+                    Coordinate(x: .b, y: .one),
+                    Coordinate(x: .a, y: .two),
+                ]
+            ),
+            #line: TestCase(
+                start: .placing(
+                    at: Coordinate(x: .a, y: .one),
+                    with: .dark,
+                    restLines: NonEmptyArray([
                         FlippableLine(
                             line: Line(
-                                start: Coordinate(x: .a, y: .three),
-                                directedDistance: DirectedDistance(direction: .top, distance: .two)
+                                start: Coordinate(x: .e, y: .one),
+                                directedDistance: DirectedDistance(direction: .left, distance: .four)
                             )!,
-                            unsafeFirstEntry: FlippableLine.Entry(unsafeDisk: .dark, at: Coordinate(x: .a, y: .three)),
+                            unsafeFirstEntry: FlippableLine.Entry(unsafeDisk: .dark, at: Coordinate(x: .e, y: .one)),
                             unsafeMiddleEntries: NonEmptyArray([
-                                FlippableLine.Entry(unsafeDisk: .light, at: Coordinate(x: .a, y: .two)),
+                                FlippableLine.Entry(unsafeDisk: .light, at: Coordinate(x: .d, y: .one)),
+                                FlippableLine.Entry(unsafeDisk: .light, at: Coordinate(x: .c, y: .one)),
+                                FlippableLine.Entry(unsafeDisk: .light, at: Coordinate(x: .b, y: .one)),
                             ])!,
                             unsafeLastEntry: FlippableLine.Entry(unsafeDisk: .none, at: Coordinate(x: .a, y: .one))
-                        ),
-                    ]),
-                    .flipping(at: Coordinate(x: .a, y: .two), with: .dark, restCoordinates: [], restLines: []),
-                    .notAnimating,
+                        )
+                    ])!
+                ),
+                expectedHistoryUntilNotAnimating: [
+                    Coordinate(x: .b, y: .one),
+                    Coordinate(x: .c, y: .one),
+                    Coordinate(x: .d, y: .one),
                 ]
             ),
         ]
@@ -89,11 +101,12 @@ class BoardAnimationModelTests: XCTestCase {
         testCases.forEach {
             let (line, testCase) = $0
 
-            var actualHistoryUntilNotAnimating = [BoardAnimationModelState]()
-            var state = testCase.start
-            while state != .notAnimating {
-                state = state.nextForAnimationCompletion!
-                actualHistoryUntilNotAnimating.append(state)
+            var actualHistoryUntilNotAnimating = [Coordinate]()
+            var prevState = testCase.start
+            while let state = prevState.nextForAnimationCompletion {
+                if state == .notAnimating { break }
+                actualHistoryUntilNotAnimating.append(state.animatingCoordinate!)
+                prevState = state
             }
 
             XCTAssertEqual(
