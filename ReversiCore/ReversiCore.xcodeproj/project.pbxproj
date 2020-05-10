@@ -238,7 +238,7 @@
 			path = DataTypes;
 			sourceTree = "<group>";
 		};
-		2475E6EBF022E1D24B90081D /* ModelDecorators */ = {
+		2475E6EBF022E1D24B90081D /* ModelAggregates */ = {
 			isa = PBXGroup;
 			children = (
 				2475EE8A31BB147638E92587 /* AnimatedGameModel+AutomatableGameModel.swift */,
@@ -248,7 +248,7 @@
 				2475E93B032B40C6A65EADA0 /* GameWithAutomatorsModelTests.swift */,
 				2475E49A60BBCADFDB456218 /* README.md */,
 			);
-			path = ModelDecorators;
+			path = ModelAggregates;
 			sourceTree = "<group>";
 		};
 		624D5F16245E9BBE00C3EBFC = {
@@ -313,7 +313,7 @@
 		62B7C4FE246048BB006F58CE /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				2475E6EBF022E1D24B90081D /* ModelDecorators */,
+				2475E6EBF022E1D24B90081D /* ModelAggregates */,
 				2475E5B70577460A8BEC04EF /* AutomatableGameModel.swift */,
 				2475E9B0B1787A752ACB5FCF /* BoardAnimationModel.swift */,
 				62B7C512246048BB006F58CE /* DiskCountModel.swift */,
