@@ -5,50 +5,72 @@ import ReactiveSwift
 
 public protocol BoardViewHandleProtocol {
     var coordinateDidSelect: ReactiveSwift.Signal<Coordinate, Never> { get }
-    func set(disk: Disk?, at: Coordinate, animated: Bool)
-    func set(disk: Disk?, at: Coordinate, animated: Bool, _ completion: ((Bool) -> Void)?)
-    func cancelAllAnimations()
-}
+    var animationDidComplete: ReactiveSwift.Signal<BoardAnimationRequest, Never> { get }
 
-
-
-extension BoardViewHandleProtocol {
-    public func set(board: Board, animated: Bool, _ completion: ((Bool) -> Void)? = nil) {
-        Coordinate.allCases.forEach { coordinate in
-            self.set(disk: board[coordinate], at: coordinate, animated: animated, completion)
-        }
-    }
+    func apply(by request: BoardAnimationRequest)
 }
 
 
 
 public class BoardViewHandle: BoardViewHandleProtocol {
     public let coordinateDidSelect: ReactiveSwift.Signal<Coordinate, Never>
+    public let animationDidComplete: ReactiveSwift.Signal<BoardAnimationRequest, Never>
+
     private let coordinateDidSelectObserver: ReactiveSwift.Signal<Coordinate, Never>.Observer
+    private let animationDidCompleteObserver: ReactiveSwift.Signal<BoardAnimationRequest, Never>.Observer
 
     private let boardView: BoardView
 
 
     public init(boardView: BoardView) {
         self.boardView = boardView
-        (self.coordinateDidSelect, self.coordinateDidSelectObserver) = ReactiveSwift.Signal<Coordinate, Never>.pipe()
+
+        (self.coordinateDidSelect, self.coordinateDidSelectObserver) =
+            ReactiveSwift.Signal<Coordinate, Never>.pipe()
+
+        (self.animationDidComplete, self.animationDidCompleteObserver) =
+            ReactiveSwift.Signal<BoardAnimationRequest, Never>.pipe()
 
         boardView.delegate = self
     }
 
 
-    public func set(disk: Disk?, at coordinate: Coordinate, animated: Bool) {
-        self.set(disk: disk, at: coordinate, animated: animated, nil)
+    public func apply(by request: BoardAnimationRequest) {
+        switch request {
+        case .shouldSyncImmediately(board: let board):
+            self.syncImmediately(to: board)
+        case .shouldAnimate(disk: let disk, at: let coordinate):
+            self.animate(disk: disk, at: coordinate)
+        }
     }
 
 
-    public func set(disk: Disk?, at coordinate: Coordinate, animated: Bool, _ completion: ((Bool) -> ())?) {
-        self.boardView.setDisk(disk, atX: coordinate.x.rawValue - 1, y: coordinate.y.rawValue - 1, animated: animated)
-    }
-
-
-    public func cancelAllAnimations() {
+    private func syncImmediately(to board: Board) {
         self.boardView.layer.removeAllAnimations()
+        Coordinate.allCases.forEach { coordinate in
+            self.set(disk: board[coordinate], at: coordinate, animated: false, completion: nil)
+        }
+        self.animationDidCompleteObserver.send(value: .shouldSyncImmediately(board: board))
+    }
+
+
+    private func animate(disk: Disk, at coordinate: Coordinate) {
+        self.set(disk: disk, at: coordinate, animated: true) { isFinished in
+            if isFinished {
+                self.animationDidCompleteObserver.send(value: .shouldAnimate(disk: disk, at: coordinate))
+            }
+        }
+    }
+
+
+    private func set(disk: Disk?, at coordinate: Coordinate, animated: Bool, completion: ((Bool) -> Void)?) {
+        self.boardView.setDisk(
+            disk,
+            atX: coordinate.x.rawValue - 1,
+            y: coordinate.y.rawValue - 1,
+            animated: animated,
+            completion: completion
+        )
     }
 }
 

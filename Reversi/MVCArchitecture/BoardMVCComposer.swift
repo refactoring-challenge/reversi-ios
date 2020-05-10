@@ -8,28 +8,30 @@ public class BoardMVCComposer {
     private let diskCountModel: DiskCountModelProtocol
 
     private let boardViewBinding: BoardViewBinding
-    private let playerAutomatorProgressViewBinding: PlayerAutomatorProgressViewBinding
+    private let gameAutomatorProgressViewBinding: GameAutomatorProgressViewBinding
+    private let gameAutomatorControlBinding: GameAutomatorControlBinding
     private let diskCountViewBinding: DiskCountViewBinding
+    private let turnMessageViewBinding: TurnMessageViewBinding
 
     private let boardController: BoardController
     private let boardAnimationController: BoardAnimationController
+    private let gameAutomatorController: GameAutomatorController
 
 
     public init(
         boardViewHandle: BoardViewHandleProtocol,
-        playerAutomatorProgressViewHandle: PlayerAutomatorProgressViewHandleProtocol,
+        gameAutomatorProgressViewHandle: GameAutomatorProgressViewHandleProtocol,
+        gameAutomatorControlHandle: GameAutomatorControlHandleProtocol,
         passConfirmationViewHandle: PassButtonHandleProtocol,
         resetConfirmationViewHandle: ResetConfirmationViewHandleProtocol,
-        diskCountViewHandle: DiskCountViewHandleProtocol
+        diskCountViewHandle: DiskCountViewHandleProtocol,
+        turnMessageViewHandle: TurnMessageViewHandle
     ) {
         // STEP-1: Constructing Models and Model Aggregates that are needed by the screen.
         //         And models should be shared across multiple screens will arrive as parameters.
         let animatedGameWithAutomatorsModel = AnimatedGameWithAutomatorsModel(
             startsWith: .initial,
-            automatorAvailabilities: GameAutomatorAvailabilities(
-                first: .disabled,
-                second: .disabled
-            ),
+            automatorAvailabilities: .bothDisabled,
             automatorStrategy: GameAutomator.delayed(selector: GameAutomator.randomSelector, 2.0)
         )
         self.animatedGameWithAutomatorsModel = animatedGameWithAutomatorsModel
@@ -40,13 +42,22 @@ public class BoardMVCComposer {
             observing: animatedGameWithAutomatorsModel,
             updating: boardViewHandle
         )
-        self.playerAutomatorProgressViewBinding = PlayerAutomatorProgressViewBinding(
+        self.gameAutomatorProgressViewBinding = GameAutomatorProgressViewBinding(
             observing: animatedGameWithAutomatorsModel,
-            updating: playerAutomatorProgressViewHandle
+            updating: gameAutomatorProgressViewHandle
         )
+        let gameAutomatorControlBinding = GameAutomatorControlBinding(
+            observing: animatedGameWithAutomatorsModel,
+            updating: gameAutomatorControlHandle
+        )
+        self.gameAutomatorControlBinding = gameAutomatorControlBinding
         self.diskCountViewBinding = DiskCountViewBinding(
             observing: diskCountModel,
             updating: diskCountViewHandle
+        )
+        self.turnMessageViewBinding = TurnMessageViewBinding(
+            gameModel: animatedGameWithAutomatorsModel,
+            updating: turnMessageViewHandle
         )
 
         // STEP-3: Constructing Controllers.
@@ -56,7 +67,11 @@ public class BoardMVCComposer {
             requestingTo: animatedGameWithAutomatorsModel
         )
         self.boardAnimationController = BoardAnimationController(
-            observingAnimationDidComplete: boardViewBinding.animationDidComplete,
+            observingAnimationDidComplete: boardViewHandle.animationDidComplete,
+            requestingTo: animatedGameWithAutomatorsModel
+        )
+        self.gameAutomatorController = GameAutomatorController(
+            observing: gameAutomatorControlHandle.availabilitiesDidChange,
             requestingTo: animatedGameWithAutomatorsModel
         )
     }

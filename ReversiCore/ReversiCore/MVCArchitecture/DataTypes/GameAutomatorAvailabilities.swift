@@ -20,16 +20,6 @@ public struct GameAutomatorAvailabilities {
             return self.second
         }
     }
-
-
-    public func updated(availability: GameAutomatorAvailability, for turn: Turn) -> GameAutomatorAvailabilities {
-        switch turn {
-        case .first:
-            return .init(first: availability, second: self.second)
-        case .second:
-            return .init(first: self.first, second: availability)
-        }
-    }
 }
 
 

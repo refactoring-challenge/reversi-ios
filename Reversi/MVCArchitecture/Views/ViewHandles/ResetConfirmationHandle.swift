@@ -6,19 +6,21 @@ import ReactiveSwift
 
 public protocol ResetConfirmationViewHandleProtocol {
     var resetDidAccept: ReactiveSwift.Signal<Bool, Never> { get }
-    func confirm()
 }
 
 
 
-public class ResetConfirmationViewHandle: ResetConfirmationViewHandleProtocol {
+public class ResetConfirmationHandle: ResetConfirmationViewHandleProtocol {
     private let confirmationViewHandle: UserConfirmationViewHandle<Bool>
+    private let button: UIButton
 
 
     public let resetDidAccept: ReactiveSwift.Signal<Bool, Never>
 
 
-    public init(willPresentOn modalPresenter: UIKitTestable.ModalPresenterProtocol) {
+    public init(handle button: UIButton, willPresentOn modalPresenter: UIKitTestable.ModalPresenterProtocol) {
+        self.button = button
+
         let confirmationViewHandle = UserConfirmationViewHandle(
             title: "Confirmation",
             message: "Do you really want to reset the game?",
@@ -31,10 +33,12 @@ public class ResetConfirmationViewHandle: ResetConfirmationViewHandleProtocol {
         )
         self.confirmationViewHandle = confirmationViewHandle
         self.resetDidAccept = self.confirmationViewHandle.userDidConfirm
+
+        button.addTarget(self, action: #selector(self.confirm(_:)), for: .touchUpInside)
     }
 
 
-    public func confirm() {
+    @objc private func confirm(_ sender: Any) {
         self.confirmationViewHandle.confirm()
     }
 }

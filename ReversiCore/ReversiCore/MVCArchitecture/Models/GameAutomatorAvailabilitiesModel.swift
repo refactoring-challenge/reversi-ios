@@ -4,7 +4,7 @@ import ReactiveSwift
 
 public protocol GameAutomatorAvailabilitiesModelProtocol: class {
     var availabilitiesDidChange: ReactiveSwift.Property<GameAutomatorAvailabilities> { get }
-    func update(availability: GameAutomatorAvailability, for turn: Turn)
+    func update(availabilities: GameAutomatorAvailabilities)
 }
 
 
@@ -19,7 +19,7 @@ public class GameAutomatorAvailabilitiesModel: GameAutomatorAvailabilitiesModelP
     public let availabilitiesDidChange: ReactiveSwift.Property<GameAutomatorAvailabilities>
 
     private let availabilityDidChangeMutable: ReactiveSwift.MutableProperty<GameAutomatorAvailabilities>
-    public private(set) var availability: GameAutomatorAvailabilities {
+    public private(set) var availabilities: GameAutomatorAvailabilities {
         get { self.availabilityDidChangeMutable.value }
         set { self.availabilityDidChangeMutable.value = newValue }
     }
@@ -32,7 +32,7 @@ public class GameAutomatorAvailabilitiesModel: GameAutomatorAvailabilitiesModelP
     }
 
 
-    public func update(availability: GameAutomatorAvailability, for turn: Turn) {
-        self.availability = self.availability.updated(availability: availability, for: turn)
+    public func update(availabilities: GameAutomatorAvailabilities) {
+        self.availabilities = availabilities
     }
 }

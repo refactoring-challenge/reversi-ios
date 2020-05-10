@@ -176,7 +176,7 @@ extension GameWithAutomatorsModel: GameAutomatorAvailabilitiesModelProtocol {
     }
 
 
-    public func update(availability newAvailability: GameAutomatorAvailability, for requestedTurn: Turn) {
+    public func update(availabilities: GameAutomatorAvailabilities) {
         switch self.gameWithAutomatorsModelState {
         case .failed:
             return
@@ -186,13 +186,13 @@ extension GameWithAutomatorsModel: GameAutomatorAvailabilitiesModelProtocol {
 
         case .automatorThinking(previousGameState: let prevGameState, previousAvailableCandidates: _):
             // NOTE: Should cancel if the availability to update is processing.
-            let shouldCancelCurrentAutomatorTask = prevGameState.turn.next == requestedTurn && newAvailability == .disabled
+            let shouldCancelCurrentAutomatorTask = availabilities.availability(on: prevGameState) == .disabled
             if shouldCancelCurrentAutomatorTask {
                 self.automatorModel.cancel()
             }
         }
 
-        self.automationAvailabilityModel.update(availability: newAvailability, for: requestedTurn)
+        self.automationAvailabilityModel.update(availabilities: availabilities)
     }
 }
 

@@ -11,7 +11,7 @@ public protocol PassButtonHandleProtocol {
 
 
 
-public class PassButtonHandle: PassButtonHandleProtocol {
+public class PassConfirmationHandle: PassButtonHandleProtocol {
     public let passDidAccept: ReactiveSwift.Signal<Void, Never>
 
     private let confirmationViewHandle: UserConfirmationViewHandle<Void>

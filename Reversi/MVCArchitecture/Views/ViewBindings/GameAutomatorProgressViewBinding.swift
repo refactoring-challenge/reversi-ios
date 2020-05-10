@@ -3,14 +3,14 @@ import ReactiveSwift
 
 
 
-public class PlayerAutomatorProgressViewBinding {
-    private let viewHandle: PlayerAutomatorProgressViewHandleProtocol
+public class GameAutomatorProgressViewBinding {
+    private let viewHandle: GameAutomatorProgressViewHandleProtocol
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(
         observing playerAutomatorProgressModel: GameAutomatorProgressModelProtocol,
-        updating viewHandle: PlayerAutomatorProgressViewHandleProtocol
+        updating viewHandle: GameAutomatorProgressViewHandleProtocol
     ) {
         self.viewHandle = viewHandle
 
