@@ -13,9 +13,18 @@ public class BoardMVCComposer {
     private let diskCountViewBinding: DiskCountViewBinding
     private let turnMessageViewBinding: TurnMessageViewBinding
 
+    private let passConfirmationController: PassConfirmationController
+    private let resetConfirmationController: ResetConfirmationController
     private let boardController: BoardController
     private let boardAnimationController: BoardAnimationController
     private let gameAutomatorController: GameAutomatorController
+
+    #if DEBUG
+    private let gameModelStateTracker: ModelTracker<GameModelState>
+    private let boardAnimationModelStateTracker: ModelTracker<BoardAnimationModelState>
+    private let gameAutomatorProgressTracker: ModelTracker<GameAutomatorProgress>
+    private let gameAutomatorAvailabilitiesTracker: ModelTracker<GameAutomatorAvailabilities>
+    #endif
 
 
     public init(
@@ -36,6 +45,13 @@ public class BoardMVCComposer {
         )
         self.animatedGameWithAutomatorsModel = animatedGameWithAutomatorsModel
         self.diskCountModel = DiskCountModel(observing: animatedGameWithAutomatorsModel)
+
+        #if DEBUG
+        self.gameModelStateTracker = ModelTracker(observing: animatedGameWithAutomatorsModel.gameModelStateDidChange)
+        self.boardAnimationModelStateTracker = ModelTracker(observing: animatedGameWithAutomatorsModel.boardAnimationStateDidChange)
+        self.gameAutomatorProgressTracker = ModelTracker(observing: animatedGameWithAutomatorsModel.automatorDidProgress)
+        self.gameAutomatorAvailabilitiesTracker = ModelTracker(observing: animatedGameWithAutomatorsModel.availabilitiesDidChange)
+        #endif
 
         // STEP-2: Constructing ViewBindings.
         self.boardViewBinding = BoardViewBinding(
@@ -62,12 +78,19 @@ public class BoardMVCComposer {
 
         // STEP-3: Constructing Controllers.
         self.boardController = BoardController(
-            observingPassConfirmationDidAccept: passConfirmationViewHandle.passDidAccept,
-            observingResetConfirmationDidAccept: resetConfirmationViewHandle.resetDidAccept,
+            observing: boardViewHandle.coordinateDidSelect,
             requestingTo: animatedGameWithAutomatorsModel
         )
         self.boardAnimationController = BoardAnimationController(
             observingAnimationDidComplete: boardViewHandle.animationDidComplete,
+            requestingTo: animatedGameWithAutomatorsModel
+        )
+        self.passConfirmationController = PassConfirmationController(
+            observingPassConfirmationDidAccept: passConfirmationViewHandle.passDidAccept,
+            requestingTo: animatedGameWithAutomatorsModel
+        )
+        self.resetConfirmationController = ResetConfirmationController(
+            observingResetConfirmationDidAccept: resetConfirmationViewHandle.resetDidAccept,
             requestingTo: animatedGameWithAutomatorsModel
         )
         self.gameAutomatorController = GameAutomatorController(

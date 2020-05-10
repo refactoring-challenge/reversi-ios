@@ -108,8 +108,7 @@ class GameStateTests: XCTestCase {
 
             let actual = try testCase.commands.reduce(testCase.gameState) { gameState, command in
                 do {
-                    let nextGameState = try command.unsafeExecute(on: gameState)
-                    return nextGameState
+                    return try command.unsafeExecute(on: gameState).nextGameState
                 }
                 catch {
                     XCTFail("\(error)")

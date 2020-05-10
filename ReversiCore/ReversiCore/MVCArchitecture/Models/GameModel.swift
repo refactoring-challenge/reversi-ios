@@ -43,8 +43,8 @@ public class GameModel: GameModelProtocol {
     }
 
 
-    fileprivate func transit(to nextState: GameModelState, by accepted: GameState.AcceptedCommand) {
-        self.gameModelState = nextState
+    fileprivate func transit(by accepted: GameState.AcceptedCommand) {
+        self.gameModelState = .next(by: accepted.nextGameState)
         self.commandDidAcceptedObserver.send(value: accepted)
     }
 }
@@ -62,8 +62,8 @@ extension GameModel: GameCommandReceivable {
             guard availableCoordinates.isEmpty else { return .ignored }
 
             // NOTE: It is safe if the availableCoordinates is calculated on the gameState.
-            let (nextGameState, accepted) = gameState.unsafePass()
-            self.transit(to: .next(by: nextGameState), by: accepted)
+            let accepted = gameState.unsafePass()
+            self.transit(by: accepted)
             return .accepted
         }
     }
@@ -83,16 +83,16 @@ extension GameModel: GameCommandReceivable {
             }
 
             // NOTE: It is safe if the availableCoordinates is calculated on the gameState.
-            let (nextGameState, accepted) = gameState.unsafeNext(by: selected)
-            self.transit(to: .next(by: nextGameState), by: accepted)
+            let accepted = gameState.unsafeNext(by: selected)
+            self.transit(by: accepted)
             return .accepted
         }
     }
 
 
     public func reset() -> GameCommandResult {
-        let (nextGameState, accepted) = self.gameModelState.gameState.reset()
-        self.transit(to: .next(by: nextGameState), by: accepted)
+        let accepted = self.gameModelState.gameState.reset()
+        self.transit(by: accepted)
         return .accepted
     }
 }

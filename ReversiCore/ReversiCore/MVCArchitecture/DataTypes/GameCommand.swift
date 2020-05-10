@@ -11,13 +11,13 @@ public enum GameCommand {
 
 
 
-    public func unsafeExecute(on gameState: GameState) throws -> GameState {
+    public func unsafeExecute(on gameState: GameState) throws -> GameState.AcceptedCommand {
         switch self {
         case .pass:
             guard gameState.availableCandidates().isEmpty else {
                 throw PreconditionFailure.cannotPass(on: gameState)
             }
-            return gameState.unsafePass().afterState
+            return gameState.unsafePass()
 
         case .place(at: let coordinate):
             guard let availableCoordinate = gameState.availableCandidates()
@@ -25,7 +25,7 @@ public enum GameCommand {
                 .first else {
                 throw PreconditionFailure.cannotPlace(at: coordinate, on: gameState)
             }
-            return gameState.unsafeNext(by: availableCoordinate).afterState
+            return gameState.unsafeNext(by: availableCoordinate)
         }
     }
 }

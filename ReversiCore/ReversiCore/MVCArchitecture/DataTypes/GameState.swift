@@ -30,19 +30,8 @@ public struct GameState {
     }
 
 
-    public func next(by selector: CoordinateSelector) -> Hydra.Promise<(afterState: GameState, accepted: AcceptedCommand)> {
-        guard let availableCandidates = NonEmptyArray(self.availableCandidates()) else {
-            // NOTE: Must pass if no coordinates are available.
-            return Hydra.Promise(resolved: self.unsafePass())
-        }
-
-        return selector(availableCandidates)
-            .then(in: .utility) { selected in self.unsafeNext(by: selected) }
-    }
-
-
     // NOTE: It is unsafe because the available coordinate is possibly no longer available.
-    public func unsafeNext(by selected: AvailableCandidate) -> (afterState: GameState, accepted: AcceptedCommand) {
+    public func unsafeNext(by selected: AvailableCandidate) -> AcceptedCommand {
         let currentTurn = self.turn
         let nextTurn = self.turn.next
 
@@ -51,36 +40,37 @@ public struct GameState {
             nextBoard = nextBoard.unsafeReplaced(with: currentTurn.disk, on: shouldBeFlipped.line)
         }
 
-        return (
-            afterState: GameState(board: nextBoard, turn: nextTurn),
-            accepted: .placed(by: selected, who: currentTurn)
-        )
+        return .placed(who: currentTurn, to: GameState(board: nextBoard, turn: nextTurn), by: selected)
     }
 
 
     // NOTE: It is unsafe because pass may be unavailable.
-    public func unsafePass() -> (afterState: GameState, accepted: AcceptedCommand) {
+    public func unsafePass() -> AcceptedCommand {
         let currentTurn = self.turn
         let nextTurn = self.turn.next
-        return (
-            afterState: GameState(board: self.board, turn: nextTurn),
-            accepted: .passed(who: currentTurn)
-        )
+        return .passed(who: currentTurn, to: GameState(board: self.board, turn: nextTurn))
     }
 
 
-    public func reset() -> (afterState: GameState, accepted: AcceptedCommand) {
-        (
-            afterState: .initial,
-            accepted: .reset
-        )
+    public func reset() -> AcceptedCommand {
+        .reset(to: .initial)
     }
+
 
 
     public enum AcceptedCommand {
-        case passed(who: Turn)
-        case placed(by: AvailableCandidate, who: Turn)
-        case reset
+        case passed(who: Turn, to: GameState)
+        case placed(who: Turn, to: GameState, by: AvailableCandidate)
+        case reset(to: GameState)
+
+
+        public var nextGameState: GameState {
+            switch self {
+            case .passed(who: _, to: let nextGameState), .placed(who: _, to: let nextGameState, by: _),
+                 .reset(to: let nextGameState):
+                return nextGameState
+            }
+        }
     }
 }
 

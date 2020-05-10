@@ -4,30 +4,21 @@ import ReactiveSwift
 
 
 public class BoardController {
-    private let model: GameCommandReceivable
+    private let gameModel: GameCommandReceivable
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(
-        observingPassConfirmationDidAccept passConfirmationDidAccept: ReactiveSwift.Signal<Void, Never>,
-        observingResetConfirmationDidAccept resetConfirmationDidAccept: ReactiveSwift.Signal<Bool, Never>,
-        requestingTo model: GameCommandReceivable
+        observing coordinateDidSelect: ReactiveSwift.Signal<Coordinate, Never>,
+        requestingTo gameModel: GameCommandReceivable
     ) {
-        self.model = model
+        self.gameModel = gameModel
 
-        passConfirmationDidAccept
+        coordinateDidSelect
+            .observe(on: QueueScheduler(qos: .userInitiated))
             .take(during: self.lifetime)
-            .observe(on: QueueScheduler(qos: .userInteractive))
-            .observeValues { [weak self] _ in
-                self?.model.pass()
-            }
-
-        resetConfirmationDidAccept
-            .take(during: self.lifetime)
-            .observe(on: QueueScheduler(qos: .userInteractive))
-            .observeValues { [weak self] isConfirmed in
-                guard isConfirmed else { return }
-                self?.model.reset()
+            .observeValues { [weak self] coordinate in
+                self?.gameModel.place(at: coordinate)
             }
     }
 }

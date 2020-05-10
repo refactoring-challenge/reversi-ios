@@ -71,8 +71,8 @@ extension AnimatedGameWithAutomatorsModel: BoardAnimationModelProtocol {
     }
 
 
-    public func requestAnimation(to board: Board, by accepted: GameState.AcceptedCommand) {
-        self.animatedGameModel.requestAnimation(to: board, by: accepted)
+    public func requestAnimation(by accepted: GameState.AcceptedCommand) {
+        self.animatedGameModel.requestAnimation(by: accepted)
     }
 
 

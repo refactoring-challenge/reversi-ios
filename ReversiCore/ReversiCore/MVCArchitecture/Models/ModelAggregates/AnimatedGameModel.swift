@@ -23,6 +23,7 @@ public class AnimatedGameModel: AnimatedGameModelProtocol {
 
     private let gameModel: GameModelProtocol
     private let boardAnimationModel: BoardAnimationModelProtocol
+    private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(gameModel: GameModelProtocol, boardAnimationModel: BoardAnimationModelProtocol) {
@@ -32,6 +33,21 @@ public class AnimatedGameModel: AnimatedGameModelProtocol {
         self.animatedGameStateDidChange = ReactiveSwift.Property
             .combineLatest(gameModel.gameModelStateDidChange, boardAnimationModel.boardAnimationStateDidChange)
             .map(AnimatedGameModelState.from(_:))
+
+        // BUG10: Did not apply board at BoardView because forgot notify accepted commands to boardAnimationModel.
+        self.start()
+    }
+
+
+    private func start() {
+        self.gameModel.gameCommandDidAccepted
+            .producer
+            .take(during: self.lifetime)
+            .observe(on: QueueScheduler(qos: .userInitiated))
+            .on(value: { [weak self] accepted in
+                self?.boardAnimationModel.requestAnimation(by: accepted)
+            })
+            .start()
     }
 }
 
@@ -64,8 +80,8 @@ extension AnimatedGameModel: BoardAnimationModelProtocol {
     public var boardAnimationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState> { self.boardAnimationModel.boardAnimationStateDidChange }
 
 
-    public func requestAnimation(to board: Board, by accepted: GameState.AcceptedCommand) {
-        self.boardAnimationModel.requestAnimation(to: board, by: accepted)
+    public func requestAnimation(by accepted: GameState.AcceptedCommand) {
+        self.boardAnimationModel.requestAnimation(by: accepted)
     }
 
 

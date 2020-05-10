@@ -28,6 +28,18 @@ public class GameAutomatorControlHandle: GameAutomatorControlHandleProtocol {
 
         (self.availabilitiesDidChange, self.availabilitiesDidChangeObserver) =
             ReactiveSwift.Signal<GameAutomatorAvailabilities, Never>.pipe()
+
+        // BUG11: Forgot observing.
+        self.firstSegmentedControl.addTarget(
+            self,
+            action: #selector(self.segmentedControlDidChange(_:)),
+            for: .valueChanged
+        )
+        self.secondSegmentedControl.addTarget(
+            self,
+            action: #selector(self.segmentedControlDidChange(_:)),
+            for: .valueChanged
+        )
     }
 
 

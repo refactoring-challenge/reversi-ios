@@ -39,6 +39,7 @@
 		2475E7BCEB316E3CDF7C55AA /* AnimatedGameWithAutomatorsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E54E57F61ADB77E6AA26 /* AnimatedGameWithAutomatorsModel.swift */; };
 		2475E8122EB35973908778FC /* GameModel+AutomatableGameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E23C10D49C8FBB1622DB /* GameModel+AutomatableGameModel.swift */; };
 		2475E893CB2FF44001B96888 /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E2B6FF9044DC5E40613B /* Coordinate.swift */; };
+		2475E8C1807C735CAB74C909 /* BoardAnimationModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E20E1B7C6B777DB463FB /* BoardAnimationModelTests.swift */; };
 		2475E8DDA4C748BB7BD0282A /* Distance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E2677BA62F2BE8C1561C /* Distance.swift */; };
 		2475E953D7D3DBD334684281 /* DiskCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E45FD214D21616F9F3D4 /* DiskCount.swift */; };
 		2475E9665E718E5841757F8E /* AnimatedGameWithAutomatorsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E54E57F61ADB77E6AA26 /* AnimatedGameWithAutomatorsModel.swift */; };
@@ -59,11 +60,13 @@
 		2475ED129C319613E0AF8768 /* BoardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EEC04F70898B0F79E92E /* BoardTests.swift */; };
 		2475ED9A8D6E5CDC580968CE /* AnimatedGameModel+AutomatableGameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EE8A31BB147638E92587 /* AnimatedGameModel+AutomatableGameModel.swift */; };
 		2475EDE050F9CFD12F212456 /* LineContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E2B052D9DEB0EDAD6158 /* LineContents.swift */; };
+		2475EE1CE215D8D8F9EEFBA1 /* ModelTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E0F4848BAE0C7880C69D /* ModelTracker.swift */; };
 		2475EE6A06278D28AE97C6D8 /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EC45424CE1E4F728FD03 /* GameState.swift */; };
 		2475EE6C130A4DEFAC7D9DED /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E1DDF292D05EA10573D6 /* Line.swift */; };
 		2475EE9A70A94309A9280557 /* GameWithAutomatorsModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E93B032B40C6A65EADA0 /* GameWithAutomatorsModelTests.swift */; };
 		2475EEB04364C48AB60BE388 /* GameCommandReceivable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475ED1972C4382FA1018742 /* GameCommandReceivable.swift */; };
 		2475EF367B51235EC47D6DD6 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E8492ADFD05C832A303A /* Board.swift */; };
+		2475EF49250CF39CF7338EEE /* ModelTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E0F4848BAE0C7880C69D /* ModelTracker.swift */; };
 		2475EF8F9509D67D88FCBFB8 /* GameAutomatorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475ECB80570053C43616EF9 /* GameAutomatorModel.swift */; };
 		2475EFAEF531CE6B9DBD243E /* Distance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E2677BA62F2BE8C1561C /* Distance.swift */; };
 		2475EFB6A314EBDE350B6231 /* GameCommandReceivable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475ED1972C4382FA1018742 /* GameCommandReceivable.swift */; };
@@ -126,7 +129,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2475E0F4848BAE0C7880C69D /* ModelTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTracker.swift; sourceTree = "<group>"; };
 		2475E1DDF292D05EA10573D6 /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
+		2475E20E1B7C6B777DB463FB /* BoardAnimationModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardAnimationModelTests.swift; sourceTree = "<group>"; };
 		2475E23C10D49C8FBB1622DB /* GameModel+AutomatableGameModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "GameModel+AutomatableGameModel.swift"; sourceTree = "<group>"; };
 		2475E2662BBF14E5110EEBBA /* NonEmptyArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonEmptyArray.swift; sourceTree = "<group>"; };
 		2475E2677BA62F2BE8C1561C /* Distance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Distance.swift; sourceTree = "<group>"; };
@@ -316,12 +321,14 @@
 				2475E6EBF022E1D24B90081D /* ModelAggregates */,
 				2475E5B70577460A8BEC04EF /* AutomatableGameModel.swift */,
 				2475E9B0B1787A752ACB5FCF /* BoardAnimationModel.swift */,
+				2475E20E1B7C6B777DB463FB /* BoardAnimationModelTests.swift */,
 				62B7C512246048BB006F58CE /* DiskCountModel.swift */,
 				62B7C50A246048BB006F58CE /* GameAutomatorAvailabilitiesModel.swift */,
 				2475ECB80570053C43616EF9 /* GameAutomatorModel.swift */,
 				2475ED1972C4382FA1018742 /* GameCommandReceivable.swift */,
 				2475E23C10D49C8FBB1622DB /* GameModel+AutomatableGameModel.swift */,
 				62B7C513246048BB006F58CE /* GameModel.swift */,
+				2475E0F4848BAE0C7880C69D /* ModelTracker.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -503,6 +510,7 @@
 				2475EAB67F373134F8214BCE /* Dump.swift in Sources */,
 				2475E7BCEB316E3CDF7C55AA /* AnimatedGameWithAutomatorsModel.swift in Sources */,
 				2475EEB04364C48AB60BE388 /* GameCommandReceivable.swift in Sources */,
+				2475EE1CE215D8D8F9EEFBA1 /* ModelTracker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,6 +550,7 @@
 				2475E78D379841F10136E5A5 /* Dump.swift in Sources */,
 				2475E9665E718E5841757F8E /* AnimatedGameWithAutomatorsModel.swift in Sources */,
 				2475EFB6A314EBDE350B6231 /* GameCommandReceivable.swift in Sources */,
+				2475EF49250CF39CF7338EEE /* ModelTracker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,6 +562,7 @@
 				2475E36087DF5F5D0978ED38 /* GameStateTests.swift in Sources */,
 				2475E6103471F2B12056D059 /* FlippableLineTests.swift in Sources */,
 				2475EE9A70A94309A9280557 /* GameWithAutomatorsModelTests.swift in Sources */,
+				2475E8C1807C735CAB74C909 /* BoardAnimationModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
