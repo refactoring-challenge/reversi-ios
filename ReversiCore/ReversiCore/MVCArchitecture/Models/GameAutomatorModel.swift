@@ -63,7 +63,7 @@ public class GameAutomatorModel: GameAutomatorModelProtocol {
             let promisedSelectedCoordinate = self.strategy(availableCandidates)
 
             let cancelToken = GameAutomatorCancelToken { promisedSelectedCoordinate.cancel() }
-            self.automatorProgress = .thinking(in: turn, within: availableCandidates, cancelToken: cancelToken)
+            self.automatorProgress = .thinking(on: turn, within: availableCandidates, cancelToken: cancelToken)
 
             promisedSelectedCoordinate
                 .then(in: .userInitiated) { [weak self] selected in
@@ -82,7 +82,7 @@ public class GameAutomatorModel: GameAutomatorModelProtocol {
         case .sleeping:
             return .ignored
 
-        case .thinking(in: _, within: _, cancelToken: let cancelToken):
+        case .thinking(on: _, within: _, cancelToken: let cancelToken):
             self.automatorProgress = .sleeping
             cancelToken.cancel()
             return .accepted
@@ -100,7 +100,7 @@ public enum GameAutomatorCommandResult {
 
 
 public enum GameAutomatorProgress {
-    case thinking(in: Turn, within: NonEmptyArray<AvailableCandidate>, cancelToken: GameAutomatorCancelToken)
+    case thinking(on: Turn, within: NonEmptyArray<AvailableCandidate>, cancelToken: GameAutomatorCancelToken)
     case sleeping
 
 

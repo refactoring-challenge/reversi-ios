@@ -231,7 +231,7 @@ public enum GameWithAutomatorsModelState {
         }
 
         switch automatorProgress {
-        case .thinking(in: _, within: let availableCandidates, cancelToken: _):
+        case .thinking(on: _, within: let availableCandidates, cancelToken: _):
             return .automatorThinking(
                 previousGameState: automatableGameState.gameState,
                 previousAvailableCandidates: Set(availableCandidates.toArray())
