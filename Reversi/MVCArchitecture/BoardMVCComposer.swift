@@ -7,6 +7,8 @@ public class BoardMVCComposer {
     private let animatedGameWithAutomatorsModel: AnimatedGameWithAutomatorsModelProtocol
     private let diskCountModel: DiskCountModelProtocol
 
+    private let modelTracker: ModelTrackerProtocol
+
     private let boardViewBinding: BoardViewBinding
     private let gameAutomatorProgressViewBinding: GameAutomatorProgressViewBinding
     private let gameAutomatorControlBinding: GameAutomatorControlBinding
@@ -20,13 +22,6 @@ public class BoardMVCComposer {
     private let boardAnimationController: BoardAnimationController
     private let gameAutomatorController: GameAutomatorController
 
-    #if DEBUG
-    private let gameModelStateTracker: ModelTracker<GameModelState>
-    private let boardAnimationModelStateTracker: ModelTracker<BoardAnimationModelState>
-    private let gameAutomatorProgressTracker: ModelTracker<GameAutomatorProgress>
-    private let gameAutomatorAvailabilitiesTracker: ModelTracker<GameAutomatorAvailabilities>
-    #endif
-
 
     public init(
         boardViewHandle: BoardViewHandleProtocol,
@@ -36,7 +31,8 @@ public class BoardMVCComposer {
         passConfirmationViewHandle: PassConfirmationHandleProtocol,
         resetConfirmationViewHandle: ResetConfirmationHandleProtocol,
         diskCountViewHandle: DiskCountViewHandleProtocol,
-        turnMessageViewHandle: TurnMessageViewHandle
+        turnMessageViewHandle: TurnMessageViewHandleProtocol,
+        isEventTracesEnabled: Bool = false
     ) {
         // STEP-1: Constructing Models and Model Aggregates that are needed by the screen.
         //         And models should be shared across multiple screens will arrive as parameters.
@@ -48,12 +44,32 @@ public class BoardMVCComposer {
         self.animatedGameWithAutomatorsModel = animatedGameWithAutomatorsModel
         self.diskCountModel = DiskCountModel(observing: animatedGameWithAutomatorsModel)
 
-        #if DEBUG
-        self.gameModelStateTracker = ModelTracker(observing: animatedGameWithAutomatorsModel.gameModelStateDidChange)
-        self.boardAnimationModelStateTracker = ModelTracker(observing: animatedGameWithAutomatorsModel.boardAnimationStateDidChange)
-        self.gameAutomatorProgressTracker = ModelTracker(observing: animatedGameWithAutomatorsModel.automatorDidProgress)
-        self.gameAutomatorAvailabilitiesTracker = ModelTracker(observing: animatedGameWithAutomatorsModel.availabilitiesDidChange)
-        #endif
+        // NOTE: This is a Model Tracker that print event traces of Models while the tracker is enabled for
+        //       better debugging experience. You can use it via LLDB.
+        //
+        //       (lldb) // Preparing $composer typically via UIApplication.shared.keyWindow!.rootViewController!....
+        //       (lldb) po $composer.modelTracker.isEnabled = true
+        self.modelTracker = ComposedModelTracker(
+            trackers: [
+                ModelTracker(
+                    observing: animatedGameWithAutomatorsModel.gameModelStateDidChange,
+                    isEnabled: isEventTracesEnabled
+                ),
+                ModelTracker(
+                    observing: animatedGameWithAutomatorsModel.boardAnimationStateDidChange,
+                    isEnabled: isEventTracesEnabled
+                ),
+                ModelTracker(
+                    observing: animatedGameWithAutomatorsModel.automatorDidProgress,
+                    isEnabled: isEventTracesEnabled
+                ),
+                ModelTracker(
+                    observing: animatedGameWithAutomatorsModel.availabilitiesDidChange,
+                    isEnabled: isEventTracesEnabled
+                ),
+            ],
+            isEnabled: isEventTracesEnabled
+        )
 
         // STEP-2: Constructing ViewBindings.
         self.boardViewBinding = BoardViewBinding(
