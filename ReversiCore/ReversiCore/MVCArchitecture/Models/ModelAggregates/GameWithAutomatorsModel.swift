@@ -220,6 +220,16 @@ public enum GameWithAutomatorsModelState {
     public var board: Board { self.gameState.board }
 
 
+    public var playerMustPass: Bool {
+        switch self {
+        case .completed, .awaitingReadyOrCompleted, .failed, .automatorThinking:
+            return false
+        case .ready(_, availableCandidates: let availableCandidates):
+            return availableCandidates.isEmpty
+        }
+    }
+
+
     public static func from(
         automatableGameState: AutomatableGameModelState,
         automatorAvailabilities: GameAutomatorAvailabilities,

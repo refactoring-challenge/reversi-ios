@@ -12,6 +12,7 @@ public class BoardMVCComposer {
     private let gameAutomatorControlBinding: GameAutomatorControlBinding
     private let diskCountViewBinding: DiskCountViewBinding
     private let turnMessageViewBinding: TurnMessageViewBinding
+    private let passConfirmationBinding: PassConfirmationBinding
 
     private let passConfirmationController: PassConfirmationController
     private let resetConfirmationController: ResetConfirmationController
@@ -75,6 +76,11 @@ public class BoardMVCComposer {
         self.turnMessageViewBinding = TurnMessageViewBinding(
             gameModel: animatedGameWithAutomatorsModel,
             updating: turnMessageViewHandle
+        )
+        // BUG13: Forgot binding pass confirmation.
+        self.passConfirmationBinding = PassConfirmationBinding(
+            observing: animatedGameWithAutomatorsModel,
+            updating: passConfirmationViewHandle
         )
 
         // STEP-3: Constructing Controllers.
