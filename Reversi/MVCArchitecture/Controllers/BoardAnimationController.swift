@@ -5,16 +5,18 @@ import ReversiCore
 
 public class BoardAnimationController {
     private let boardAnimationModel: BoardAnimationModelProtocol
+    private let boardAnimationHandle: BoardAnimationHandleProtocol
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(
-        observingAnimationDidComplete animationDidComplete: ReactiveSwift.Signal<BoardAnimationRequest, Never>,
+        observing boardAnimationHandle: BoardAnimationHandleProtocol,
         requestingTo boardAnimationModel: BoardAnimationModelProtocol
     ) {
         self.boardAnimationModel = boardAnimationModel
+        self.boardAnimationHandle = boardAnimationHandle
 
-        animationDidComplete
+        boardAnimationHandle.animationDidComplete
             .take(during: self.lifetime)
             .observe(on: QueueScheduler(qos: .userInteractive))
             .observeValues { [weak self] animationRequest in

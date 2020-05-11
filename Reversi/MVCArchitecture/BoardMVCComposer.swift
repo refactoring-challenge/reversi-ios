@@ -29,10 +29,11 @@ public class BoardMVCComposer {
 
     public init(
         boardViewHandle: BoardViewHandleProtocol,
+        boardAnimationHandle: BoardAnimationHandleProtocol,
         gameAutomatorProgressViewHandle: GameAutomatorProgressViewHandleProtocol,
         gameAutomatorControlHandle: GameAutomatorControlHandleProtocol,
-        passConfirmationViewHandle: PassButtonHandleProtocol,
-        resetConfirmationViewHandle: ResetConfirmationViewHandleProtocol,
+        passConfirmationViewHandle: PassConfirmationHandleProtocol,
+        resetConfirmationViewHandle: ResetConfirmationHandleProtocol,
         diskCountViewHandle: DiskCountViewHandleProtocol,
         turnMessageViewHandle: TurnMessageViewHandle
     ) {
@@ -78,23 +79,23 @@ public class BoardMVCComposer {
 
         // STEP-3: Constructing Controllers.
         self.boardController = BoardController(
-            observing: boardViewHandle.coordinateDidSelect,
+            observing: boardViewHandle,
             requestingTo: animatedGameWithAutomatorsModel
         )
         self.boardAnimationController = BoardAnimationController(
-            observingAnimationDidComplete: boardViewHandle.animationDidComplete,
+            observing: boardAnimationHandle,
             requestingTo: animatedGameWithAutomatorsModel
         )
         self.passConfirmationController = PassConfirmationController(
-            observingPassConfirmationDidAccept: passConfirmationViewHandle.passDidAccept,
+            observing: passConfirmationViewHandle,
             requestingTo: animatedGameWithAutomatorsModel
         )
         self.resetConfirmationController = ResetConfirmationController(
-            observingResetConfirmationDidAccept: resetConfirmationViewHandle.resetDidAccept,
+            observing: resetConfirmationViewHandle,
             requestingTo: animatedGameWithAutomatorsModel
         )
         self.gameAutomatorController = GameAutomatorController(
-            observing: gameAutomatorControlHandle.availabilitiesDidChange,
+            observing: gameAutomatorControlHandle,
             requestingTo: animatedGameWithAutomatorsModel
         )
     }

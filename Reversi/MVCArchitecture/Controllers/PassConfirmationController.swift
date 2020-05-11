@@ -4,21 +4,23 @@ import ReactiveSwift
 
 
 public class PassConfirmationController {
-    private let model: GameCommandReceivable
+    private let gameModel: GameCommandReceivable
+    private let passConfirmationHandle: PassConfirmationHandleProtocol
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(
-        observingPassConfirmationDidAccept passConfirmationDidAccept: ReactiveSwift.Signal<Void, Never>,
+        observing passConfirmationHandle: PassConfirmationHandleProtocol,
         requestingTo model: GameCommandReceivable
     ) {
-        self.model = model
+        self.gameModel = model
+        self.passConfirmationHandle = passConfirmationHandle
 
-        passConfirmationDidAccept
+        passConfirmationHandle.passDidAccept
             .take(during: self.lifetime)
             .observe(on: QueueScheduler(qos: .userInteractive))
             .observeValues { [weak self] _ in
-                self?.model.pass()
+                self?.gameModel.pass()
             }
     }
 }

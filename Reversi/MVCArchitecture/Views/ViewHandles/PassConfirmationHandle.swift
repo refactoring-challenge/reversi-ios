@@ -4,14 +4,14 @@ import ReactiveSwift
 
 
 
-public protocol PassButtonHandleProtocol {
+public protocol PassConfirmationHandleProtocol {
     var passDidAccept: ReactiveSwift.Signal<Void, Never> { get }
     func confirm()
 }
 
 
 
-public class PassConfirmationHandle: PassButtonHandleProtocol {
+public class PassConfirmationHandle: PassConfirmationHandleProtocol {
     public let passDidAccept: ReactiveSwift.Signal<Void, Never>
 
     private let confirmationViewHandle: UserConfirmationViewHandle<Void>

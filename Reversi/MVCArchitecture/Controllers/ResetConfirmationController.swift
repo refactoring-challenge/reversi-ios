@@ -4,22 +4,24 @@ import ReactiveSwift
 
 
 public class ResetConfirmationController {
-    private let model: GameCommandReceivable
+    private let gameModel: GameCommandReceivable
+    private let resetConfirmationHandle: ResetConfirmationHandleProtocol
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(
-        observingResetConfirmationDidAccept resetConfirmationDidAccept: ReactiveSwift.Signal<Bool, Never>,
+        observing resetConfirmationHandle: ResetConfirmationHandleProtocol,
         requestingTo model: GameCommandReceivable
     ) {
-        self.model = model
+        self.gameModel = model
+        self.resetConfirmationHandle = resetConfirmationHandle
 
-        resetConfirmationDidAccept
+        resetConfirmationHandle.resetDidAccept
             .take(during: self.lifetime)
             .observe(on: QueueScheduler(qos: .userInteractive))
             .observeValues { [weak self] isConfirmed in
                 guard isConfirmed else { return }
-                self?.model.reset()
+                self?.gameModel.reset()
             }
     }
 }

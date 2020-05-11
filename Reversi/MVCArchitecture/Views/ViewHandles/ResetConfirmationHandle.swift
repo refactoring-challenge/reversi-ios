@@ -4,13 +4,13 @@ import ReactiveSwift
 
 
 
-public protocol ResetConfirmationViewHandleProtocol {
+public protocol ResetConfirmationHandleProtocol {
     var resetDidAccept: ReactiveSwift.Signal<Bool, Never> { get }
 }
 
 
 
-public class ResetConfirmationHandle: ResetConfirmationViewHandleProtocol {
+public class ResetConfirmationHandle: ResetConfirmationHandleProtocol {
     private let confirmationViewHandle: UserConfirmationViewHandle<Bool>
     private let button: UIButton
 
@@ -27,7 +27,8 @@ public class ResetConfirmationHandle: ResetConfirmationViewHandleProtocol {
             preferredStyle: .alert,
             actions: [
                 (title: "Cancel", style: .cancel, false),
-                (title: "OK", style: .default, false),
+                // BUG12: Unexpectedly use false instead of true.
+                (title: "OK", style: .default, true),
             ],
             willPresentOn: modalPresenter
         )

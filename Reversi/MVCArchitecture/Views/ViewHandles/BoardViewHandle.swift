@@ -5,14 +5,19 @@ import ReactiveSwift
 
 public protocol BoardViewHandleProtocol {
     var coordinateDidSelect: ReactiveSwift.Signal<Coordinate, Never> { get }
-    var animationDidComplete: ReactiveSwift.Signal<BoardAnimationRequest, Never> { get }
 
     func apply(by request: BoardAnimationRequest)
 }
 
 
 
-public class BoardViewHandle: BoardViewHandleProtocol {
+public protocol BoardAnimationHandleProtocol {
+    var animationDidComplete: ReactiveSwift.Signal<BoardAnimationRequest, Never> { get }
+}
+
+
+
+public class BoardViewHandle: BoardViewHandleProtocol, BoardAnimationHandleProtocol {
     public let coordinateDidSelect: ReactiveSwift.Signal<Coordinate, Never>
     public let animationDidComplete: ReactiveSwift.Signal<BoardAnimationRequest, Never>
 

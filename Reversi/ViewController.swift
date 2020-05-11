@@ -19,9 +19,11 @@ public class ViewController: UIViewController {
         super.viewDidLoad()
 
         let modalPresenter = UIKitTestable.ModalPresenter(wherePresentOn: .weak(self))
+        let boardViewHandle = BoardViewHandle(boardView: self.boardView)
 
         self.composer = BoardMVCComposer(
-            boardViewHandle: BoardViewHandle(boardView: self.boardView),
+            boardViewHandle: boardViewHandle,
+            boardAnimationHandle: boardViewHandle,
             gameAutomatorProgressViewHandle: GameAutomatorProgressViewHandle(
                 firstActivityIndicator: self.playerActivityIndicators[0],
                 secondActivityIndicator: self.playerActivityIndicators[1]

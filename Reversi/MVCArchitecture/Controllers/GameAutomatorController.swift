@@ -4,21 +4,23 @@ import ReactiveSwift
 
 
 public class GameAutomatorController {
-    private let model: GameAutomatorAvailabilitiesModelProtocol
+    private let gameAutomatorAvailabilitiesModel: GameAutomatorAvailabilitiesModelProtocol
+    private let gameAutomatorControlHandle: GameAutomatorControlHandleProtocol
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(
-        observing gameAutomatorAvailabilitiesDidChange: ReactiveSwift.Signal<GameAutomatorAvailabilities, Never>,
-        requestingTo model: GameAutomatorAvailabilitiesModelProtocol
+        observing gameAutomatorControlHandle: GameAutomatorControlHandleProtocol,
+        requestingTo gameAutomatorAvailabilitiesModel: GameAutomatorAvailabilitiesModelProtocol
     ) {
-        self.model = model
+        self.gameAutomatorAvailabilitiesModel = gameAutomatorAvailabilitiesModel
+        self.gameAutomatorControlHandle = gameAutomatorControlHandle
 
-        gameAutomatorAvailabilitiesDidChange
+        gameAutomatorControlHandle.availabilitiesDidChange
             .take(during: self.lifetime)
             .observe(on: QueueScheduler(qos: .userInteractive))
             .observeValues { [weak self] automationAvailabilities in
-                self?.model.update(availabilities: automationAvailabilities)
+                self?.gameAutomatorAvailabilitiesModel.update(availabilities: automationAvailabilities)
             }
     }
 }
