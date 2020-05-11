@@ -92,6 +92,7 @@
 		2475E956166C4B7CD4BD773D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2475EA20B8A60D78D639DB8C /* BoardViewHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardViewHandle.swift; sourceTree = "<group>"; };
 		2475EA9D27323AA1CD6DC67C /* TurnMessageViewBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TurnMessageViewBinding.swift; sourceTree = "<group>"; };
+		2475EAC71BD775984ABD19F7 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2475EB5E202BCDEA6ACFCDD9 /* ResetConfirmationHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetConfirmationHandle.swift; sourceTree = "<group>"; };
 		2475EBE7C5148ED3A35739FC /* GameAutomatorController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameAutomatorController.swift; sourceTree = "<group>"; };
 		2475EC31645FE4A4402CC583 /* BoardViewBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardViewBinding.swift; sourceTree = "<group>"; };
@@ -147,6 +148,7 @@
 				2475E12AF9E266A66AB1069C /* BoardController.swift */,
 				2475EBE7C5148ED3A35739FC /* GameAutomatorController.swift */,
 				2475E6D9B1B380FF762BB7A8 /* PassConfirmationController.swift */,
+				2475EAC71BD775984ABD19F7 /* README.md */,
 				2475E87C64BE7954A2FBD775 /* ResetConfirmationController.swift */,
 			);
 			path = Controllers;
