@@ -4,8 +4,7 @@ import ReversiCore
 
 
 public protocol GameAutomatorProgressViewHandleProtocol {
-    func applyFirstPlayerAutomator(inProgress: Bool)
-    func applySecondPlayerAutomator(inProgress: Bool)
+    func apply(inProgress: Turn?)
 }
 
 
@@ -24,22 +23,17 @@ public class GameAutomatorProgressViewHandle: GameAutomatorProgressViewHandlePro
     }
 
 
-    public func applyFirstPlayerAutomator(inProgress: Bool) {
-        if inProgress {
-            self.firstActivityIndicator.startAnimating()
-        }
-        else {
+    public func apply(inProgress: Turn?) {
+        switch inProgress {
+        case .none:
             self.firstActivityIndicator.stopAnimating()
-        }
-    }
-
-
-    public func applySecondPlayerAutomator(inProgress: Bool) {
-        if inProgress {
-            self.secondActivityIndicator.startAnimating()
-        }
-        else {
             self.secondActivityIndicator.stopAnimating()
+        case .some(.first):
+            self.firstActivityIndicator.startAnimating()
+            self.secondActivityIndicator.stopAnimating()
+        case .some(.second):
+            self.firstActivityIndicator.stopAnimating()
+            self.secondActivityIndicator.startAnimating()
         }
     }
 }

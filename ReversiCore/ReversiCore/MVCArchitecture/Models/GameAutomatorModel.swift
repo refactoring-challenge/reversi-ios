@@ -104,12 +104,12 @@ public enum GameAutomatorProgress {
     case sleeping
 
 
-    var isWorking: Bool {
+    public var turnThinking: Turn? {
         switch self {
         case .sleeping:
-            return false
-        case .thinking:
-            return true
+            return nil
+        case .thinking(on: let turn, within: _, cancelToken: _):
+            return turn
         }
     }
 }

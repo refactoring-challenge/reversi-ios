@@ -20,17 +20,7 @@ public class GameAutomatorProgressViewBinding {
             .observe(on: UIScheduler())
             .on(value: { [weak self] automatorProgress in
                 guard let self = self else { return }
-                switch automatorProgress {
-                case .thinking(on: .first, within: _, cancelToken: _):
-                    self.viewHandle.applyFirstPlayerAutomator(inProgress: true)
-                    self.viewHandle.applySecondPlayerAutomator(inProgress: false)
-                case .thinking(on: .second, within: _, cancelToken: _):
-                    self.viewHandle.applyFirstPlayerAutomator(inProgress: false)
-                    self.viewHandle.applySecondPlayerAutomator(inProgress: true)
-                case .sleeping:
-                    self.viewHandle.applyFirstPlayerAutomator(inProgress: false)
-                    self.viewHandle.applySecondPlayerAutomator(inProgress: false)
-                }
+                self.viewHandle.apply(inProgress: automatorProgress.turnThinking)
             })
             .start()
     }
