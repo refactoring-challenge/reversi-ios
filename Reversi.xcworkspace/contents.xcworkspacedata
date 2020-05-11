@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:/Users/yuki.kokubun/Development/reversi-ios/Reversi/NewMain.storyboard">
-   </FileRef>
-   <FileRef
       location = "group:Carthage/Checkouts/ReactiveSwift/../../../ReversiCore/ReversiCore.xcodeproj">
    </FileRef>
    <FileRef
