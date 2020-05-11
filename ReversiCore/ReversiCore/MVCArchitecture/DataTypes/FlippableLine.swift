@@ -21,6 +21,20 @@ public struct FlippableLine {
     }
 
 
+    public init?(
+        board: Board,
+        line: Line,
+        turn: Turn
+    ) {
+        switch FlippableLine.validate(lineContents: board[line], turn: turn) {
+        case .unavailable:
+            return nil
+        case .available(let flippableLine):
+            self = flippableLine
+        }
+    }
+
+
 
     public struct Entry {
         public let coordinate: Coordinate

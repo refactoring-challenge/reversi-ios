@@ -55,7 +55,9 @@ public struct NonEmptyArray<T> {
 
 
     public func reversed() -> NonEmptyArray<T> {
-        NonEmptyArray(first: self.last, rest: self.rest.reversed())
+        // BUG12: Missing first because the code was NonEmptyArray(first: self.last, rest: self.rest.reversed()).
+        // NOTE: It is safe because reverse does not change the length.
+        NonEmptyArray(self.toArray().reversed())!
     }
 
 
