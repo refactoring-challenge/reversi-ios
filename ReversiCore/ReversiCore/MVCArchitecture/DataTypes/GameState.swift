@@ -12,7 +12,7 @@ public struct GameState {
     public let turn: Turn
 
 
-    public static let initial = GameState(board: .initial(), turn: .first)
+    public static let initial = GameState(board: .initial, turn: .first)
 
 
     public init(board: Board, turn: Turn) {
@@ -40,7 +40,7 @@ public struct GameState {
             nextBoard = nextBoard.unsafeReplaced(with: currentTurn.disk, on: shouldBeFlipped.line)
         }
 
-        return .placed(who: currentTurn, to: GameState(board: nextBoard, turn: nextTurn), by: selected)
+        return .placed(with: selected, who: currentTurn, to: GameState(board: nextBoard, turn: nextTurn))
     }
 
 
@@ -60,13 +60,13 @@ public struct GameState {
 
     public enum AcceptedCommand {
         case passed(who: Turn, to: GameState)
-        case placed(who: Turn, to: GameState, by: AvailableCandidate)
+        case placed(with: AvailableCandidate, who: Turn, to: GameState)
         case reset(to: GameState)
 
 
         public var nextGameState: GameState {
             switch self {
-            case .passed(who: _, to: let nextGameState), .placed(who: _, to: let nextGameState, by: _),
+            case .passed(who: _, to: let nextGameState), .placed(with: _, who: _, to: let nextGameState),
                  .reset(to: let nextGameState):
                 return nextGameState
             }
@@ -96,7 +96,7 @@ public struct AvailableCandidate {
     public let linesShouldFlip: NonEmptyArray<FlippableLine>
 
 
-    private init(
+    public init(
         unsafeSelected selectedCoordinate: Coordinate,
         willFlip linesWillFlip: NonEmptyArray<FlippableLine>
     ) {

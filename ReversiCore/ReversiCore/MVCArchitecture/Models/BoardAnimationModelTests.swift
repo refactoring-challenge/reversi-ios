@@ -19,27 +19,51 @@ class BoardAnimationModelTests: XCTestCase {
         let testCases: [UInt: TestCase] = [
             #line: TestCase(
                 start: .placing(
-                    at: Coordinate(x: .a, y: .one),
-                    with: .dark,
-                    restLines: NonEmptyArray([
-                        FlippableLine(
-                            board: Board(unsafeArray: [
-                                [target, .light, .dark, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                            ]),
-                            line: Line(
-                                start: Coordinate(x: .c, y: .one),
-                                directedDistance: DirectedDistance(direction: .left, distance: .two)
+                    with: AvailableCandidate(
+                        unsafeSelected: Coordinate(x: .a, y: .one),
+                        willFlip: NonEmptyArray([
+                            FlippableLine(
+                                board: Board(unsafeArray: [
+                                    [target, .light, .dark, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                ]),
+                                line: Line(
+                                    start: Coordinate(x: .c, y: .one),
+                                    directedDistance: DirectedDistance(direction: .left, distance: .two)
+                                )!,
+                                turn: .first
                             )!,
-                            turn: .first
-                        )!,
-                    ])!
+                        ])!
+                    ),
+                    who: .first,
+                    in: BoardAnimationTransaction(
+                        begin: Board(unsafeArray: [
+                            [target, .light, .dark, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                        ]),
+                        end: Board(unsafeArray: [
+                            [.dark, .dark, .dark, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                        ])
+                    )
                 ),
                 expectedHistoryUntilNotAnimating: [
                     Coordinate(x: .a, y: .one),
@@ -48,44 +72,68 @@ class BoardAnimationModelTests: XCTestCase {
             ),
             #line: TestCase(
                 start: .placing(
-                    at: Coordinate(x: .a, y: .one),
-                    with: .dark,
-                    restLines: NonEmptyArray([
-                        FlippableLine(
-                            board: Board(unsafeArray: [
-                                [target, .light, .dark, nil, nil, nil, nil, nil],
-                                [.light, nil, nil, nil, nil, nil, nil, nil],
-                                [.dark, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                            ]),
-                            line: Line(
-                                start: Coordinate(x: .c, y: .one),
-                                directedDistance: DirectedDistance(direction: .left, distance: .two)
+                    with: AvailableCandidate(
+                        unsafeSelected: Coordinate(x: .a, y: .one),
+                        willFlip:
+                        NonEmptyArray([
+                            FlippableLine(
+                                board: Board(unsafeArray: [
+                                    [target, .light, .dark, nil, nil, nil, nil, nil],
+                                    [.light, nil, nil, nil, nil, nil, nil, nil],
+                                    [.dark, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                ]),
+                                line: Line(
+                                    start: Coordinate(x: .c, y: .one),
+                                    directedDistance: DirectedDistance(direction: .left, distance: .two)
+                                )!,
+                                turn: .first
                             )!,
-                            turn: .first
-                        )!,
-                        FlippableLine(
-                            board: Board(unsafeArray: [
-                                [target, .light, .dark, nil, nil, nil, nil, nil],
-                                [.light, nil, nil, nil, nil, nil, nil, nil],
-                                [.dark, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                            ]),
-                            line: Line(
-                                start: Coordinate(x: .a, y: .three),
-                                directedDistance: DirectedDistance(direction: .top, distance: .two)
+                            FlippableLine(
+                                board: Board(unsafeArray: [
+                                    [target, .light, .dark, nil, nil, nil, nil, nil],
+                                    [.light, nil, nil, nil, nil, nil, nil, nil],
+                                    [.dark, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                ]),
+                                line: Line(
+                                    start: Coordinate(x: .a, y: .three),
+                                    directedDistance: DirectedDistance(direction: .top, distance: .two)
+                                )!,
+                                turn: .first
                             )!,
-                            turn: .first
-                        )!,
-                    ])!
+                        ])!),
+                    who: .first,
+                    in: BoardAnimationTransaction(
+                        begin: Board(unsafeArray: [
+                            [target, .light, .dark, nil, nil, nil, nil, nil],
+                            [.light, nil, nil, nil, nil, nil, nil, nil],
+                            [.dark, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                        ]),
+                        end: Board(unsafeArray: [
+                            [.dark, .dark, .dark, nil, nil, nil, nil, nil],
+                            [.dark, nil, nil, nil, nil, nil, nil, nil],
+                            [.dark, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                        ])
+                    )
                 ),
                 expectedHistoryUntilNotAnimating: [
                     Coordinate(x: .a, y: .one),
@@ -95,27 +143,51 @@ class BoardAnimationModelTests: XCTestCase {
             ),
             #line: TestCase(
                 start: .placing(
-                    at: Coordinate(x: .a, y: .one),
-                    with: .dark,
-                    restLines: NonEmptyArray([
-                        FlippableLine(
-                            board: Board(unsafeArray: [
-                                [target, .light, .light, .light, .dark, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                                [nil, nil, nil, nil, nil, nil, nil, nil],
-                            ]),
-                            line: Line(
-                                start: Coordinate(x: .e, y: .one),
-                                directedDistance: DirectedDistance(direction: .left, distance: .four)
+                    with: AvailableCandidate(
+                        unsafeSelected: Coordinate(x: .a, y: .one),
+                        willFlip: NonEmptyArray([
+                            FlippableLine(
+                                board: Board(unsafeArray: [
+                                    [target, .light, .light, .light, .dark, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                    [nil, nil, nil, nil, nil, nil, nil, nil],
+                                ]),
+                                line: Line(
+                                    start: Coordinate(x: .e, y: .one),
+                                    directedDistance: DirectedDistance(direction: .left, distance: .four)
+                                )!,
+                                turn: .first
                             )!,
-                            turn: .first
-                        )!,
-                    ])!
+                        ])!
+                    ),
+                    who: .first,
+                    in: BoardAnimationTransaction(
+                        begin: Board(unsafeArray: [
+                            [target, .light, .light, .light, .dark, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                        ]),
+                        end: Board(unsafeArray: [
+                            [.dark, .dark, .dark, .dark, .dark, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                            [nil, nil, nil, nil, nil, nil, nil, nil],
+                        ])
+                    )
                 ),
                 expectedHistoryUntilNotAnimating: [
                     Coordinate(x: .a, y: .one),
@@ -129,19 +201,17 @@ class BoardAnimationModelTests: XCTestCase {
         testCases.forEach {
             let (line, testCase) = $0
 
-            var actualHistoryUntilNotAnimating = [Coordinate]()
+            var actualHistoryWhileAnimating = [Coordinate]()
             var prevState: BoardAnimationModelState? = testCase.start
             while let state = prevState {
-                if state == .notAnimating {
-                    break
-                }
-                actualHistoryUntilNotAnimating.append(state.animatingCoordinate!)
-                prevState = state.nextForAnimationCompletion
+                guard state.isAnimating else { break }
+                actualHistoryWhileAnimating.append(state.animatingCoordinate!)
+                prevState = state.nextInTransaction
             }
 
             XCTAssertEqual(
-                actualHistoryUntilNotAnimating, testCase.expectedHistoryUntilNotAnimating,
-                diff(between: testCase.expectedHistoryUntilNotAnimating, and: actualHistoryUntilNotAnimating),
+                actualHistoryWhileAnimating, testCase.expectedHistoryUntilNotAnimating,
+                diff(between: testCase.expectedHistoryUntilNotAnimating, and: actualHistoryWhileAnimating),
                 line: line
             )
         }

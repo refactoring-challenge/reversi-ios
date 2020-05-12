@@ -44,8 +44,9 @@ public class BoardViewHandle: BoardViewHandleProtocol, BoardAnimationHandleProto
         switch request {
         case .shouldSyncImmediately(board: let board):
             self.syncImmediately(to: board)
-        case .shouldAnimate(disk: let disk, at: let coordinate):
-            self.animate(disk: disk, at: coordinate)
+        case .shouldAnimate(disk: let disk, at: let coordinate, shouldSyncBefore: let board):
+            self.syncImmediately(to: board)
+            self.animate(disk: disk, at: coordinate, shouldSyncBefore: board)
         }
     }
 
@@ -59,10 +60,14 @@ public class BoardViewHandle: BoardViewHandleProtocol, BoardAnimationHandleProto
     }
 
 
-    private func animate(disk: Disk, at coordinate: Coordinate) {
+    private func animate(disk: Disk, at coordinate: Coordinate, shouldSyncBefore board: Board) {
         self.set(disk: disk, at: coordinate, animated: true) { isFinished in
             if isFinished {
-                self.animationDidCompleteObserver.send(value: .shouldAnimate(disk: disk, at: coordinate))
+                self.animationDidCompleteObserver.send(value: .shouldAnimate(
+                    disk: disk,
+                    at: coordinate,
+                    shouldSyncBefore: board
+                ))
             }
         }
     }

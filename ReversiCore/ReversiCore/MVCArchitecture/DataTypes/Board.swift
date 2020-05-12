@@ -2,18 +2,16 @@ public struct Board {
     private let array: [[Disk?]]
 
 
-    public static func initial() -> Board {
-        Board(unsafeArray: [
-            [nil, nil, nil, nil, nil, nil, nil, nil],
-            [nil, nil, nil, nil, nil, nil, nil, nil],
-            [nil, nil, nil, nil, nil, nil, nil, nil],
-            [nil, nil, nil, .light, .dark, nil, nil, nil],
-            [nil, nil, nil, .dark, .light, nil, nil, nil],
-            [nil, nil, nil, nil, nil, nil, nil, nil],
-            [nil, nil, nil, nil, nil, nil, nil, nil],
-            [nil, nil, nil, nil, nil, nil, nil, nil],
-        ])
-    }
+    public static let initial: Board = Board(unsafeArray: [
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, .light, .dark, nil, nil, nil],
+        [nil, nil, nil, .dark, .light, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+    ])
 
 
     public init(unsafeArray: [[Disk?]]) {

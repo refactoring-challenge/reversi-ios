@@ -5,17 +5,11 @@ import ReactiveSwift
 // State transition diagram. Methods not explicitly described are transitions to self.
 // The initial state is .notAnimated.
 //
-//                                                 +-----------------+
-//                 +-----------------+-----------> | .resetting(...) |
-//                 A                 A             +--------+--------+
-//                 |                 |                      |
-//                 |                 |           .markResetAsCompleted()
-//                 |                 |                      |
-//                 |     .requestAnimation(by: .reset)      |    [[ initial ]]
-//                 |                 |                      |         /
-//                 |                 |                      V        V
-//                 |                 |               +--------------+
-//                 |                 +---------------| .notAnimated | <---------------------+
+//                                                      (initial)
+//                                                          |
+//                                                          V
+//                                                   +--------------+
+//                 +-------------------------------->| .notAnimated | <---------------------+
 //                 |                                 +------+-------+                       |
 //                 |                                        |                               |
 //                 |                           .requestAnimation(by: .placed)               |
@@ -53,7 +47,6 @@ public protocol BoardAnimationModelProtocol: class {
 
     // NOTE: Why both mark{Animation,Reset}AsCompleted() are needed is to ignore expired animation callbacks.
     func markAnimationAsCompleted()
-    func markResetAsCompleted()
 }
 
 
@@ -77,43 +70,38 @@ public class BoardAnimationModel: BoardAnimationModelProtocol {
 
 
     public init(startsWith board: Board) {
-        let stateDidChangeMutable = ReactiveSwift.MutableProperty<BoardAnimationModelState>(.notAnimating)
+        let stateDidChangeMutable = ReactiveSwift.MutableProperty<BoardAnimationModelState>(.notAnimating(on: board))
         self.stateDidChangeMutable = stateDidChangeMutable
         self.boardAnimationStateDidChange = ReactiveSwift.Property(stateDidChangeMutable)
     }
 
 
     public func requestAnimation(by accepted: GameState.AcceptedCommand) {
-        switch (self.boardAnimationState, accepted) {
-        case (.placing, _), (.flipping, _), (.resetting, _):
-            // NOTE: Stop animations and sync immediately to prevent mismatch between BoardModel and BoardView.
-            self.boardAnimationState = .resetting(to: accepted.nextGameState.board)
-
-        case (_, .passed):
+        switch accepted {
+        case .passed:
             // NOTE: Do nothing.
             return
 
-        case (_, .reset):
-            self.boardAnimationState = .resetting(to: accepted.nextGameState.board)
-
-        case (.notAnimating, .placed(who: let turn, to: _, by: let selected)):
+        case .placed(with: let selected, who: let turn, to: let nextGameState):
             self.boardAnimationState = .placing(
-                at: selected.coordinate,
-                with: turn.disk,
-                restLines: selected.linesShouldFlip.sorted(by: shouldAnimateBefore)
+                with: selected,
+                who: turn,
+                // NOTE: Order stop animations and immediately sync to the board that is a result of the last transaction
+                //       before starting a new animation transaction. It make the transaction result consistent.
+                in: BoardAnimationTransaction(
+                    begin: self.boardAnimationState.boardIfTransactionIsDone,
+                    end: nextGameState.board
+                )
             )
+
+        case .reset:
+            self.boardAnimationState = .notAnimating(on: accepted.nextGameState.board)
         }
     }
 
 
     public func markAnimationAsCompleted() {
-        guard let nextState = self.boardAnimationState.nextForAnimationCompletion else { return }
-        self.boardAnimationState = nextState
-    }
-
-
-    public func markResetAsCompleted() {
-        guard let nextState = self.boardAnimationState.nextForResetCompletion else { return }
+        guard let nextState = self.boardAnimationState.nextInTransaction else { return }
         self.boardAnimationState = nextState
     }
 }
@@ -121,39 +109,76 @@ public class BoardAnimationModel: BoardAnimationModelProtocol {
 
 
 public enum BoardAnimationRequest {
-    case shouldAnimate(disk: Disk, at: Coordinate)
+    case shouldAnimate(disk: Disk, at: Coordinate, shouldSyncBefore: Board)
     case shouldSyncImmediately(board: Board)
 }
 
 
 
+public struct BoardAnimationTransaction {
+    let begin: Board
+    let end: Board
+
+
+    public init(begin: Board, end: Board) {
+        self.begin = begin
+        self.end = end
+    }
+}
+
+
+
+extension BoardAnimationTransaction: Equatable {}
+
+
+
 public enum BoardAnimationModelState {
-    case notAnimating
-    case placing(at: Coordinate, with: Disk, restLines: NonEmptyArray<FlippableLine>)
-    case flipping(at: Coordinate, with: Disk, restCoordinates: [Coordinate], restLines: [FlippableLine])
-    case resetting(to: Board)
+    case notAnimating(on: Board)
+    case placing(at: Coordinate, with: Disk, restLines: NonEmptyArray<FlippableLine>, transaction: BoardAnimationTransaction)
+    case flipping(at: Coordinate, with: Disk, restCoordinates: [Coordinate], restLines: [FlippableLine], transaction: BoardAnimationTransaction)
 
 
     public var animatingCoordinate: Coordinate? {
         switch self {
-        case .notAnimating, .resetting:
+        case .notAnimating:
             return nil
-        case .placing(at: let coordinate, with: _, restLines: _),
-            .flipping(at: let coordinate, with: _, restCoordinates: _, restLines: _):
+        case .placing(at: let coordinate, with: _, restLines: _, transaction: _),
+             .flipping(at: let coordinate, with: _, restCoordinates: _, restLines: _, transaction: _):
             return coordinate
         }
     }
 
 
-    public var animationRequest: BoardAnimationRequest? {
+    public var unfinishedTransaction: BoardAnimationTransaction? {
         switch self {
         case .notAnimating:
             return nil
-        case .placing(at: let coordinate, with: let disk, restLines: _),
-             .flipping(at: let coordinate, with: let disk, restCoordinates: _, restLines: _):
-            return .shouldAnimate(disk: disk, at: coordinate)
-        case .resetting(to: let board):
+        case .placing(at: _, with: _, restLines: _, transaction: let transaction),
+             .flipping(at: _, with: _, restCoordinates: _, restLines: _, transaction: let transaction):
+            return transaction
+        }
+    }
+
+
+    public var boardIfTransactionIsDone: Board {
+        switch self {
+        case .notAnimating(on: let board):
+            return board
+        case .placing(at: _, with: _, restLines: _, transaction: let transaction),
+             .flipping(at: _, with: _, restCoordinates: _, restLines: _, transaction: let transaction):
+            return transaction.end
+        }
+    }
+
+
+    public var animationRequest: BoardAnimationRequest {
+        switch self {
+        case .notAnimating(on: let board):
             return .shouldSyncImmediately(board: board)
+
+        case .placing(at: let coordinate, with: let disk, restLines: _, transaction: let transaction),
+             .flipping(at: let coordinate, with: let disk, restCoordinates: _, restLines: _, transaction: let transaction):
+            return .shouldAnimate(disk: disk, at: coordinate, shouldSyncBefore: transaction.begin)
         }
     }
 
@@ -162,48 +187,41 @@ public enum BoardAnimationModelState {
         switch self {
         case .notAnimating:
             return false
-        case .placing, .flipping, .resetting:
+        case .placing, .flipping:
             return true
         }
     }
 
 
-    /// Next state for reset completions.
-    public var nextForResetCompletion: BoardAnimationModelState? {
-        switch self {
-        case .notAnimating, .placing, .flipping:
-            // NOTE: Ignore invalid requests.
-            return nil
-
-        case .resetting:
-            return .notAnimating
-        }
-    }
-
-
     /// Next state for animation completions.
-    public var nextForAnimationCompletion: BoardAnimationModelState? {
+    public var nextInTransaction: BoardAnimationModelState? {
         switch self {
-        case .notAnimating, .resetting:
+        case .notAnimating:
             // NOTE: Ignore invalid requests.
             return nil
 
-        case .placing(at: _, with: let disk, restLines: let restLines):
+        case .placing(at: _, with: let disk, restLines: let restLines, transaction: let transaction):
             return .flipping(
                 lineToFlip: restLines.first,
                 disk: disk,
-                restLines: restLines.rest
+                restLines: restLines.rest,
+                inTransaction: transaction
             )
 
-        case .flipping(at: _, with: let disk, restCoordinates: let restCoordinates, restLines: let restLines):
+        case .flipping(at: _, with: let disk, restCoordinates: let restCoordinates, restLines: let restLines, transaction: let transaction):
             guard let coordinateToFlip = restCoordinates.first else {
                 guard let lineToFlip = restLines.first else {
                     // NOTE: It means that all lines were flipped.
-                    return .notAnimating
+                    return .notAnimating(on: transaction.end)
                 }
 
                 // NOTE: It means this line was completed but next lines are remained yet.
-                return .flipping(lineToFlip: lineToFlip, disk: disk, restLines: Array(restLines.dropFirst()))
+                return .flipping(
+                    lineToFlip: lineToFlip,
+                    disk: disk,
+                    restLines: Array(restLines.dropFirst()),
+                    inTransaction: transaction
+                )
             }
 
             // NOTE: It means one or more coordinates not flipped is still on this line.
@@ -211,16 +229,32 @@ public enum BoardAnimationModelState {
                 at: coordinateToFlip,
                 with: disk,
                 restCoordinates: Array(restCoordinates.dropFirst()),
-                restLines: restLines
+                restLines: restLines,
+                transaction: transaction
             )
         }
+    }
+
+
+    public static func placing(
+        with selected: AvailableCandidate,
+        who turn: Turn,
+        in transaction: BoardAnimationTransaction
+    ) -> BoardAnimationModelState {
+        .placing(
+            at: selected.coordinate,
+            with: turn.disk,
+            restLines: selected.linesShouldFlip.sorted(by: lineShouldAnimateBefore),
+            transaction: transaction
+        )
     }
 
 
     public static func flipping(
         lineToFlip: FlippableLine,
         disk: Disk,
-        restLines: [FlippableLine]
+        restLines: [FlippableLine],
+        inTransaction transaction: BoardAnimationTransaction
     ) -> BoardAnimationModelState {
         // NOTE: Nearest coordinate from where to place is highest animation priority (see README.md).
         let coordinatesShouldFlipEndToStart = lineToFlip.coordinatesShouldFlipStartToEnd.reversed()
@@ -230,7 +264,8 @@ public enum BoardAnimationModelState {
             at: coordinateToFlip,
             with: disk,
             restCoordinates: restCoordinates,
-            restLines: restLines
+            restLines: restLines,
+            transaction: transaction
         )
     }
 }
@@ -241,7 +276,7 @@ extension BoardAnimationModelState: Equatable {}
 
 
 
-public func shouldAnimateBefore(_ a: FlippableLine, _ b: FlippableLine) -> Bool {
+public func lineShouldAnimateBefore(_ a: FlippableLine, _ b: FlippableLine) -> Bool {
     // NOTE: Do not have to care that both directions of a and b have same priority.
     //       Because flipped lines at a turn cannot not have common directions.
     animationPriority(of: a.line.directedDistance.direction) < animationPriority(of: b.line.directedDistance.direction)
@@ -250,22 +285,23 @@ public func shouldAnimateBefore(_ a: FlippableLine, _ b: FlippableLine) -> Bool 
 
 public func animationPriority(of direction: Direction) -> Int {
     // SEE: README.md
+    // BUG15: This order followed the order in README.md, but the line direction is inverted.
     switch direction {
     case .topLeft:
-        return 0
-    case .top:
-        return 1
-    case .topRight:
-        return 2
-    case .right:
-        return 3
-    case .bottomRight:
-        return 4
-    case .bottom:
-        return 5
-    case .bottomLeft:
-        return 6
-    case .left:
         return 7
+    case .top:
+        return 6
+    case .topRight:
+        return 5
+    case .right:
+        return 4
+    case .bottomRight:
+        return 3
+    case .bottom:
+        return 2
+    case .bottomLeft:
+        return 1
+    case .left:
+        return 0
     }
 }

@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+
+git grep '// BUG' . | sed -E 's/[^:]*: * \/\/ BUG(.*)/\1/' | sort -n | sed -E 's/.*/BUG &/'

@@ -27,7 +27,7 @@ public class ResetConfirmationHandle: ResetConfirmationHandleProtocol {
             preferredStyle: .alert,
             actions: [
                 (title: "Cancel", style: .cancel, false),
-                // BUG12: Unexpectedly use false instead of true.
+                // BUG13: Unexpectedly use false instead of true.
                 (title: "OK", style: .default, true),
             ],
             willPresentOn: modalPresenter

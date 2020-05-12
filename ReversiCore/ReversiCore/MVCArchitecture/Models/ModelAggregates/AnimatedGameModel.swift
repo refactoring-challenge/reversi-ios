@@ -88,11 +88,6 @@ extension AnimatedGameModel: BoardAnimationModelProtocol {
     public func markAnimationAsCompleted() {
         self.boardAnimationModel.markAnimationAsCompleted()
     }
-
-
-    public func markResetAsCompleted() {
-        self.boardAnimationModel.markResetAsCompleted()
-    }
 }
 
 
@@ -154,14 +149,13 @@ public enum AnimatedGameModelState {
     }
 
 
-    public static func from(gameModelState: GameModelState, animationState: BoardAnimationModelState
+    public static func from(
+        gameModelState: GameModelState,
+        animationState: BoardAnimationModelState
     ) -> AnimatedGameModelState {
-        switch animationState {
-        case .notAnimating:
-            return .notAnimating(from: gameModelState)
-        case .placing, .flipping, .resetting:
-            return .animating(from: gameModelState)
-        }
+        animationState.isAnimating
+            ? .animating(from: gameModelState)
+            : .notAnimating(from: gameModelState)
     }
 
 

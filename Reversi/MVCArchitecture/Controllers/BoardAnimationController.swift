@@ -16,6 +16,7 @@ public class BoardAnimationController {
         self.boardAnimationModel = boardAnimationModel
         self.boardAnimationHandle = boardAnimationHandle
 
+        // BUG16: Initial sync are not applied because markResetAsCompleted was sent before observing.
         boardAnimationHandle.animationDidComplete
             .take(during: self.lifetime)
             .observe(on: QueueScheduler(qos: .userInteractive))
@@ -25,7 +26,7 @@ public class BoardAnimationController {
                     self?.boardAnimationModel.markAnimationAsCompleted()
 
                 case .shouldSyncImmediately:
-                    self?.boardAnimationModel.markResetAsCompleted()
+                    return
                 }
             }
     }

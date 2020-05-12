@@ -12,24 +12,24 @@ public class AnimatedGameWithAutomatorsModel: AnimatedGameWithAutomatorsModelPro
     private let animatedGameWithAutomatorsModel: GameWithAutomatorsModelProtocol
 
 
+
     public init(
-        startsWith initialGameState: GameState,
-        automatorAvailabilities: GameAutomatorAvailabilities,
+        gameModel: GameModelProtocol,
+        gameAutomatorAvailabilitiesModel: GameAutomatorAvailabilitiesModelProtocol,
         automatorStrategy: @escaping CoordinateSelector
     ) {
-        let gameModel = GameModel(startsWith: initialGameState)
         self.gameModel = gameModel
 
         let animatedGameModel = AnimatedGameModel(
             gameModel: gameModel,
-            boardAnimationModel: BoardAnimationModel(startsWith: initialGameState.board)
+            boardAnimationModel: BoardAnimationModel(startsWith: gameModel.gameModelState.board)
         )
         self.animatedGameModel = animatedGameModel
 
         self.animatedGameWithAutomatorsModel = GameWithAutomatorsModel(
             automatableGameModel: animatedGameModel,
             automatorModel: GameAutomatorModel(strategy: automatorStrategy),
-            automationAvailabilityModel: GameAutomatorAvailabilitiesModel(startsWith: automatorAvailabilities)
+            automationAvailabilityModel: gameAutomatorAvailabilitiesModel
         )
     }
 }
@@ -78,11 +78,6 @@ extension AnimatedGameWithAutomatorsModel: BoardAnimationModelProtocol {
 
     public func markAnimationAsCompleted() {
         self.animatedGameModel.markAnimationAsCompleted()
-    }
-
-
-    public func markResetAsCompleted() {
-        self.animatedGameModel.markResetAsCompleted()
     }
 }
 

@@ -23,8 +23,7 @@ public class BoardViewBinding {
             .take(during: self.lifetime)
             .observe(on: UIScheduler())
             .on(value: { [weak self] state in
-                guard let animationRequest = state.animationRequest else { return }
-                self?.viewHandle.apply(by: animationRequest)
+                self?.viewHandle.apply(by: state.animationRequest)
             })
             .start()
     }
