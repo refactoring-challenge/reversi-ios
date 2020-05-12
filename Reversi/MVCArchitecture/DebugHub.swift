@@ -26,6 +26,18 @@ public func printDebugInfo() {
 }
 
 
+/// - Example: `(lldb) po debugFastAnimation()`
+public func debugFastAnimation() {
+    animationDuration = 0.01
+}
+
+
+/// - Example: `(lldb) po debugFastThinking()`
+public func debugFastThinking() {
+    gameAutomatorDuration = 0.0
+}
+
+
 /// - Example: `(lldb) po printModelsHistory()`
 public func printModelsHistory() {
     guard let modelsTracker = debugModelsTracker() else { return }

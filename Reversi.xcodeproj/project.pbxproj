@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		2475E190FD031E469B04C42B /* GameAutomatorControlBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E20A7BC56CF59F241EF7 /* GameAutomatorControlBinding.swift */; };
 		2475E19560481A4B8C7551DD /* TurnMessageViewHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E0B45029FE1A7CBDB573 /* TurnMessageViewHandle.swift */; };
-		2475E1CFDFBB5EB390988BE5 /* DebugControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E443DC46218961E0DA53 /* DebugControl.swift */; };
+		2475E1CFDFBB5EB390988BE5 /* DebugHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E443DC46218961E0DA53 /* DebugHub.swift */; };
 		2475E26098338961B32DC15C /* GameAutomatorControlHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E7D8480508682494F011 /* GameAutomatorControlHandle.swift */; };
 		2475E2D2C0E775D33AB4ED5E /* UserConfirmationViewHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E3497324581DD033385E /* UserConfirmationViewHandle.swift */; };
 		2475E5622D1545B2A483152B /* ResetConfirmationHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB5E202BCDEA6ACFCDD9 /* ResetConfirmationHandle.swift */; };
@@ -24,6 +24,7 @@
 		2475E9C673F7B148E4CAD89F /* BoardViewHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EA20B8A60D78D639DB8C /* BoardViewHandle.swift */; };
 		2475EA145D4D46268BE1456E /* ModalPresenterQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E081241CA10F52F19C07 /* ModalPresenterQueue.swift */; };
 		2475EBB35E62D4DF20A903F4 /* PassConfirmationBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EDB6B20FFC12800DC3F0 /* PassConfirmationBinding.swift */; };
+		2475EC0C1FE1018E2B16F556 /* DebuggableGameAutomator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E4B446CA3DF1B6EFB448 /* DebuggableGameAutomator.swift */; };
 		2475EC50251456A73F5DBB66 /* PassConfirmationHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E0A093E9FA51B4A53A34 /* PassConfirmationHandle.swift */; };
 		2475EC7656389F4D2FF37371 /* BoardMVCComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E72A8BF4ACD322490087 /* BoardMVCComposer.swift */; };
 		2475ECC8830E6FC9FC17733A /* BoardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E12AF9E266A66AB1069C /* BoardController.swift */; };
@@ -86,7 +87,8 @@
 		2475E3064E22952BD593098D /* GameAutomatorProgressViewHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameAutomatorProgressViewHandle.swift; sourceTree = "<group>"; };
 		2475E3497324581DD033385E /* UserConfirmationViewHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserConfirmationViewHandle.swift; sourceTree = "<group>"; };
 		2475E435E67DF68DC40E73F3 /* DiskCountViewBinding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiskCountViewBinding.swift; sourceTree = "<group>"; };
-		2475E443DC46218961E0DA53 /* DebugControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugControl.swift; sourceTree = "<group>"; };
+		2475E443DC46218961E0DA53 /* DebugHub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugHub.swift; sourceTree = "<group>"; };
+		2475E4B446CA3DF1B6EFB448 /* DebuggableGameAutomator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebuggableGameAutomator.swift; sourceTree = "<group>"; };
 		2475E6D9B1B380FF762BB7A8 /* PassConfirmationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassConfirmationController.swift; sourceTree = "<group>"; };
 		2475E72A8BF4ACD322490087 /* BoardMVCComposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardMVCComposer.swift; sourceTree = "<group>"; };
 		2475E7D8480508682494F011 /* GameAutomatorControlHandle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameAutomatorControlHandle.swift; sourceTree = "<group>"; };
@@ -171,9 +173,10 @@
 			isa = PBXGroup;
 			children = (
 				2475E1D7FC01E81F9D2045F1 /* Controllers */,
+				2475ED21645A3AC16654B8B5 /* Models */,
 				2475E25ED91F236C19DD123B /* Views */,
 				2475E72A8BF4ACD322490087 /* BoardMVCComposer.swift */,
-				2475E443DC46218961E0DA53 /* DebugControl.swift */,
+				2475E443DC46218961E0DA53 /* DebugHub.swift */,
 			);
 			path = MVCArchitecture;
 			sourceTree = "<group>";
@@ -193,6 +196,14 @@
 				2475E3497324581DD033385E /* UserConfirmationViewHandle.swift */,
 			);
 			path = ViewHandles;
+			sourceTree = "<group>";
+		};
+		2475ED21645A3AC16654B8B5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				2475E4B446CA3DF1B6EFB448 /* DebuggableGameAutomator.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		2475EEEE1F5942145B4EF3A7 /* ViewBindings */ = {
@@ -403,7 +414,8 @@
 				2475ECC8830E6FC9FC17733A /* BoardController.swift in Sources */,
 				2475EBB35E62D4DF20A903F4 /* PassConfirmationBinding.swift in Sources */,
 				2475EA145D4D46268BE1456E /* ModalPresenterQueue.swift in Sources */,
-				2475E1CFDFBB5EB390988BE5 /* DebugControl.swift in Sources */,
+				2475E1CFDFBB5EB390988BE5 /* DebugHub.swift in Sources */,
+				2475EC0C1FE1018E2B16F556 /* DebuggableGameAutomator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

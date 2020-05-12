@@ -46,7 +46,7 @@ public class BoardMVCComposer {
                 userDefaults: userDefaults,
                 defaultValue: .bothDisabled
             ),
-            automatorStrategy: GameAutomator.delayed(selector: GameAutomator.randomSelector, 2.0)
+            automatorStrategy: debuggableGameAutomator(selector: GameAutomator.randomSelector, duration: 2.0)
         )
         self.animatedGameWithAutomatorsModel = animatedGameWithAutomatorsModel
         self.diskCountModel = DiskCountModel(observing: animatedGameWithAutomatorsModel)
