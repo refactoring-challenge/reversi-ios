@@ -45,7 +45,6 @@ public protocol BoardAnimationModelProtocol: class {
 
     func requestAnimation(by accepted: GameState.AcceptedCommand)
 
-    // NOTE: Why both mark{Animation,Reset}AsCompleted() are needed is to ignore expired animation callbacks.
     func markAnimationAsCompleted()
 }
 
