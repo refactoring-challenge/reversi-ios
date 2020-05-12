@@ -2,6 +2,7 @@ import UIKit
 import UIKitTestable
 
 
+
 public class ViewController: UIViewController {
     @IBOutlet private var boardView: BoardView!
     @IBOutlet private var messageDiskView: DiskView!
@@ -11,14 +12,18 @@ public class ViewController: UIViewController {
     @IBOutlet private var playerActivityIndicators: [UIActivityIndicatorView]!
     @IBOutlet private var playerControls: [UISegmentedControl]!
     @IBOutlet private var resetButton: UIButton!
-    
+
     private var composer: BoardMVCComposer?
+    private var modalPresenterQueue: ModalPresenterQueueProtocol?
 
 
     public override func viewDidLoad() {
         super.viewDidLoad()
 
         let modalPresenter = UIKitTestable.ModalPresenter(wherePresentOn: .weak(self))
+        let modalPresenterQueue = ModalPresenterQueue()
+        self.modalPresenterQueue = modalPresenterQueue
+
         let boardViewHandle = BoardViewHandle(boardView: self.boardView)
 
         self.composer = BoardMVCComposer(
@@ -34,11 +39,13 @@ public class ViewController: UIViewController {
                 secondSegmentedControl: self.playerControls[1]
             ),
             passConfirmationViewHandle: PassConfirmationHandle(
-                willModalsPresentOn: modalPresenter
+                willModalsPresentOn: modalPresenter,
+                orEnqueueIfViewNotAppeared: modalPresenterQueue
             ),
             resetConfirmationViewHandle: ResetConfirmationHandle(
-                handle: self.resetButton,
-                willPresentOn: modalPresenter
+                button: self.resetButton,
+                willModalsPresentOn: modalPresenter,
+                orEnqueueIfViewNotAppeared: modalPresenterQueue
             ),
             diskCountViewHandle: DiskCountViewHandle(
                 firstPlayerCountLabel: self.countLabels[0],
@@ -50,5 +57,15 @@ public class ViewController: UIViewController {
                 messageDiskViewConstraint: self.messageDiskSizeConstraint
             )
         )
+    }
+
+
+    public override func viewDidAppear(_ animated: Bool) {
+        self.modalPresenterQueue?.viewDidAppear()
+    }
+
+
+    public override func viewWillDisappear(_ animated: Bool) {
+        self.modalPresenterQueue?.viewWillDisappear()
     }
 }

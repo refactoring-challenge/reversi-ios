@@ -26,6 +26,7 @@ public class UserConfirmationViewHandle<T>: UserConfirmationViewHandleProtocol {
     private let preferredStyle: UIAlertController.Style
     private let actions: [(title: String, style: UIAlertAction.Style, value: T)]
     private let modalPresenter: UIKitTestable.ModalPresenterProtocol
+    private let modalPresenterQueue: ModalPresenterQueueProtocol
 
 
     public init(
@@ -33,13 +34,15 @@ public class UserConfirmationViewHandle<T>: UserConfirmationViewHandleProtocol {
         message: String,
         preferredStyle: UIAlertController.Style,
         actions: [(title: String, style: UIAlertAction.Style, value: T)],
-        willPresentOn modalPresenter: UIKitTestable.ModalPresenterProtocol
+        willPresentOn modalPresenter: UIKitTestable.ModalPresenterProtocol,
+        orEnqueueIfViewNotAppeared modalPresenterQueue: ModalPresenterQueueProtocol
     ) {
         self.title = title
         self.message = message
         self.actions = actions
         self.preferredStyle = preferredStyle
         self.modalPresenter = modalPresenter
+        self.modalPresenterQueue = modalPresenterQueue
 
         (self.userDidConfirm, self.userDidConfirmObserver) = ReactiveSwift.Signal<T, Never>.pipe()
     }
@@ -62,7 +65,11 @@ public class UserConfirmationViewHandle<T>: UserConfirmationViewHandleProtocol {
             )
         }
 
-        self.modalPresenter.present(viewController: alertViewController, animated: true)
+        self.modalPresenterQueue.enqueue(task: ModalPresenterTask(
+            modalPresenter: self.modalPresenter,
+            modalViewControllerRef: .strong(alertViewController),
+            animated: true
+        ))
     }
 }
 

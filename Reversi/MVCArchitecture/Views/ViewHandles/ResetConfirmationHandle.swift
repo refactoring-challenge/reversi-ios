@@ -18,7 +18,11 @@ public class ResetConfirmationHandle: ResetConfirmationHandleProtocol {
     public let resetDidAccept: ReactiveSwift.Signal<Bool, Never>
 
 
-    public init(handle button: UIButton, willPresentOn modalPresenter: UIKitTestable.ModalPresenterProtocol) {
+    public init(
+        button: UIButton,
+        willModalsPresentOn modalPresenter: UIKitTestable.ModalPresenterProtocol,
+        orEnqueueIfViewNotAppeared modalPresenterQueue: ModalPresenterQueueProtocol
+    ) {
         self.button = button
 
         let confirmationViewHandle = UserConfirmationViewHandle(
@@ -30,7 +34,8 @@ public class ResetConfirmationHandle: ResetConfirmationHandleProtocol {
                 // BUG13: Unexpectedly use false instead of true.
                 (title: "OK", style: .default, true),
             ],
-            willPresentOn: modalPresenter
+            willPresentOn: modalPresenter,
+            orEnqueueIfViewNotAppeared: modalPresenterQueue
         )
         self.confirmationViewHandle = confirmationViewHandle
         self.resetDidAccept = self.confirmationViewHandle.userDidConfirm

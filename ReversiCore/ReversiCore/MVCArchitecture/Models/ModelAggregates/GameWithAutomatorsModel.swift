@@ -90,13 +90,8 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
 
                     case .enabled:
                         guard let nonEmptyAvailableCandidates = NonEmptyArray(availableCandidates) else {
-                            switch self.automatableGameModel.pass() {
-                            case .ignored:
-                                self.automatorDidFail.value = .passNotAccepted
-                                return
-                            case .accepted:
-                                return
-                            }
+                            // NOTE: User must confirm if the automator do pass.
+                            return
                         }
 
                         self.automatorModel.runAutomator(inThisTurn: gameState.turn, for: nonEmptyAvailableCandidates)
@@ -140,10 +135,10 @@ extension GameWithAutomatorsModel: GameCommandReceivable {
     @discardableResult
     public func pass() -> GameCommandResult {
         switch self.gameWithAutomatorsModelState {
-        case .automatorThinking, .failed:
+        case .failed:
             return .ignored
 
-        case .ready, .completed, .awaitingReadyOrCompleted:
+        case .ready, .completed, .awaitingReadyOrCompleted, .automatorThinking:
             return self.automatableGameModel.pass()
         }
     }
@@ -222,9 +217,10 @@ public enum GameWithAutomatorsModelState {
 
     public var playerMustPass: Bool {
         switch self {
-        case .completed, .awaitingReadyOrCompleted, .failed, .automatorThinking:
+        case .completed, .awaitingReadyOrCompleted, .failed:
             return false
-        case .ready(_, availableCandidates: let availableCandidates):
+        case .ready(_, availableCandidates: let availableCandidates),
+             .automatorThinking(previousGameState: _, previousAvailableCandidates: let availableCandidates):
             return availableCandidates.isEmpty
         }
     }

@@ -22,6 +22,7 @@ public class PassConfirmationBinding {
             .observe(on: UIScheduler())
             .on(value: { [weak self] state in
                 guard state.playerMustPass else { return }
+                // BUG18: Alert not appeared because it called before viewDidAppear.
                 self?.passConfirmationHandle.confirm()
             })
             .start()

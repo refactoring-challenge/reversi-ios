@@ -17,13 +17,17 @@ public class PassConfirmationHandle: PassConfirmationHandleProtocol {
     private let confirmationViewHandle: UserConfirmationViewHandle<Void>
 
 
-    public init(willModalsPresentOn modalPresenter: UIKitTestable.ModalPresenterProtocol) {
+    public init(
+        willModalsPresentOn modalPresenter: UIKitTestable.ModalPresenterProtocol,
+        orEnqueueIfViewNotAppeared modalPresenterQueue: ModalPresenterQueueProtocol
+    ) {
         let confirmationViewHandle = UserConfirmationViewHandle(
             title: "Pass",
             message: "Cannot place a disk.",
             preferredStyle: .alert,
             actions: [(title: "Dismiss", style: .default, ())],
-            willPresentOn: modalPresenter
+            willPresentOn: modalPresenter,
+            orEnqueueIfViewNotAppeared: modalPresenterQueue
         )
         self.confirmationViewHandle = confirmationViewHandle
         self.passDidAccept = self.confirmationViewHandle.userDidConfirm
