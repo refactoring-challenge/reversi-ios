@@ -289,21 +289,21 @@ public func animationPriority(of direction: Direction) -> Int {
     // SEE: README.md
     // BUG15: This order followed the order in README.md, but the line direction is inverted.
     switch direction {
-    case .topLeft:
-        return 7
-    case .top:
-        return 6
-    case .topRight:
-        return 5
-    case .right:
-        return 4
     case .bottomRight:
-        return 3
-    case .bottom:
-        return 2
-    case .bottomLeft:
-        return 1
-    case .left:
         return 0
+    case .bottom:
+        return 1
+    case .bottomLeft:
+        return 2
+    case .left:
+        return 3
+    case .topLeft:
+        return 4
+    case .top:
+        return 5
+    case .topRight:
+        return 6
+    case .right:
+        return 7
     }
 }
