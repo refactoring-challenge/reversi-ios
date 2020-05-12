@@ -24,6 +24,7 @@ public class BoardMVCComposer {
 
 
     public init(
+        userDefaults: UserDefaults,
         boardViewHandle: BoardViewHandleProtocol,
         boardAnimationHandle: BoardAnimationHandleProtocol,
         gameAutomatorProgressViewHandle: GameAutomatorProgressViewHandleProtocol,
@@ -37,8 +38,14 @@ public class BoardMVCComposer {
         // STEP-1: Constructing Models and Model Aggregates that are needed by the screen.
         //         And models should be shared across multiple screens will arrive as parameters.
         let animatedGameWithAutomatorsModel = AnimatedGameWithAutomatorsModel(
-            startsWith: .initial,
-            automatorAvailabilities: .bothDisabled,
+            gameModel: AutoBackupGameModel(
+                userDefaults: userDefaults,
+                defaultValue: .initial
+            ),
+            gameAutomatorAvailabilitiesModel: AutoBackupGameAutomatorAvailabilitiesModel(
+                userDefaults: userDefaults,
+                defaultValue: .bothDisabled
+            ),
             automatorStrategy: GameAutomator.delayed(selector: GameAutomator.randomSelector, 2.0)
         )
         self.animatedGameWithAutomatorsModel = animatedGameWithAutomatorsModel
@@ -93,7 +100,7 @@ public class BoardMVCComposer {
             gameModel: animatedGameWithAutomatorsModel,
             updating: turnMessageViewHandle
         )
-        // BUG13: Forgot binding pass confirmation.
+        // BUG14: Forgot binding pass confirmation.
         self.passConfirmationBinding = PassConfirmationBinding(
             observing: animatedGameWithAutomatorsModel,
             updating: passConfirmationViewHandle

@@ -126,6 +126,9 @@ public enum GameModelState {
     public var board: Board { self.gameState.board }
 
 
+    public static func initial() -> GameModelState { .next(by: .initial) }
+
+
     public static func next(by gameState: GameState) -> GameModelState {
         if let gameResult = gameState.gameResult() {
             return .completed(gameState, gameResult)

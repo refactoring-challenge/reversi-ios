@@ -1,4 +1,4 @@
-public enum GameAutomatorAvailability {
+public enum GameAutomatorAvailability: String {
     case enabled
     case disabled
 }
@@ -6,3 +6,7 @@ public enum GameAutomatorAvailability {
 
 
 extension GameAutomatorAvailability: Equatable {}
+
+
+
+extension GameAutomatorAvailability: Codable {}

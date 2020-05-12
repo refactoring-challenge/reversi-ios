@@ -25,3 +25,6 @@ public struct GameAutomatorAvailabilities {
 
 
 extension GameAutomatorAvailabilities: Equatable {}
+
+
+extension GameAutomatorAvailabilities: Codable {}

@@ -2,6 +2,18 @@ public struct Board {
     private let array: [[Disk?]]
 
 
+    public static let empty: Board = Board(unsafeArray: [
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+        [nil, nil, nil, nil, nil, nil, nil, nil],
+    ])
+
+
     public static let initial: Board = Board(unsafeArray: [
         [nil, nil, nil, nil, nil, nil, nil, nil],
         [nil, nil, nil, nil, nil, nil, nil, nil],
@@ -146,6 +158,10 @@ public struct Board {
 
 
 extension Board: Equatable {}
+
+
+
+extension Board: Codable {}
 
 
 

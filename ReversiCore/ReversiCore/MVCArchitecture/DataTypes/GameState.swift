@@ -13,6 +13,7 @@ public struct GameState {
 
 
     public static let initial = GameState(board: .initial, turn: .first)
+    public static let empty = GameState(board: .empty, turn: .first)
 
 
     public init(board: Board, turn: Turn) {
@@ -77,6 +78,10 @@ public struct GameState {
 
 
 extension GameState: Equatable {}
+
+
+
+extension GameState: Codable {}
 
 
 

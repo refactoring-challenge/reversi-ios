@@ -1,4 +1,4 @@
-public enum Turn: CaseIterable {
+public enum Turn: String, CaseIterable {
     case first
     case second
 
@@ -26,6 +26,10 @@ public enum Turn: CaseIterable {
 
 
 extension Turn: Hashable {}
+
+
+
+extension Turn: Codable {}
 
 
 

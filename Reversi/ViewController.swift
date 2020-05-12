@@ -22,6 +22,7 @@ public class ViewController: UIViewController {
         let boardViewHandle = BoardViewHandle(boardView: self.boardView)
 
         self.composer = BoardMVCComposer(
+            userDefaults: UserDefaults.standard,
             boardViewHandle: boardViewHandle,
             boardAnimationHandle: boardViewHandle,
             gameAutomatorProgressViewHandle: GameAutomatorProgressViewHandle(
