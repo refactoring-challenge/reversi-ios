@@ -4,10 +4,10 @@ import ReversiCore
 
 
 public class BoardMVCComposer {
-    private let animatedGameWithAutomatorsModel: AnimatedGameWithAutomatorsModelProtocol
-    private let diskCountModel: DiskCountModelProtocol
+    public let animatedGameWithAutomatorsModel: AnimatedGameWithAutomatorsModelProtocol
+    public let diskCountModel: DiskCountModelProtocol
 
-    private let modelTracker: ModelTrackerProtocol
+    public let modelTracker: ModelTrackerProtocol
 
     private let boardViewBinding: BoardViewBinding
     private let gameAutomatorProgressViewBinding: GameAutomatorProgressViewBinding
@@ -33,7 +33,7 @@ public class BoardMVCComposer {
         resetConfirmationViewHandle: ResetConfirmationHandleProtocol,
         diskCountViewHandle: DiskCountViewHandleProtocol,
         turnMessageViewHandle: TurnMessageViewHandleProtocol,
-        isEventTracesEnabled: Bool = false
+        isEventTracesEnabled: Bool = isDebug
     ) {
         // STEP-1: Constructing Models and Model Aggregates that are needed by the screen.
         //         And models should be shared across multiple screens will arrive as parameters.

@@ -4,12 +4,15 @@ import ReactiveSwift
 
 public protocol ModelTrackerProtocol: class {
     var isEnabled: Bool { get set }
+    func printRecentHistory()
 }
 
 
 
 public class ModelTracker<T>: ModelTrackerProtocol {
     public var isEnabled: Bool
+    public private(set) var recentHistory = Buffer<T>(capacity: 100)
+
     private let stateDidChange: ReactiveSwift.Property<T>
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
@@ -25,9 +28,27 @@ public class ModelTracker<T>: ModelTrackerProtocol {
             .on(value: { [weak self] state in
                 guard let self = self else { return }
                 guard self.isEnabled else { return }
-                print("ModelTracker<\(String(reflecting: T.self))>:\n\(dumpString(state))")
+                self.recentHistory.append(state)
             })
             .start()
+    }
+
+
+    public func printRecentHistory() {
+        var text = ""
+        text.write("===== \(String(reflecting: type(of: T.self))) =====\n")
+
+        if self.recentHistory.isEmpty {
+            text.write("No history available (probably the tracker have never been enabled?)\n")
+        }
+        self.recentHistory.enumerated().forEach {
+            let (index, state) = $0
+            text.write("[\(index)]\t")
+            dump(state, to: &text)
+        }
+        text.write("\n\n")
+
+        print(text)
     }
 }
 
@@ -35,7 +56,7 @@ public class ModelTracker<T>: ModelTrackerProtocol {
 
 public class ComposedModelTracker: ModelTrackerProtocol {
     public var isEnabled: Bool {
-        didSet (newValue) {
+        didSet(newValue) {
             self.trackers.forEach { tracker in tracker.isEnabled = newValue }
         }
     }
@@ -45,5 +66,10 @@ public class ComposedModelTracker: ModelTrackerProtocol {
     public init(trackers: [ModelTrackerProtocol], isEnabled: Bool) {
         self.trackers = trackers
         self.isEnabled = isEnabled
+    }
+
+
+    public func printRecentHistory() {
+        self.trackers.forEach { tracker in tracker.printRecentHistory() }
     }
 }

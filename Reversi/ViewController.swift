@@ -13,7 +13,7 @@ public class ViewController: UIViewController {
     @IBOutlet private var playerControls: [UISegmentedControl]!
     @IBOutlet private var resetButton: UIButton!
 
-    private var composer: BoardMVCComposer?
+    public private(set) var composer: BoardMVCComposer?
     private var modalPresenterQueue: ModalPresenterQueueProtocol?
 
 
