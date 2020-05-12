@@ -10,8 +10,8 @@ public let isDebug = false
 #endif
 
 
-/// - Example: `(lldb) po debugInfo()`
-public func debugInfo() {
+/// - Example: `(lldb) po printDebugInfo()`
+public func printDebugInfo() {
     guard let composer = debugComposer() else {
         print("Debuggable ViewController not found")
         return
@@ -30,6 +30,12 @@ public func debugInfo() {
 public func printModelsHistory() {
     guard let modelsTracker = debugModelsTracker() else { return }
     modelsTracker.printRecentHistory()
+}
+
+
+/// - Example: `(lldb) po printUserDefaults()`
+public func printUserDefaults(_ userDefaults: UserDefaults = UserDefaults.standard) {
+    dump(userDefaults.dictionaryRepresentation())
 }
 
 
