@@ -1,4 +1,4 @@
 #!/bin/bash
 set -euo pipefail
 
-git grep '// BUG' . | sed -E 's/[^:]*: * \/\/ BUG(.*)/\1/' | sort -n | sed -E 's/.*/BUG &/'
+git grep -n '// BUG' ./Reversi ./ReversiCore | sed -E 's/^([^:]*:[0-9]*): *\/\/ BUG([^:]*): (.*)$/\2: \3 (at \1)/' | sort -n | sed -E 's/.*/BUG &/'

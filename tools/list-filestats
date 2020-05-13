@@ -1,0 +1,24 @@
+#!/bin/bash
+set -euo pipefail
+
+BASE_DIR="$(cd "$(dirname "$0")"; pwd)"
+
+tmp="$(mktemp /tmp/reversi-filestats.XXXXXX)"
+
+sum() {
+	local filename="$1"
+	awk '{m+=$1} END{print m;}' "$filename"
+}
+
+max() {
+	local filename="$1"
+	awk '{if(m<$1) m=$1} END{print m}' "$filename"
+}
+
+avg() {
+	local filename="$1"
+	awk '{m+=$1} END{print m/NR;}' "$filename"
+}
+
+wc -l $(git ls-files '*.swift') | fgrep -v 'total' | tee "$tmp"
+echo -e "avg: $(avg "$tmp")\tmax: $(max "$tmp")\ttotal: $(sum "$tmp")"

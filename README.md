@@ -1,440 +1,992 @@
 # リファクタリング・チャレンジ （リバーシ編） iOS版
 
-本チャレンジは、 _Fat View Controller_ として実装された[リバーシ](https://en.wikipedia.org/wiki/Reversi)アプリをリファクタリングし、どれだけクリーンな設計とコードを実現できるかというコンペティションです（ジャッジが優劣を判定するわけではなく、設計の技を競い合うのが目的です）。
+> 本チャレンジは、 _Fat View Controller_ として実装された[リバーシ](https://en.wikipedia.org/wiki/Reversi)アプリをリファクタリングし、どれだけクリーンな設計とコードを実現できるかというコンペティションです（ジャッジが優劣を判定するわけではなく、設計の技を競い合うのが目的です）。
+>
+> ![アプリのスクリーンショット](img/screenshot.png)
+>
+> [reversi-ios/README.md](https://github.com/refactoring-challenge/reversi-ios)
 
-![アプリのスクリーンショット](img/screenshot.png)
 
-## はじめに
+# リファクタリングの方針
 
-_Fat View Controller_ は iOS アプリ開発におけるアンチパターンとしてよく知られています。 _Fat View Contoller_ を作ると、 UI とロジックが分離されず、モジュール性が低く、テストしづらいコードができあがります。状態管理が複雑になり、修正時の影響範囲が見通しづらく、メンテナンス性が低下します。
+このリポジトリはフルスクラッチで理想的な設計を目指しました。なお、作業者は以下のシチュエーションを想像しながら進めました：
 
-試行錯誤の結果、自分なりに _Fat View Controller_ との戦い方を確立した人も多いでしょう。勉強会やカンファレンスなどで知見を共有することで、コミュニティとしての戦い方も進化してきました。また、このような問題は iOS アプリに限った話ではありません。アプリケーション開発においてよりクリーンな設計・コードを実現するために、様々なアーキテクチャパターンが考案されてきました。さらに、それらをサポートするフレームワークも多数開発されています。
+* このアプリがクラッシュしたら人が死ぬ
+* クラッシュじゃないバグでも大変なことになってしまう
 
-しかし、そのような戦い方は抽象的な説明ではなかなか伝わりません。具体的な説明も、ボリュームの関係で極度に単純化された例になってしまいがちです。そのため、実際のプロジェクトに適用しようとしても、説明の意図通りに適用できているのかわからないというケースも多いのではないでしょうか。一方で、より現実的な例で説明しようとしても、業務で扱うような巨大で複雑なコードベースは、説明の題材には不適切です。戦い方を理解する前に、コードの挙動を理解するだけで多大な時間を必要とします。
+一般的には、多少バグがあっても魅力的な機能のリリースを優先することもあります。しかしこのリポジトリでは多少のバグも許されないので、あの手この手でバグを防がねばなりません（ということになっています）。この結果は末尾の「[リファクタリングの結果](#リファクタリングの結果)」に記載してあります。
 
-もし、適切な複雑さとボリュームを持った題材があれば、 _Fat View Controller_ との戦い方をより具体的な形で学べるはずです。また、共通の題材を用いて比較すれば、どの方法が何をどのように解決するのか、また何をカバーしてい **ない** のかを可視化し、論じやすくなります。
 
-そこで、誰もが仕様を知っており、かつ、適度な複雑さを持った対象として、[リバーシ](https://en.wikipedia.org/wiki/Reversi)（オセロとも呼ばれますが、オセロは[メガハウス社](https://www.megahouse.co.jp/)の登録商標のため、ここではリバーシと呼びます）を選びました。このコンペティションでは、用意された _Fat View Controller_ をどれだけクリーンにリファクタリングできるかを競います。
 
-しかし、この _Fat View Controller_ のコードは、どうしようもないスパゲッティコードなわけではありません。 UI とロジックが分離されていないという問題がありますが、コード自体はそれなりに整理されています。下手に _Fat View Controller_ を解消しようとすると、不必要にコードを複雑化してしまうでしょう。そうならないように腕が問われます。是非、あなたの技を駆使して、理想の設計とコードを実現して下さい！
+## 前提
 
-## なぜリバーシなのか
+バグを減らすための唯一の方法は **とにかく可能な入力を試す** ことです。可能な入力を試す手段には色々なものがあります：
 
-リバーシは、次の点で題材として優れていると考えています。
+* 手動ポチポチ
+* 従来の自動テスト（XCTest/Quickなど）
+* 型以外の静的検査（SwiftLintなど）
+* 型検査
+* モデル検査や証明
 
-- 誰もがルールを知っているので仕様の理解が容易である
-- ゲーム自体に最低限以上の複雑さがあり、記述すべき具体的なロジックが存在する（どのディスクを裏返すかなど）
-- 明確にテストすべき事項（ゲームのルールを満たしているか）が存在する
-- ボリュームが大きすぎない（熟練したエンジニアが数時間〜 1 日程度あれば扱える）
+このうち、このリポジトリで採用したのはほぼ型検査と自動テスト（と少しだけ手動ポチポチ）です。中でも特に静的型検査に力を入れました。
 
-また、一般的なアプリ開発において問題となりやすい事項を扱えるように、本アプリの仕様として次のような特徴も備えています。
+これは「とにかく可能な入力を試す」を達成する方法として静的検査の優れるからです。手動ポチポチや自動テストは、どこかにバグ（欠陥）があってもそれが実行されなければ発見できませんが、型検査はどこか1箇所にでも入力される値の想定ミスがあれば実行せずとも発見できます。
+このように、静的型検査を含む静的検査には広範な入力を網羅的に検証できるという特徴を備えています。中でも静的型検査は数ある静的検査の中でも軽量で手軽な手段です（モデル検査や正当性証明は手軽ではない）。
 
-- 非同期処理を伴う（ディスクを裏返すアニメーション、 AI の思考など）
-- 永続化のための I/O を伴う（ゲーム途中でプロセスが終了されても再開できるように）
-- インタラクションと、それに伴う UI の制御が必要である
+そのため、作者は自動テスト書いたら負けぐらいの気持ちで型検査に力を入れました（この状況を正当化しうるのは、主にリファクタリングの方針で説明されたようなミッションクリティカルシステムのような限定的な場合のみです）。そしてあわよくばモデルけんさと正当性証明を狙いました。
 
-## チャレンジのしかた
 
-本リポジトリを clone し、 Xcode で Reversi.xcodeproj を開いて下さい。本アプリは _Fat View Controller_ として実装されており、一部のビューコンポーネントや基本的なデータ型を除いて、すべてのコードが [ViewController.swift](Reversi/ViewController.swift) に書かれています。この `ViewController` クラスに書かれたコードをリファクタリングするのがチャレンジの内容です。
 
-リファクタリングなので、 **アプリの挙動が変化しないようにして下さい** 。挙動を維持したまま、どれだけコードをクリーンにできるかというチャレンジです。なお、リファクタリングというタームは、ここでは挙動を変更せずにコードを変更するという意味で使っています。通常リファクタリングに求められるような段階的な修正を期待しているわけではありません。仕様を理解した上で理想的な設計を考え、ほぼスクラッチで再実装するような大胆な変更も問題ありません。もちろん、通常のリファクタリングと同じように、段階的に修正を行っても構いません。
+## 型設計で考えるべきこと
 
-なお、 ViewController.swift 以外のコード（リバーシの盤やディスクを表示するビューコンポーネントやディスクの裏表を表すデータ型）は変更を加えずにそのまま利用できるように作られています。たとえば、ディスクを裏返すアニメーションは `CellView` と、それを並べて保持する `BoardView` に実装されており、自分で実装する必要はありません。また、 Storyboard もそのまま利用することができます。ただし、それらの利用は強制されるわけではなく、また、修正が禁止されているわけではありません。たとえば、既存コードは UIKit ベースで実装されていますが、（挙動さえ維持できるなら） SwiftUI で再実装しても問題ありません。
+安全性を重視した型設計をする上でもっとも重要な考え方は **とにかく異常な値が許されないようにする** ことです。もしある型が異常な値を許してしまうとプログラマはその型を信用できません。結果として、プログラムのいたるところに値が意図通りか確かめるコードを書くことになるでしょう（あるいは書き忘れてバグになるかもしれません）。さて、このとき意図通りの値ではないことがわかったとして、常に適切なエラー処理ができるでしょうか？おそらくとそうできないことも多いでしょう。特に絶対に失敗しないように思える場所でのエラー処理は雑になりがちで、これがバグの温床になることもあります。そのため、安全な型設計では異常な値を主に次の2つの手段で排除します：
 
-## 修正のポイント
+1. 値空間を削る
+2. 動的検査後にインスタンスが手に入る
 
-リバーシは明確なルールを持ったゲームです。ルールを正しく実装できているか単体テストで検証できることが望ましいです。現状では、ディスクを置いてディスクを裏返す処理とアニメーションの制御、ビューの更新（ディスクの枚数の表示）などが関連し合っており、リバーシのロジックだけを単体テストするのが困難です。リバーシのロジックを切り離して、単体テストできるようにしましょう。
+1に出てきた値空間とはある型に対してその型に属する値すべての集合です。例えば `Int32` の値空間には32bitで表現できる整数すべてが入っています。そして値空間を削るとは、この値空間を縮めて異常な値が含まないように型を定義し直すことです。例えば `Int32` から負の数を含まないようにしたのが `UInt32` です（厳密には `Int32` で表現できない大きな整数が代わりに値空間に入ってしまいます）。
 
-さらに、リバーシというゲーム自体が持つロジックとは別に、アプリケーションに紐付いたロジックも存在します。たとえば、 "Manual" の（人間が操作する）プレイヤーは `BoardView` のセルをタップすることでディスクを配置しますが、ディスクを裏返すアニメーションの途中はセルがタップされても入力を無効化しなければなりません。そのような、 UI とより密接に関係しているロジックこそ複雑な状態管理が必要となりがちです。それらのロジックも UI のコードから分離して単体テストできると望ましいです。
-
-UI だけでなく、ファイル I/O やデータベースへのアクセス、ネットワークを介した通信など、純粋なロジックではなく外部環境が関係する処理も単体テストがしづらい部分です。本チャレンジでは、ゲームの状態をセーブおよびロードする処理を扱います。そのような処理を実際の I/O から分離し、セーブ・ロードを伴う処理を単体テストできると良いでしょう。
-
-また、現状ではゲームの状態（黒・白どちらの番か、勝敗はついたのか）や非同期処理の制御などの状態管理のコードが `ViewController` 中に散らばっています。それらを整理してコードの見通しを良くすることも良い修正につながるでしょう。
-
-その他の方向性として、お気に入りのライブラリやフレームワークを使って、冗長なコードと戦うこともできます。たとえば、現状では非同期処理のコードは主にコールバック関数をベースにして書かれています。ライブラリを導入してコードをシンプルにすることもできます。
-
-なお、本リポジトリの実装には、コーナーケースでのみ発生する既知のバグが存在します。テストを導入するなどしてバグを発見し、修正できると望ましいです。
-
-上記のすべてを行わないといけないわけではありませんし、他に取り組むべき問題もあるでしょう。ここで挙げた内容は参考程度にとどめ、理想の設計によるクリーンなコードを実現して下さい。
-
-## 詳細仕様
-
-アプリが満たすべき仕様を説明します。シンプルなアプリなので、おおまかな仕様は実際に実行して操作してみることで把握可能です。ここでは、より細かい、注意すべき仕様について説明します。
-
-### プレイヤーモード
-
-本アプリには人間が操作する "Manual" と、 AI が操作する "Computer" の 2 種類のプレイヤーモードが存在します。
-
-ユーザーは、黒・白ともいつでもプレイヤーモードを切り替えることができます。
-
-<img alt="プレイヤーモード" src="img/player-view.png" width="293">
-
-"Manual" は盤のセルをタップすることでディスクを配置し、無効な手となるセルのタップ（ディスクを 1 枚も裏返せない、すでにディスクが置かれているなど）や、入力可能な状態でない（ "Computer" の思考中、ディスクが裏返されるアニメーションの途中など）場合、入力は無視されます。
-
-"Computer" の思考は非同期的に行われ、その思考中もユーザーの入力はブロックされません。 "Computer" の思考中は、そのことを示すインジケータ（上図右端）を表示します。
-
-#### 注意事項
-
-"Computer" の思考中にプレイヤーモードが "Manual" に切り替えられた場合、 "Computer" の思考を停止し、インジケータを隠さなければなりません。
-
-"Computer" の思考ロジック自体は本チャレンジの課題ではありません。本リポジトリの実装では、有効な手からランダムに一つを選択し、 2 秒後に結果を返します。独自のロジックを実装しても構いませんが、本チャレンジの評価対象には含まれません。
-
-### ディスクのアニメーション
-
-ディスクを置く・裏返す処理は非同期のアニメーションを伴い、一枚ずつ順番に処理されます。
-
-アニメーションの途中でもユーザーの入力はブロックされません。
-
-アニメーションの順番は次のように決められています。
-
-- 最初に、新たなディスクを配置する
-- 左上、上、右上、右、右下、下、左下、左の最大 8 列のディスクが裏返る可能性があるが、ここに列挙した順に、各列内のディスクを裏返す
-- 各列内では、新たに配置されたディスクに近いディスクから順に裏返される
-
-たとえば、 `x` が黒、 `o` が白のディスクを表し、 `-` がディスクの配置されていないセルを表すものとして、今、盤の状態が次の通りとします。
+さて、1の例をリバーシにおける Line で見てみましょう。Line とは盤面上でひっくり返すときの線を表現しています。次の図は盤面の左上端を抜粋したものです。いま黒い石（`x`）を A1（一番左上の座標）に置けるのは、D1に自分と同じ色の石がありここから左方向へ A1 までの間に相手の白い石（`o`）が連続して配置されているからです：
 
 ```
---------
-x-------
--o------
---ooo---
----ox---
------oox
----ooo--
---o-x---
+   ABCD
+  +----
+1 | oox
+2 |
+  :
 ```
 
-このとき、下図の `#` の位置に黒（ `x` ）のディスクを置いたとします。
+このとき、このひっくり返せる線である Line を表現する型の定義には選択肢がたくさんあります。例としてもっとも素直な表現である始点と終点のみを記録する `((Int, Int), (Int, Int))` を考えましょう。この型で前図の例の Line 値を表現すると `((0, 0), (3, 0))` になります。
 
-```
---------
-x-------
--o------
---ooo---
----ox---
-----#oox
----ooo--
---o-x---
-```
-
-すると、ディスクを置く・裏返すアニメーションは次の順番に実行されます。
-
-```
---------
-x-------
--4------
---3oo---
----2x---
-----156x
----o7o--
---o-x---
-```
-
-その結果、最終的に盤の状態は次のようになります。
-
-```
---------
-x-------
--x------
---xoo---
----xx---
-----xxxx
----oxo--
---o-x---
-```
-
-なお、あるセルのディスクを置いたり裏返したりするアニメーションは `BoardView` および `CellView` で実装されており、アニメーション自体を独自に実装する必要はありません。
-
-### ディスクの枚数の表示
-
-黒・白それぞれのディスクの枚数を画面上に表示します。
-
-<img alt="枚数の表示" src="img/player-view.png" width="293">
-
-ディスクが置かれ、ディスクの枚数が更新される場合、すべてのディスクが裏返された後でまとめて枚数の表示を更新します。何枚のディスクが裏返されても、 1 手につき一度だけ枚数の表示が更新されます。
-
-#### 注意事項
-
-ディスクを 1 枚裏返す度に枚数の表示を更新してはいけません（実際にそのような仕様を試してみたところ、見づらかったため現仕様となりました）。盤の状態の変化を検知し、自動的に枚数の表示を更新するようなコードでは、この仕様をうまく扱えません。一連の処理をまとめて扱う必要があります。
-
-### "Reset" ボタン
-
-ユーザーは "Reset" ボタンを押すことで、いつでもゲームを初期化することができます。初期化の内容は次の通りです。
-
-- 盤を初期状態に戻す
-- 黒のターンにする
-- 黒・白ともプレイヤーモードを "Manual" にする
-
-なお、盤の初期状態は前述の表記を用いると次のとおりです。
-
-```
---------
---------
---------
----ox---
----xo---
---------
---------
---------
-```
-
-誤操作によってゲームが初期化されてしまわないように、 "Reset" ボタンが押されると次のようなアラートを表示して、ユーザーの意思を確認します。 "Cancel" が選択された場合には、ゲームの初期化は行われません。
-
-<img alt="&quot;Reset&quot; ボタンのアラート" src="img/reset-alert.png" width="280">
-
-#### 注意事項
-
-ディスクを裏返すアニメーションの途中や "Computer" の思考中も "Reset" ボタンは有効です。それらの非同期処理を停止してただちにゲームを初期化する必要があります。
-
-"Reset" ボタンによってプレイヤーモードも初期化されるということは、プレイヤーモードはユーザー入力だけでなくプログラムからも変更され得るということです。
-
-### メッセージエリア
-
-今、黒のターンなのか、白のターンなのか、それともゲームの勝敗が着いた状態なのかをメッセージエリアに表示します。
-
-<img alt="メッセージエリア" src="img/message-area.png" width="125">
-
-黒または白のターンの場合はメッセージエリアに "●'s turn" と表示します。 "●" の部分には黒または白の円形が入ります。本リポジトリの実装では、"●" の部分の表示に `DiskView` （ `CellView` の内部で使用されている、黒または白の円形を表示するビューコンポーネント）が用いられています。
-
-ゲームの勝敗が着いた場合は、メッセージエリアに "● won" と表示します。 "●" の取り扱いは "●'s turn" のときと同じです。ただし、引き分けの場合には "Tied" と表示します。
-
-#### 注意事項
-
-"Tied" のときは "●" が表示されず、 "Tied" が水平方向中央に表示されます。そのようなレイアウトは本リポジトリの実装をそのまま踏襲して構いません。 UI のレイアウトは本チャレンジの課題ではありません。
-
-### パス
-
-有効な手が存在しない場合、そのプレイヤーのターンはパスされます。
-
-パスされる場合、次のようなアラートを表示します。
-
-<img alt="パスのアラート" src="img/pass-alert.png" width="277">
-
-"Dismiss" ボタンが押されるとパスの処理が行われ、次のプレイヤーのターンに移ります。
-
-パスするプレイヤーが "Computer" であっても、アラートの表示は必要です。その場合、 "Computer" の思考は行わずにただちにアラートが表示されます。
-
-両プレイヤーとも有効な手が存在しない場合には、パスではなくゲーム終了となります。パスのアラートも表示しません。
-
-アラートを表示し "Dismiss" ボタンが押されるまでの間は、メッセージエリアに "●'s turn" と、そのパスするプレイヤーのターンであることを表示しなければなりません。
-
-#### 注意事項
-
-パスの判定は UI を介在させずにロジックだけで完結できますが、アラートとメッセージエリアのターン表示が求められることで、パスの処理と UI のインタラクションを連携させなければなりません。単純にパスの処理をロジックで完結させてしまうと、それらの表示が省略されてしまいます。
-
-### セーブ／ロード
-
-ゲームの途中でアプリが強制終了されてしまっても同じ状況からゲームを再開できるように、自動的にゲームの状態が保存されます。アプリ開始時には、最後に保存されたゲームの状態が読み込まれます。
-
-保存される項目は次の通りです。
-
-- 黒・白どちらのターンか、または勝敗が着いているのか
-- 黒・白それぞれのプレイヤーモードが "Manual" か "Computer" か
-- 盤の状態（ 64 個のセルそれぞれに、ディスクが置かれていないか、または黒・白どちらのディスクが置かれているか）
-
-保存は、 1 手ごと、またはプレイヤーモードが変更された場合に自動的に行われます。
-
-#### 注意事項
-
-本リポジトリの実装では、ディスクを裏返すアニメーションが完了してから保存が行われます。これは、 UI とロジックが分離されていないため、 UI の更新が行われないと状態の変更が完了しないからです。リファクタリングの結果として、アニメーションの完了を待たずに状態の変更を先取りして保存しても構いません。
-
-## コード概要
-
-本リポジトリの課題用コードについて説明します。
-
-意味のあるコードが書かれているのは次の 5 ファイルです。
-
-| ファイル | 提供する主な型 | 概要 |
-|:--|:--|:--|
-| [ViewController.swift](Reversi/ViewController.swift) | `ViewController` | アプリ本体（ `UIViewController` のサブクラス） |
-| [BoardView.swift](Reversi/BoardView.swift)<br />（ Xcode 上では Views グループの中） | `BoardView` | リバーシの盤を表すビュー（ `UIView` のサブクラス） |
-| [CellView.swift](Reversi/CellView.swift)<br />（ Xcode 上では Views グループの中） | `CellView` | リバーシの盤のセルを表すビュー（ `UIView` のサブクラス） |
-| [DiskView.swift](Reversi/DiskView.swift)<br />（ Xcode 上では Views グループの中） | `DiskView` | リバーシのディスクを表すビュー（ `UIView` のサブクラス） |
-| [Disk.swift](Reversi/Disk.swift)<br />（ Xcode 上では DataTypes グループの中） | `Disk` | リバーシのディスク（黒か白か）を表すデータ構造（ `enum` ） |
-
-**基本的に ViewController.swift 以外には手を加える必要はありません** 。 `BoardView`, `CellView`, `DiskView` はリバーシ用に用意されたビュークラスで、 UIKit のコンポーネントと同じ感覚で利用できます。 `UISwitch` に不満があっても `UISwitch` そのものを改変するのではなく、ラッパークラスや `extension` で対応すると思います。 `BoardView` 等についても同様です。また、 `CellView` に関しては課題挑戦者が直接利用することもありません（ `BoardView` が内部的に利用しています）。 `DiskView` についても利用機会は限定的です。 `Disk` は黒か白かを表す小さな `enum` なので、実質的に使い方を覚える必要があるのは `BoardView` だけです。 `BoardView` にしても、 UIKit のビュークラス群と似た API を持つので、すぐに使い方を理解できると思います。
-
-以下、一つずつ説明します（ CellView.swift は省略します）。ここで紹介する API についてはドキュメンテーションコメントが書かれているので、 Xcode 上で確認することもできます。
-
-### Disk.swift
-
-ディスクが黒（ dark ）か白（ light ）かを表す次のような `enum` が実装されています。
+ここで Line の値空間を考えてみると、以下の `exampleN` はすべて Line の値空間に収まります。
 
 ```swift
-public enum Disk {
-    case dark
-    case light
+let example1 = ((0, 0), (3, 0))
+let example2 = ((0, 0), (10, -1))
+let example3 = ((0, 0), (1, 2))
+let example4 = ((0, 0), (0, 0))
+```
+
+しかし、このうち2-4は異常な値です（2:盤面の範囲外、3:縦横斜めの線上にない、4:長さが0）。つまり、この Line の型では異常な値が数多く含まれてしまいます。
+
+そこで、今回のリファクタリングではこれらの異常な値を許さない極めて厳密な型を用意しました：
+
+```swift
+public struct Line {
+    public let start: Coordinate
+    public let end: Coordinate
+    public let directedDistance: DirectedDistance
+}
+
+
+public struct Coordinate {
+    public let x: CoordinateX
+    public let y: CoordinateY
+}
+
+
+public enum CoordinateX: Int, CaseIterable {
+    case a = 1
+    case b
+    case c
+    case d
+    case e
+    case f
+    case g
+    case h
+}
+
+
+public enum CoordinateY: Int, CaseIterable {
+    case one = 1
+    case two
+    case three
+    case four
+    case five
+    case six
+    case seven
+    case eight
+}
+
+
+public struct DirectedDistance {
+    public let direction: Direction
+    public let distance: Distance
+}
+
+
+public enum Direction: CaseIterable {
+    case top
+    case topRight
+    case right
+    case bottomRight
+    case bottom
+    case bottomLeft
+    case left
+    case topLeft
+}
+
+
+public enum Distance: Int, CaseIterable {
+    case one = 1
+    case two
+    case three
+    case four
+    case five
+    case six
+    case seven
 }
 ```
 
-`Disk` は補助的にいくつかの API を提供します。 `Disk` が提供する API は次の通りです。
+この型の座標は、整数の組の代わりに `CoordinateX` などの `enum` を用いているため盤面の外の座標の値は存在できません。ただし、これだけだとまだ `start` と `end` と `directedDistance` が不整合を起こす可能性があります。
 
-| API | 概要 |
-|:--|:--|
-| `mutating func flip()` | 自身の値を、現在の値が `.dark` なら `.light` に、 `.light` なら `.dark` に反転させます。 |
-| `var flipped: Disk { get }` | 自身の値を反転させた値（ `.dark` なら `.light` 、 `.light` なら `.dark` ）を返します。 |
-| `static var sides: [Disk] { get }` | `[.dark, .light]` を返します。 |
+そこで、2つめの方法である動的検査後にインスタンスを手に入れられるようにしてみましょう。次の `init` は整合性の動的検査に成功した場合のみ値を生成できるようになっています：
 
-### DiskView.swift
-
-ディスクを表すビュー `DiskView` が実装されています。
 
 ```swift
-class DiskView: UIView
-```
+public struct Line {
+    public let start: Coordinate
+    public let end: Coordinate
+    public let directedDistance: DirectedDistance
 
-`DiskView` は主に `CellView` で用いられ、直接 `DiskView` を使う機会は少ないですが、メッセージエリアとディスクの枚数の表示のために、ディスクを表示するために用いられています。
 
-<img alt="メッセージエリア" src="img/message-area.png" width="125">
-
-<img alt="枚数の表示" src="img/player-view.png" width="293">
-
-特に、メッセージエリアについては "●'s turn" か "○'s turn" かを切り替える必要があります。 `DiskView` が表示するディスクを色を変更するには `disk` プロパティを用います。
-
-```swift
-// 表示されるディスクの色を黒にする
-diskView.disk = .dark
-
-// 表示されるディスクの色を反転する
-diskView.disk.flip()
-```
-
-`DiskView` が提供する API は次の通りです。
-
-| API | 概要 |
-|:--|:--|
-| `var disk: Disk { get set }` | このビューが表示するディスクの色を決定します。 |
-| `var name: String { get set }` | Interface Builder からディスクの色を設定するためのプロパティです。 `"dark"` か `"light"` の文字列を設定します。 |
-
-### BoardView.swift
-
-リバーシの盤を表すビュー `BoardView` が実装されています。また、 `BoardView` に対するインタラクションをハンドリングするための `BoardViewDelegate` が宣言されています。
-
-```swift
-class BoardView: UIView
-protocol BoardViewDelegate: AnyObject
-```
-
-`BoardView` は 8 × 8 のセルを持ちます。 `BoardView` の API を通して、それらのセルの状態（黒、白、ディスクが置かれていない）を取得したり、変更したりすることができます。
-
-```swift
-// 3 列目・ 4 行目のセルの状態を取得
-let disk: Disk? = boardView.diskAt(x: 3, y: 4)
-
-// 3 列目・ 4 行目のセルを黒のディスクが置かれている状態に変更
-boardView.setDisk(.dark, atX: 3, y: 4, animated: false)
-```
-
-列・行はそれぞれ `x`, `y` で表され、 0 番から始まることに注意して下さい。また、ディスクが置かれていない状態は　`nil` で表されます。
-
-`setDisk()` メソッドの引数 `animated` に `true` を渡した場合、セルの状態を変更するアニメーションが実行されます。これは、 `UISwitch` の `setOn(_:animated:)` メソッド（参考: [API リファレンス](https://developer.apple.com/documentation/uikit/uiswitch/1623686-seton)）に類似しています。アニメーションは、変更前後のセルの状態によって 3 種類存在します。
-
-| 前 | 後 | アニメーションの内容 |
-|:--|:--|:--|
-| `nil` | `.dark` または `.light` | ディスクが配置される。 |
-| `.dark` または `.light` | `nil` | ディスクが取り除かれる。 |
-| `.dark` または `.light` | 元と反転 | ディスクが裏返される。 |
-
-どのアニメーションが適用されるかは自動的に決定されるため、この API の利用者がアニメーションの種類を選択する必要はありません。
-
-`setDisk()` を利用すると、アニメーションの完了通知をコールバックで受け取ることもできます。
-
-```swift
-boardView.setDisk(.dark, atX: 3, y: 4, animated: true) { isFinished in
-    // アニメーション完了時に呼ばれる
+    public init?(start: Coordinate, directedDistance: DirectedDistance) {
+        guard let end = start.moved(to: directedDistance) else {
+            return nil
+        }
+        self.start = start
+        self.end = end
+        self.directedDistance = directedDistance
+    }
 }
-```
 
-特に複数枚のディスクを順番に連続して裏返す場合などは、このコールバックを用いてタイミングを制御することが重要になります。
 
-`setDisk()` によるアニメーションをキャンセルする API はありません。ただし、アニメーションの途中で、同一のセルに新しい状態が設定された場合には適切に処理されます。これも　`UISwitch` の `setOn(_:animated)` の挙動に似ています。
+public struct Coordinate {
+    public let x: CoordinateX
+    public let y: CoordinateY
 
-なお、 `BoardView` は **リバーシのルールに関する API を持ちません** 。たとえば、あるセルにディスクを配置したときに周囲のディスクを裏返したり、あるセルにある色のディスクを配置できるかを判定する API 等は提供しません。単なる、 8 × 8 のセルを持つテーブル上の構造を持ったビューにすぎません。
 
-その他にも、 `BoardView` は補助的にいくつかの API を提供します。 `BoardView` が提供する API は次の通りです。
+    public func moved(to directedDistance: DirectedDistance) -> Coordinate? {
+        // NOTE: Be nil if the X is out of boards.
+        let unsafeX: CoordinateX?
+        switch directedDistance.direction {
+        case .top, .bottom:
+            unsafeX = self.x
+        case .left, .topLeft, .bottomLeft:
+            unsafeX = CoordinateX(rawValue: self.x.rawValue - directedDistance.distance.rawValue)
+        case .right, .topRight, .bottomRight:
+            unsafeX = CoordinateX(rawValue: self.x.rawValue + directedDistance.distance.rawValue)
+        }
 
-| API | 概要 |
-|:--|:--|
-| `weak var delegate: BoardViewDelegate?` | セルがタップされたときの挙動を移譲するためのオブジェクトです。 |
-| `func diskAt(x: Int, y: Int) -> Disk?` | `x`, `y` で指定されたセルの状態を返します。セルにディスクが置かれていない場合は `nil` を返します。 |
-| `let height: Int ` | 盤の高さ（ `8` ）を返します。 |
-| `func reset()` | 盤をゲーム開始時に状態に戻します。このメソッドはアニメーションを伴いません。 |
-| `func setDisk(_ disk: Disk?, atX x: Int, y: Int, animated: Bool, completion: ((Bool) -> Void)? = nil)` | `x`, `y` で指定されたセルの状態を与えられた `disk` に変更します。 `animated` が `true` の場合、アニメーションが実行されます。アニメーションの完了通知は `completion` で受け取ることができます。 `completion` が受け取る `Bool` 値は、 `UIView.animate()` （参考: [API リファレンス](https://developer.apple.com/documentation/uikit/uiview/1622515-animate)）等に準じます。 |
-| `let width: Int` | 盤の幅（ `8` ）を返します。 |
-| `let xRange: Range<Int>` | 盤のセルの `x` の範囲（ `0 ..< 8` ）を返します。 |
-| `let yRange: Range<Int>` | 盤のセルの `y` の範囲（ `0 ..< 8` ）を返します。 |
+        // NOTE: Be nil if the Y is out of boards.
+        let unsafeY: CoordinateY?
+        switch directedDistance.direction {
+        case .left, .right:
+            unsafeY = self.y
+        case .top, .topLeft, .topRight:
+            unsafeY = CoordinateY(rawValue: self.y.rawValue - directedDistance.distance.rawValue)
+        case .bottom, .bottomLeft, .bottomRight:
+            unsafeY = CoordinateY(rawValue: self.y.rawValue + directedDistance.distance.rawValue)
+        }
 
-`BoardView` は `BoardViewDelegate` を通じて、セルがタップされたことを通知します。
-
-```swift
-extension ViewController: BoardViewDelegate {
-    func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
-        // x 列目・ y 列目のセルがタップされたときに呼ばれる
+        switch (unsafeX, unsafeY) {
+        case (.none, _), (_, .none):
+            return nil
+        case (.some(let x), .some(let y)):
+            return Coordinate(x: x, y: y)
+        }
     }
 }
 ```
 
-これは `UITableView` と `UITableViewDelegate` の関係に似ています。 `BoardView` の `delegate` プロパティを用いて `BoardViewDelegate` を設定します。典型的には、 View Controller を `BoardViewDelegate` に適合させ、 `delegate` プロパティに渡します。
+2つめの方法は実際のiOSアプリでもバリデーションまわりに応用できます。次のコードは8文字以上のパスワードのみを許す Password 型を定義しています：
 
 ```swift
-class ViewController: UIViewController {
-    override func viewDidLoad() {
+// NOTE: 実際の iOS アプリのバリデーションなどでよく使われる。
+public struct Password {
+    public init?(rawValue: String) {
+        guard rawValue.count >= 8 else { return nil }
+        self.rawValue = rawValue
+    }
+}
+```
+
+なお、1はより安全ですが自由度が低く、2は自由度が高いですが安全性の担保には動的テストを必要とするでしょう。
+
+今回のリファクタリングでは以下がそれぞれの実例になっています：
+
+1. 値空間を削る
+    * [`Coordinate`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Coordinate.swift)
+    * [`NonEmptyArray`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/NonEmptyArray.swift)
+    * [`Board`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift)
+    * [`GameResult`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameResult.swift)
+2. 動的検査後にインスタンスが手に入る
+    * [`Line`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Line.swift)
+    * [`FlippableLine`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLine.swift)
+
+
+
+## アーキテクチャについて
+
+このリポジトリは古典的な MVC（not Cocoa MVC）を iOS に書きやすく適応した亜種を採用しています。
+
+まずは ViewController をご覧ください：
+
+```swift
+public class ViewController: UIViewController {
+    @IBOutlet private var boardView: BoardView!
+    @IBOutlet private var messageDiskView: DiskView!
+    @IBOutlet private var messageDiskSizeConstraint: NSLayoutConstraint!
+    @IBOutlet private var messageLabel: UILabel!
+    @IBOutlet private var countLabels: [UILabel]!
+    @IBOutlet private var playerActivityIndicators: [UIActivityIndicatorView]!
+    @IBOutlet private var playerControls: [UISegmentedControl]!
+    @IBOutlet private var resetButton: UIButton!
+
+    public private(set) var composer: BoardMVCComposer?
+    private var modalPresenterQueue: ModalPresenterQueueProtocol?
+
+
+    public override func viewDidLoad() {
         super.viewDidLoad()
+
+        let modalPresenter = UIKitTestable.ModalPresenter(wherePresentOn: .weak(self))
+        let modalPresenterQueue = ModalPresenterQueue()
+        self.modalPresenterQueue = modalPresenterQueue
+
+        let boardViewHandle = BoardViewHandle(boardView: self.boardView)
+
+        self.composer = BoardMVCComposer(
+            userDefaults: UserDefaults.standard,
+            boardViewHandle: boardViewHandle,
+            boardAnimationHandle: boardViewHandle,
+            gameAutomatorProgressViewHandle: GameAutomatorProgressViewHandle(
+                firstActivityIndicator: self.playerActivityIndicators[0],
+                secondActivityIndicator: self.playerActivityIndicators[1]
+            ),
+            gameAutomatorControlHandle: GameAutomatorControlHandle(
+                firstSegmentedControl: self.playerControls[0],
+                secondSegmentedControl: self.playerControls[1]
+            ),
+            passConfirmationViewHandle: PassConfirmationHandle(
+                willModalsPresentOn: modalPresenter,
+                orEnqueueIfViewNotAppeared: modalPresenterQueue
+            ),
+            resetConfirmationViewHandle: ResetConfirmationHandle(
+                button: self.resetButton,
+                willModalsPresentOn: modalPresenter,
+                orEnqueueIfViewNotAppeared: modalPresenterQueue
+            ),
+            diskCountViewHandle: DiskCountViewHandle(
+                firstPlayerCountLabel: self.countLabels[0],
+                secondPlayerCountLabel: self.countLabels[1]
+            ),
+            turnMessageViewHandle: TurnMessageViewHandle(
+                messageLabel: self.messageLabel,
+                messageDiskView: self.messageDiskView,
+                messageDiskViewConstraint: self.messageDiskSizeConstraint
+            )
+        )
+    }
+
+
+    public override func viewDidAppear(_ animated: Bool) {
+        self.modalPresenterQueue?.viewDidAppear()
+    }
+
+
+    public override func viewWillDisappear(_ animated: Bool) {
+        self.modalPresenterQueue?.viewWillDisappear()
+    }
+}
+```
+
+やっていることは、`viewDidLoad` の後でしか手に入らない UIView を View Handle というもの（後述）に包んで `BoardMVCComposer` に渡しているだけです。あとはライフサイクルを必要なコンポーネントへ通知しているだけです。これによって、`UIViewController` は本来の責務であったライフサイクルイベントの管理だけに集中できるようになりました。
+
+さて、中身の `BoardMVCComposer` は古典的な MVC パターンの Model と View（コード上の名前は View Binding） と Controller を接続する責務があります：
+
+```swift
+public class BoardMVCComposer {
+    public let animatedGameWithAutomatorsModel: AnimatedGameWithAutomatorsModelProtocol
+
+    // ...
+
+    private let boardViewBinding: BoardViewBinding
+
+    // ...
+
+    private let boardController: BoardController
+
+    // ...
+
+
+
+    public init(
+        userDefaults: UserDefaults,
+        // ...
+        isEventTracesEnabled: Bool = isDebug
+    ) {
+        // STEP-1: Constructing Models and Model Aggregates that are needed by the screen.
+        //         And models should be shared across multiple screens will arrive as parameters.
+
+        let animatedGameWithAutomatorsModel = AnimatedGameWithAutomatorsModel(/* ... */)
+        self.animatedGameWithAutomatorsModel = animatedGameWithAutomatorsModel
+
+        // ...
+
+
+        // STEP-2: Constructing ViewBindings.
+        self.boardViewBinding = BoardViewBinding(
+            observing: animatedGameWithAutomatorsModel,
+            updating: boardViewHandle
+        )
+
+        // ...
+
+
+        // STEP-3: Constructing Controllers.
+        self.boardController = BoardController(
+            observing: boardViewHandle,
+            requestingTo: animatedGameWithAutomatorsModel
+        )
+
+        // ...
+    }
+```
+
+この中では次の6種類のコンポーネントが登場します：
+
+* MVC Model に相当するもの
+    * Model: 変更を外へ通知する状態機械
+        * [`GameModel`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/GameModel.swift)
+        * [`BoardAnimationModel`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModel.swift)
+        * [`UserDefaultsModel`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/UserDefaultsModel.swift)
+        * [...](https://github.com/Kuniwak/reversi-ios/tree/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models)
+    * Model Aggregates: Model を複数集めて Model 同士を接続したもの
+        * [`AutoBackupGameModel`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AutoBackupGameModel.swift) = `GameModel` + `UserDefaultsModel`
+        * [`AnimatedGameModel`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel.swift) = `GameModel` + `BoardAnimationModel`
+        * [...](https://github.com/Kuniwak/reversi-ios/tree/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates)
+* MVC View に相当するもの
+    * Viewi Binding: Model の変更を View Handle へ伝達するもの（単方向データバインディング）
+        * [`BoardViewBinding`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewBindings/BoardViewBinding.swift)
+        * [`DiskCountViewBinding`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewBindings/DiskCountViewBinding.swift)
+        * [...](https://github.com/Kuniwak/reversi-ios/tree/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewBindings)
+    * View Handle: UIView を内部にもち、View Binding から受け取った Model の状態を反映して UI イベントを外へ通知するもの
+        * [`BoardViewHandle`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewHandles/BoardViewHandle.swift)
+        * [`ResetConfirmatioinHandle`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewHandles/ResetConfirmationHandle.swift)
+        * [...](https://github.com/Kuniwak/reversi-ios/tree/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewHandles)
+* MVC Controller に相当するもの
+    * Controller: ViewHandle から UI イベントを受け取り Model へと転送するもの
+        * [`BoardAnimationController`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Controllers/BoardAnimationController.swift)
+        * [`ResetConfirmationController`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Controllers/ResetConfirmationController.swift)
+        * [...](https://github.com/Kuniwak/reversi-ios/tree/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Controllers)
+
+ここでは特に重要な Model と Model Aggregates について解説します。
+
+
+
+### Model とは
+
+このリポジトリにおける Model は状態機械として設計されています。この状態機械は外からの要求に応じて内部状態を変化させ、変化を外部へ通知するようになっています。
+
+ここではリバーシのゲームの状態を管理する `GameModel` をみてみましょう。`GameModel` が内部にもつ状態は次の2つの状態のグループをもちます：
+
+```swift
+public enum GameModelState {
+    // ゲームは進行中
+    case ready(GameState, Set<AvailableCandidate>)
+
+    // ゲームは決着した
+    case completed(GameState, GameResult)
+}
+```
+
+もし `GameModel` の公開しているメソッドである `pass()` `place(...)` `reset(...)` が呼ばれると、それが妥当な要求なら Model は内部状態を次のように変化させます：
+
+```
+  +-------+                        +-----------+
+  | ready | ---- (pass/place) ---> | completed |
+  +-------+                        +-----------+
+      A                                  |
+      |                                  |
+      +----------- (reset) --------------+
+```
+
+```swift
+public protocol GameCommandReceivable: class {
+    @discardableResult
+    func pass() -> GameCommandResult
+
+    @discardableResult
+    func place(at coordinate: Coordinate) -> GameCommandResult
+
+    @discardableResult
+    func reset() -> GameCommandResult
+}
+```
+
+ここで妥当な要求か否かは Model が判断します。例えば、ルール上置けない場所への `place(...)` やゲームが決着したあとの `pass()` は妥当でないので、Model はこれを無視します。逆に、パスしかできない場面での `pass()` など妥当な要求を受け取ると内部状態が変化します。この内部状態の変化は `ReactiveSwift.Property` などのイベントストリームから観測できます：
+
+```swift
+public protocol GameModelProtocol: GameCommandReceivable {
+    var gameModelStateDidChange: ReactiveSwift.Property<GameModelState> { get }
+    var gameCommandDidAccepted: ReactiveSwift.Signal<GameState.AcceptedCommand, Never> { get }
+}
+```
+
+そして、最終的にこの状態変化を監視している View Binding や Model Aggregate に通知が届き、表示や次の処理が開始されます。
+
+次に Model Aggregate の解説です。
+
+
+
+### Model Aggregate とは
+
+Model Aggregate は複数の Model を意味のある単位で束ねたものです。Model は基本的にとても小さな状態機械として設計するので（理由は後述）、これらを適切に組み合わせてより大きな状態機械を構成するための手段です。
+
+例えば、次の `AutoBackupGameModel` は、先ほどの `GameModel` と UserDefaults への書き込み状況をもつ `UserDefaultsModel` の2つを集約した Model Aggregate です。このクラスの責務は、ゲームの盤面を管理する `GameModel` の状態を `UserDefaultsModel` から読み込み、そして `GameModel` の変更を監視して `UserDefaults` へ書き込みを要求します：
+
+```swift
+public class AutoBackupGameModel: AutoStoredGameModelProtocol {
+    private let userDefaultsModel: AnyUserDefaultsModel<GameState, UserDefaultsJSONReadWriterError>
+    private let gameModel: GameModelProtocol
+    private let (lifetime, token) = ReactiveSwift.Lifetime.make()
+
+    private static let key = UserDefaultsKey.gameStateKey
+
+
+    public init(userDefaults: UserDefaults, defaultValue: GameState) {
+        let userDefaultsModel = UserDefaultsModel<GameState, UserDefaultsJSONReaderError, UserDefaultsJSONWriterError>(
+            userDefaults: userDefaults,
+            reader: userDefaultsJSONReader(forKey: AutoBackupGameModel.key, defaultValue: defaultValue),
+            writer: userDefaultsJSONWriter(forKey: AutoBackupGameModel.key)
+        ).asAny()
+        self.userDefaultsModel = userDefaultsModel
+
+        let initialGameState: GameState
+        switch userDefaultsModel.userDefaultsValue {
+        case .failure:
+            initialGameState = defaultValue
+        case .success(let storedGameState):
+            initialGameState = storedGameState
+        }
+        self.gameModel = GameModel(initialState: .next(by: initialGameState))
+
+        self.start()
+    }
+
+
+    private func start() {
+        self.gameModel.gameModelStateDidChange
+            .producer
+            .take(during: self.lifetime)
+            .observe(on: QueueScheduler(qos: .utility))
+            .on(value: { [weak self] gameModelState in
+                self?.userDefaultsModel.store(value: gameModelState.gameState)
+            })
+            .start()
+    }
+}
+
+
+
+extension AutoBackupGameModel: GameCommandReceivable {
+    public func pass() -> GameCommandResult { self.gameModel.pass() }
+
+
+    public func place(at coordinate: Coordinate) -> GameCommandResult { self.gameModel.place(at: coordinate) }
+
+
+    public func reset() -> GameCommandResult { self.gameModel.reset() }
+}
+
+
+
+extension AutoBackupGameModel: GameModelProtocol {
+    public var gameModelStateDidChange: Property<GameModelState> {
+        self.gameModel.gameModelStateDidChange
+    }
+
+    public var gameCommandDidAccepted: Signal<GameState.AcceptedCommand, Never> {
+        self.gameModel.gameCommandDidAccepted
+    }
+}
+```
+
+これによって、ゲームの盤面を管理するだけの小さな Model と UserDefaults を管理するだけの小さな Model から、より大きな自動バックアップ機能つきのモデルを構成できます。他にも、オートプレイはオートプレイのオンオフをもつ Model とゲームロジックだけの Model、コンピュータの思考状況の Model から構成されています。また、これらを組み合わせたあとでないと実装できないロジック（思考中のユーザー操作無視など）も集約の責務です。
+
+なお、なぜ Model を小さく設計して Model Aggregates で合成していくのかというと、**このほうが自動テストをしやすいから** です。
+
+具体的には、ゲームロジックとオートプレイだけの確認をしたい場合に、アニメーション機能が搭載されていてるとテストの邪魔になります（テストが長くなる/テストに余計なコードが増える/テストの実行時間が増えるなど）。回避方法の一案として最初にゲームロジックとオートプレイだけを実装してテストを書き、後からここに機能を追加していく方法もありえますがいい方法ではありません。これだとあとになってのリファクタリングのときには機能が増えてしまっているためリファクタリングのためのテストの邪魔になるからです。
+
+そこで、小さな Model やその階層的な集約をつくれれば、必要な要素だけが揃った状況を狙ってテストできます（例: アニメーションを排除しつつオートプレイをテストする [`GameWithAutomatorsModelTests`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModelTests.swift)）
+
+補足すると、そもそも Model や Model Aggregate のテストは Rx などのイベントストリームが絡むので面倒になりがちという問題があり、もし Model から離れられるものは離した方が自動テストが楽になります（例: モデルから離れてゲームロジックだけをテストする [`GameStateTests`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameStateTests.swift) や [`BoardAnimationModelTests`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModelTests.swift)）。
+
+これらをまとめると、動作確認のやりやすさためにより小さな Model/Model Aggregate が望ましく、もしそれで必要な仕様を満たせないならさらに Model Aggregate で集約していくという方針を取っているということです。しかしここには大きな落とし穴があります。
+
+一般に、並行並列動作する状態機械の組み合わせの数は人間の想像を超えてきます。よく並行並列システム（特にマルチスレッドプログラミング）の開発が難しいと言われるのは、この膨大な数の組み合わせのなかのごくわずかな部分にデッドロックや無限ループなどの欠陥が潜んでいることに気づけないからです。そして、このような膨大の入力の組み合わせ数があるとき自動テストを含む動的検査は無力です。静的検査においてはモデル検査と呼ばれる技術がこの種の網羅的な検証を得意としています。なお今回はモデル検査を試みていますが、いくつかの事情によって断念することになりました（後述）。
+
+さて、残りの View Binding/Handle についても軽く解説します。
+
+
+
+### View Binding とは
+
+View Binding とは、Model/Model Aggregate の変更をイベントストリーム経由で監視し、変化を View Handle へ反映する役割をもちます：
+
+```swift
+public class BoardViewBinding {
+    private let boardAnimationModel: BoardAnimationModelProtocol
+    private let viewHandle: BoardViewHandleProtocol
+
+    private let (lifetime, token) = ReactiveSwift.Lifetime.make()
+
+
+    public init(
+        observing boardAnimationModel: BoardAnimationModelProtocol,
+        updating viewHandle: BoardViewHandleProtocol
+    ) {
+        self.boardAnimationModel = boardAnimationModel
+        self.viewHandle = viewHandle
+
+        boardAnimationModel
+            .boardAnimationStateDidChange
+            .producer
+            .take(during: self.lifetime)
+            .observe(on: UIScheduler())
+            .on(value: { [weak self] state in
+                self?.viewHandle.apply(by: state.animationRequest)
+            })
+            .start()
+    }
+}
+```
+
+View Binding はこの例のように1つの View Handle だけを持ちます。複数の View Handle を持ちたくなった場合は次のように View Binding の分割か View Handle の合成を検討するとよいでしょう：
+
+* 順序不定で複数の View Handle へ反映したい → View Binding を分割する
+* 決まった順序で View Handle へ反映したい → 複数の View Handle を 1 つの新しい View Handle に包んで順序を固定して呼び出す
+
+次は View Handle の解説です。
+
+
+### View Handle とは
+
+View Handle は View Binding から受け取った変更指示を UIView へ伝え、かつ UIView からの UI イベントを外部へイベントストリームとして公開する役割をもちます。よくある開発では View Handle 相当のクラスを UIView の派生クラスにするようですが、このリポジトリでは特に派生クラスを強制していません。なぜなら UIView を外から受け取って保持するだけで十分機能を果たせるのであれば、UIView の面倒な部分（生成経路が複数あって UINib 側の経路が面倒）を回避できるからです。
+
+なお、View Handle と View Binding が分離されている理由は、View Handle 側でサードパーティ製の UIView の API を取り回しやすくする調整に専念させたいからです。UIKit を含む多くの View 層のライブラリにイベントストリームの用意などは期待できませんから、この API の調整役が必要なのです。また、もし View Binding に簡易的なテストを用意したくなった場合に偽物の View Handle を差し込むことで、どのような変化を View Binding が指示したかを検証できるという利点もあります。
+
+では具体例を見てみましょう。次の例はリファクタリング前からあった BoardView に対応する View Handle です。この View Handle は次の 3 つの調整をしています：
+
+* BoardViewBinding からの個々のアニメーションの指示を BoardView へ伝える
+* BoardView の座標選択イベントをイベントストリームへ変換する
+* BoardView のアニメーション完了イベントをイベントストリームへ変換する
+
+```swift
+public protocol BoardViewHandleProtocol {
+    var coordinateDidSelect: ReactiveSwift.Signal<Coordinate, Never> { get }
+
+    func apply(by request: BoardAnimationRequest)
+}
+
+
+
+public protocol BoardAnimationHandleProtocol {
+    var animationDidComplete: ReactiveSwift.Signal<BoardAnimationRequest, Never> { get }
+}
+
+
+
+public class BoardViewHandle: BoardViewHandleProtocol, BoardAnimationHandleProtocol {
+    public let coordinateDidSelect: ReactiveSwift.Signal<Coordinate, Never>
+    public let animationDidComplete: ReactiveSwift.Signal<BoardAnimationRequest, Never>
+
+    private let coordinateDidSelectObserver: ReactiveSwift.Signal<Coordinate, Never>.Observer
+    private let animationDidCompleteObserver: ReactiveSwift.Signal<BoardAnimationRequest, Never>.Observer
+
+    private let boardView: BoardView
+
+
+    public init(boardView: BoardView) {
+        self.boardView = boardView
+
+        (self.coordinateDidSelect, self.coordinateDidSelectObserver) =
+            ReactiveSwift.Signal<Coordinate, Never>.pipe()
+
+        (self.animationDidComplete, self.animationDidCompleteObserver) =
+            ReactiveSwift.Signal<BoardAnimationRequest, Never>.pipe()
+
         boardView.delegate = self
     }
+
+
+    public func apply(by request: BoardAnimationRequest) {
+        switch request {
+        case .shouldSyncImmediately(board: let board):
+            self.syncImmediately(to: board)
+        case .shouldAnimate(disk: let disk, at: let coordinate, shouldSyncBefore: let boardToSyncIfExists):
+            if let board = boardToSyncIfExists {
+                self.syncImmediately(to: board)
+            }
+            self.animate(disk: disk, at: coordinate, shouldSyncBefore: boardToSyncIfExists)
+        }
+    }
+
+
+    private func syncImmediately(to board: Board) {
+        self.boardView.layer.removeAllAnimations()
+        Coordinate.allCases.forEach { coordinate in
+            self.set(disk: board[coordinate], at: coordinate, animated: false, completion: nil)
+        }
+        self.animationDidCompleteObserver.send(value: .shouldSyncImmediately(board: board))
+    }
+
+
+    private func animate(disk: Disk, at coordinate: Coordinate, shouldSyncBefore board: Board?) {
+        self.set(disk: disk, at: coordinate, animated: true) { isFinished in
+            if isFinished {
+                self.animationDidCompleteObserver.send(value: .shouldAnimate(
+                    disk: disk,
+                    at: coordinate,
+                    shouldSyncBefore: board
+                ))
+            }
+        }
+    }
+
+
+    private func set(disk: Disk?, at coordinate: Coordinate, animated: Bool, completion: ((Bool) -> Void)?) {
+        self.boardView.setDisk(
+            disk,
+            atX: coordinate.x.rawValue - 1,
+            y: coordinate.y.rawValue - 1,
+            animated: animated,
+            completion: completion
+        )
+    }
+}
+
+
+
+extension BoardViewHandle: BoardViewDelegate {
+    public func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int) {
+        guard let coordinateX = CoordinateX(rawValue: x + 1) else { return }
+        guard let coordinateY = CoordinateY(rawValue: y + 1) else { return }
+        self.coordinateDidSelectObserver.send(value: Coordinate(x: coordinateX, y: coordinateY))
+    }
 }
 ```
 
-`BoardViewDelegate` が宣言する API は次の通りです。
-
-| API | 概要 |
-|:--|:--|
-| `func boardView(_ boardView: BoardView, didSelectCellAtX x: Int, y: Int)` | `boardView` の `x`, `y` で指定されるセルがタップされたときに呼ばれます。 |
-
-### ViewController.swift
-
-本課題の対象となる Fat View Controller `ViewController` が実装されています。
+また、少し特殊な View Handle としてリセットボタンが押されたら UIAlertViewController を表示してリセットの意思を再確認するクラスもみてみましょう。注目して欲しいのは本来 `UIAlertViewController` の表示には `UIViewController.present(...)` が必要なため `UIViewController` への依存（大抵は継承）が必要なはずですが、[UIKitTestable](https://github.com/Kuniwak/UIKitTestable) の `ModalPresenter` を使うことでこれを避けています：
 
 ```swift
-class ViewController: UIViewController
+public protocol ResetConfirmationHandleProtocol {
+    var resetDidAccept: ReactiveSwift.Signal<Bool, Never> { get }
+}
+
+
+
+public class ResetConfirmationHandle: ResetConfirmationHandleProtocol {
+    private let confirmationViewHandle: UserConfirmationViewHandle<Bool>
+    private let button: UIButton
+
+
+    public let resetDidAccept: ReactiveSwift.Signal<Bool, Never>
+
+
+    public init(
+        button: UIButton,
+        willModalsPresentOn modalPresenter: UIKitTestable.ModalPresenterProtocol,
+        orEnqueueIfViewNotAppeared modalPresenterQueue: ModalPresenterQueueProtocol
+    ) {
+        self.button = button
+
+        let confirmationViewHandle = UserConfirmationViewHandle(
+            title: "Confirmation",
+            message: "Do you really want to reset the game?",
+            preferredStyle: .alert,
+            actions: [
+                (title: "Cancel", style: .cancel, false),
+                // BUG13: Unexpectedly use false instead of true.
+                (title: "OK", style: .default, true),
+            ],
+            willPresentOn: modalPresenter,
+            orEnqueueIfViewNotAppeared: modalPresenterQueue
+        )
+        self.confirmationViewHandle = confirmationViewHandle
+        self.resetDidAccept = self.confirmationViewHandle.userDidConfirm
+
+        button.addTarget(self, action: #selector(self.confirm(_:)), for: .touchUpInside)
+    }
+
+
+    @objc private func confirm(_ sender: Any) {
+        self.confirmationViewHandle.confirm()
+    }
+}
 ```
 
-`ViewController` の実装は主に次の 8 個のパートに分かれています。
+この `UIKitTestable.ModalPresenter` は次のようにとても薄い `UIViewController.present` の wrapper class です（他にも [`UINavigationiController.push` に対応するもの](https://github.com/Kuniwak/UIKitTestable/blob/17bd00de1746003b96120d7ef7f101a4113a6755/UIKitTestable/UIKitTestable/Navigator.swift) などもあります）：
 
-| パート | 内容　|
-|:--|:--|
-| 冒頭部 | `ViewController` のプロパティの宣言や `viewDidLoad()` ・ `viewDidAppear()` などの実装 |
-| Reversi logics | マスにディスクがおけるかや、勝敗を判定するメソッドなどの実装 |
-| Game management | 新規ゲームの開始やユーザーの入力待ち、勝敗判定など、リバーシのルール自体の実装 |
-| Views | 状態変更をビューに反映するためのメソッドの実装 |
-| Inputs | ユーザー入力をハンドリングするためのメソッドの実装 |
-| Save and Load | ゲームの状態をファイルに保存・読み込みするためのメソッドの実装 |
-| Additional types | このファイルで利用する補助的な型の実装 |
-| File-private extensions | このファイルで利用する補助的な `extension` の実装 |
+```swift
+/// A wrapper class to encapsulate a implementation of `UIViewController#present(_: UIViewController, animated: Bool)`.
+/// You can replace the class with the stub or spy for testing.
+/// - SeeAlso: [`ModalPresenterUsages`](https://kuniwak.github.io/UIKitTestable/UIKitTestableAppTests/Classes/ModalPresenterUsages.html).
+public final class ModalPresenter<ViewController: UIViewController>: ModalPresenterProtocol {
+    private let groundViewController: WeakOrUnowned<ViewController>
 
-`ViewController` の実装で特筆すべきこととして、リバーシの盤の状態が `BoardView` インスタンスで管理されていることが挙げられます。 `boardView` プロパティがその役割を担っていて、モデルとビューのコードが混ざりあった状態です。さらに、ディスクが置かれたときに周辺のディスクをひっくり返す処理を実装した `placeDisk(_:atX:y:animated:completion:)` メソッド（と、その中から呼び出されている `animateSettingDisks(at:to:completion:)` メソッド）では、データの変更とアニメーションが互いに密接に関係した処理を行っています。これらは特に "Reversi logics" に関係が深いです。
 
-全体の処理の流れは　"Game management" で管理されており、 `waitForPlayer()` メソッドによるプレイヤーの行動待ち（ "Manual" の場合はユーザーの入力待ち）と、その結果を受けて次の状態（次のプレイヤーの番か、パスか、勝敗が決して結果表示か）への遷移を扱う `nextTurn()` メソッドがその中心です。典型的には、
+    /// Returns newly initialized ModalPresenter with the UIViewController.
+    /// Some UIViewControllers will be present on the specified UIViewController of the function.
+    public init(wherePresentOn groundViewController: WeakOrUnowned<ViewController>) {
+        self.groundViewController = groundViewController
+    }
 
-1. `waitForTurn()` でプレイヤーの行動待ち
-2. プレイヤーの行動を受けて `placeDisk(_:atX:y:animated:completion:)` でディスクをひっくり返す
-3. `nextTurn()` で次プレイヤーに遷移
 
-を繰り返すことでゲームが進行します。最初は `viewDidAppear()` で `waitForTurn()` が呼ばれることでこのループに突入します。
+    /// Presents a view controller modally.
+    /// This method behave like `UIViewController#present(UIViewController, animated: Bool, completion: (() -> Void)?)`
+    public func present(viewController: UIViewController, animated: Bool, completion: (() -> Void)?) {
+        switch self.groundViewController {
+        case .weakReference(let weak):
+            weak.do { groundViewController in
+                groundViewController?.present(viewController, animated: animated, completion: completion)
+            }
+        case .unownedReference(let unowned):
+            unowned.do { groundViewController in
+                groundViewController.present(viewController, animated: animated, completion: completion)
+            }
+        }
+    }
+}
+```
 
-他にわかりづらい点としては、 `animationCanceller` プロパティと `playerCancellers` プロパティがあります。本アプリには非同期処理のキャンセルが必要になるケースとして、ディスクをひっくり返すアニメーションの途中でのゲームリセットと、プレイヤーの行動待ち中のプレイヤーモードの切り替えがあります。前者ではアニメーションを中断しないといけません。後者では、たとえば、 "Computer" から "Manual" 切り替わったのに、 AI の思考が完了して勝手にディスクが置かれるというような事態を防がなければなりません。それらのキャンセル処理を管理するのが `animationCanceller` プロパティと `playerCancellers` プロパティです。対応する非同期処理中にはそれらのプロパティにキャンセラーが保持され、非同期処理が終わると `nil` がセットされます。
+これらを駆使して ViewHandle は UIKit やサードパーティ製の View ライブラリを、本体プロジェクトで扱いやすい形へ変換しています。
 
-`@IBOutlet` で接続されたプロパティと、対応するビューの関係は次のようになっています。
+さて、このリファクタリングの結果をみてみましょう。
 
-<img alt="ビューとプロパティ" src="img/views-and-properties.png" width="207">
 
-## 結果一覧
 
-チャレンジの結果一覧です。掲載を希望される方は、下記の表に行を追加する Pull Request をお送り下さい。
+## リファクタリングの結果
+### 設計はよくなったのか
 
-| リポジトリ | 作者 | アーキテクチャパターン | フレームワーク | UI | 備考 |
-|:--|:--|:--|:--|:--|:--|
-| [refactoring-challenge/reversi-ios](https://github.com/refactoring-challenge/reversi-ios) | [@koher](https://github.com/koher) | Fat View Controller | - | UIKit | 本リポジトリ |
+チャレンジの目的は Fat ViewController をなんとかしたいということだったので、UIViewController の本来の責務であったライフサイクルの管理に専念できるようになったということで最終的な設計は成功していると思います。
+
+なお、ViewController 以外のファイルの行数にも着目してみましょう：
+
+* リファクタリング前→後
+	* 平均: 135行 → 69行
+	* 最大: 573行 → 308行
+	* 全体: 1080行 → 5276行
+
+<details>
+<summary>内訳</summary>
+
+#### Before
+```connsole
+$ ./list-filestats
+      29 Reversi/AppDelegate.swift
+     176 Reversi/BoardView.swift
+     139 Reversi/CellView.swift
+      26 Reversi/Disk.swift
+      66 Reversi/DiskView.swift
+      45 Reversi/SceneDelegate.swift
+     573 Reversi/ViewController.swift
+      26 ReversiTests/ReversiTests.swift
+avg: 135        max: 573        total: 1080
+```
+
+#### After
+```console
+$ ./tools/list-filestats
+      29 Reversi/AppDelegate.swift
+     130 Reversi/MVCArchitecture/BoardMVCComposer.swift
+      32 Reversi/MVCArchitecture/Controllers/BoardAnimationController.swift
+      25 Reversi/MVCArchitecture/Controllers/BoardController.swift
+      25 Reversi/MVCArchitecture/Controllers/GameAutomatorController.swift
+      26 Reversi/MVCArchitecture/Controllers/PassConfirmationController.swift
+      27 Reversi/MVCArchitecture/Controllers/ResetConfirmationController.swift
+      61 Reversi/MVCArchitecture/DebugHub.swift
+      10 Reversi/MVCArchitecture/Models/DebuggableGameAutomator.swift
+      29 Reversi/MVCArchitecture/Views/ViewBindings/BoardViewBinding.swift
+      27 Reversi/MVCArchitecture/Views/ViewBindings/DiskCountViewBinding.swift
+      17 Reversi/MVCArchitecture/Views/ViewBindings/GameAutomatorControlBinding.swift
+      26 Reversi/MVCArchitecture/Views/ViewBindings/GameAutomatorProgressViewBinding.swift
+      29 Reversi/MVCArchitecture/Views/ViewBindings/PassConfirmationBinding.swift
+      29 Reversi/MVCArchitecture/Views/ViewBindings/TurnMessageViewBinding.swift
+      97 Reversi/MVCArchitecture/Views/ViewHandles/BoardViewHandle.swift
+      29 Reversi/MVCArchitecture/Views/ViewHandles/DiskCountViewHandle.swift
+      73 Reversi/MVCArchitecture/Views/ViewHandles/GameAutomatorControlHandle.swift
+      38 Reversi/MVCArchitecture/Views/ViewHandles/GameAutomatorProgressViewHandle.swift
+      86 Reversi/MVCArchitecture/Views/ViewHandles/ModalPresenterQueue.swift
+      40 Reversi/MVCArchitecture/Views/ViewHandles/PassConfirmationHandle.swift
+      50 Reversi/MVCArchitecture/Views/ViewHandles/ResetConfirmationHandle.swift
+      49 Reversi/MVCArchitecture/Views/ViewHandles/TurnMessageViewHandle.swift
+      93 Reversi/MVCArchitecture/Views/ViewHandles/UserConfirmationViewHandle.swift
+      45 Reversi/SceneDelegate.swift
+     177 Reversi/ThirdPartyViews/BoardView.swift
+     141 Reversi/ThirdPartyViews/CellView.swift
+      67 Reversi/ThirdPartyViews/DiskView.swift
+      71 Reversi/ViewController.swift
+     188 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift
+     112 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift
+      29 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Buffer.swift
+     128 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Coordinate.swift
+       5 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/CoordinateSelector.swift
+      30 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/DirectedDistance.swift
+      14 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Direction.swift
+      43 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Disk.swift
+      24 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/DiskCount.swift
+      30 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Distance.swift
+       7 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Dump.swift
+     120 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLine.swift
+     136 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLineTests.swift
+      49 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameAutomator.swift
+      30 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameAutomatorAvailabilities.swift
+      12 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameAutomatorAvailability.swift
+      47 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameCommand.swift
+       7 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameResult.swift
+     146 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameState.swift
+     120 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameStateTests.swift
+      55 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Line.swift
+      68 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/LineContents.swift
+     118 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/NonEmptyArray.swift
+      44 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Turn.swift
+      55 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/UserDefaultsJSON.swift
+      18 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/UserDefaultsKey.swift
+       4 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/UserDefaultsReadWriter.swift
+       5 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/UserDefaultsReader.swift
+       5 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/UserDefaultsWriter.swift
+      45 ReversiCore/ReversiCore/MVCArchitecture/Models/AutomatableGameModel.swift
+     308 ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModel.swift
+     218 ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModelTests.swift
+      29 ReversiCore/ReversiCore/MVCArchitecture/Models/DiskCountModel.swift
+      37 ReversiCore/ReversiCore/MVCArchitecture/Models/GameAutomatorAvailabilitiesModel.swift
+     134 ReversiCore/ReversiCore/MVCArchitecture/Models/GameAutomatorModel.swift
+      10 ReversiCore/ReversiCore/MVCArchitecture/Models/GameCommandReceivable.swift
+      33 ReversiCore/ReversiCore/MVCArchitecture/Models/GameModel+AutomatableGameModel.swift
+     155 ReversiCore/ReversiCore/MVCArchitecture/Models/GameModel.swift
+      27 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel+AutomatableGameModel.swift
+     166 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel.swift
+     116 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameWithAutomatorsModel.swift
+      75 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AutoBackupGameAutomatorAvailabilitiesModel.swift
+      74 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AutoBackupGameModel.swift
+     277 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModel.swift
+     189 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModelTests.swift
+      74 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelTracker.swift
+      82 ReversiCore/ReversiCore/MVCArchitecture/Models/UserDefaultsModel.swift
+avg: 69.4211    max: 308        total: 5276
+```
+</details>
+
+個々のファイルは小さくなり小さなコンポーネントへ分割できているようですが、このためになんと全体の行数が5倍になりました。一般的にコンポーネントの分割は全体のコード行数を増やしがちですので、まあこんなもんかなという印象でした。
+
+
+
+### バグはどれだけ出たのか
+
+おさらいですが、このリファクタリングではとにかくバグを出さないことを目指していました。そこで、リファクタリングの過程では達成状況を評価できるようにするため、バグを発見したら次のように原因コードの近くにコメントを残すようにしています：
+
+```swift
+public struct Board {
+    private let array: [[Disk?]]
+
+
+    // BUG1: Missing -1 for rawValue (CoordinateX and Y is 1-based)
+    public subscript(_ coordinate: Coordinate) -> Disk? {
+        // NOTE: all coordinates are bound by 8x8, so it must be success.
+        self.array[coordinate.y.rawValue - 1][coordinate.x.rawValue - 1]
+    }
+}
+```
+
+<details>
+<summary>バグの出現箇所一覧</summary>
+
+```
+$ ./tools/list-bugs
+BUG 1: Missing -1 for rawValue (CoordinateX and Y is 1-based) (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift:34)
+BUG 2: Missing addition for start. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Line.swift:32)
+BUG 3: I expected `x == nil` mean x == .some(.none), but it mean x == .none. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLine.swift:85)
+BUG 4: Misunderstood that the line.coordinates is sorted as start to end. But it was a Set. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/LineContents.swift:24)
+BUG 5: Misunderstand that the break without any labels break from lineContentsLoop. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift:138)
+BUG 6: Loop forever because using continue cause unchanged nextLineContents. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift:133)
+BUG 7: Wrongly use base lines that have constant distance for all search. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift:143)
+BUG 8: Signal from Property does not receive the current value at first. (at ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModel.swift:70)
+BUG 9: Removing .one to limit line lengths caused that users of .allCases or .init(rawValue:_) get broken. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Distance.swift:2)
+BUG 10: Did not apply board at BoardView because forgot notify accepted commands to boardAnimationModel. (at ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel.swift:37)
+BUG 11: Forgot observing. (at Reversi/MVCArchitecture/Views/ViewHandles/GameAutomatorControlHandle.swift:32)
+BUG 12: Missing first because the code was NonEmptyArray(first: self.last, rest: self.rest.reversed()). (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/NonEmptyArray.swift:58)
+BUG 13: Unexpectedly use false instead of true. (at Reversi/MVCArchitecture/Views/ViewHandles/ResetConfirmationHandle.swift:34)
+BUG 14: Forgot binding pass confirmation. (at Reversi/MVCArchitecture/BoardMVCComposer.swift:103)
+BUG 15: This order followed the order in README.md, but the line direction is inverted. (at ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModel.swift:290)
+BUG 16: Initial sync are not applied because markResetAsCompleted was sent before observing. (at Reversi/MVCArchitecture/Controllers/BoardAnimationController.swift:19)
+BUG 17: Should not sync in flipping because both ends of the transaction did not match to transitional boards. (at ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModel.swift:182)
+BUG 18: Alert not appeared because it called before viewDidAppear. (at Reversi/MVCArchitecture/Views/ViewBindings/PassConfirmationBinding.swift:25)
+```
+</details>
+
+今回は自動テスト時にクラッシュ2件とバグが7件、手動ポチポチ時に9件のバグを発生させてしまいました。つまり、**動作試験時に死者2名と7名が大変なことになり、本番運用時に9名が大変なことになってしまいました（大惨事）**。
+
+内訳はこんな感じです（原因と発見方法は後からまとめているので不正確なところあっても許してください）：
+
+| ID | 現象 | 原因 | 発見方法 | 
+|---:|:-----|:-----|:-------|
+| 1  | 起動即クラッシュ | 盤面クラスの内部的な配列は 0-based インデックスだが、座標クラスは 1-based インデックスで out of bounds になった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 2  | 石をどこにも置けない | Line に沿った盤面の石を取得した LineContents のループ条件にバグがあり開始地点の石が取得できてなかった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 3  | 石をどこにも置けない | `Optional<Optional<Foo>>` な変数の `== nil` が `.some(nil)` で `false` になるとは思っていなかった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 4  | 石を置けるはずの場所に置けないことがある | Line 上の座標の配列を返す API に順序があると期待していたが実際には Set だった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 5  | 遅い | ループの脱出のつもりで `break` を書いたが、`swift` 分の内部だったのでループを脱出できなかった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 6  | 無反応（無限ループ） | ループの終わりに条件を更新するべきだったがこれをせずに `continue` でループを再開したためずっと同じ条件でループしていた | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 7  | 距離が2より大きい位置へ石を置けない | ループ内で、適切な長さの Line ではなくループ開始条件のための長さ2固定の Line を取り違えて使ってしまったため | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 8  | 起動直後にオートプレイが有効になっていても何も起こらない | ReactiveSwift.Property の購読直後に現在の値が Signal へ流されると勘違いしていた（それは SignalProducer じゃないとできない） | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/master/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModelTests.swift) |
+| 9  | 石をどこにも置けない | 欲を出して Line をより安全な型にしようと Distatnce の 1 を消して 2 始まりにしたら 1 がくることを期待していた配置可能判定が壊れた | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 10 | 1度画面に石を配置すると次はどこにも置けなくなる | アニメーション完了判定を Model へ通知する Controller が接続されておらず Model はずっとアニメーション中だと判断してユーザーの操作を無視した | 手動ポチポチ |
+| 11 | オートプレイを有効にしても何も起きない | オートプレイ切り替えの `UISegmentedControl` の UI イベント検知を View Handle で忘れた | 手動ポチポチ |
+| 12 | 長さ3以上の Line をひっくり返すアニメーションの最後だけひっくり返らない（ただし見た目だけでゲームロジックは正常） | NonEmptyArray の reversed 実装にバグがあり、末尾が先頭で重複する代わりに先頭要素が抜けてしまった | 手動ポチポチで発見、[自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModelTests.swift)で再現条件確認 |
+| 13 | リセットの確認モーダルで OK を押しても何も起きない | リセットの確認結果の Bool がコピペにより OK と Cancel で両方同じ値になっていた | 手動ポチポチ |
+| 14 | パス画面が表示されずパスできない | パス画面を表示させる View Binding の接続忘れ | 手動ポチポチ |
+| 15 | 元のアニメーション順序と逆の順序でアニメーションされる | README 通りの順序を設定したつもりが Line の向きの表現が README と逆だった（README は配置地点が基準、Line は対応する自分の石地点が基準だった） | 手動ポチポチ |
+| 16 | パスしかない状態で終了するとパス確認画面がでず進行できない | Controller は View Handle からのリセット完了イベントを Model に転送しなければならないが、Controller が接続される前にリセット完了イベントが流れてしまったため Model はリセット完了待ち状態のままになった | 手動ポチポチ |
+| 17 | ひっくり返すアニメーションがチラつく | アニメーションが未完了の状態でさらなるアニメーション要求がきた場合に備えてアニメーションの前に盤面を sync する指示を石の配置アニメーション指示に加えたが、間違って石をひっくり返す指示にも加わってしまったためアニメーションの途中で一連のアニメーション前の状態に戻される処理が挟まってしまった | 手動ポチポチ |
+| 18 | パスしかできない状態でアプリを再起動するとパス確認画面が再度表示されない | `viewDidAppear` の前に `UIViewController.present` しようとしてしまい無視された | 手動ポチポチ |
+
+この結果が多少のバグが許されるフルスクラッチな開発現場だった場合に、多いと考えるか少ないと考えるかは各自にお任せします。次にそれぞれから見えてきた課題をみてみましょう。
+
+
+
+### 原因の分類
+
+* 依存コンポーネントの振る舞いの誤解系: 1, 3, 4, 8
+* アルゴリズムの誤記（意図とコードの振る舞いが違った）: 5, 6
+* アルゴリズムの誤解（意図がそもそも間違ってた）: 2, 9, 12, 15, 17
+* 同じ型の値の取り違え系: 7, 13
+* 接続忘れ系: 10, 11, 14
+* 実行タイミングの誤解: 16, 18
+
+それぞれの対策を考えてみましたが次のようになりました：
+
+* 依存コンポーネントの振る舞いの誤解系:
+	* REPL 駆動開発
+* アルゴリズムの誤記（意図とコードの振る舞いが違った）:
+	* より強力な静的検査（アドホックに事前条件と事後条件書いて証明するなど（Swift の意味論のモデル化が必要））
+* アルゴリズムの誤解（意図がそもそも間違ってた）:
+	* より強力な静的検査（アドホックに事前条件と事後条件書いて証明するなど（Swift の意味論のモデル化が必要））
+* 同じ型の値の取り違え系:
+	* 変数に適切でそれなりに長い名前をつける（7 は `line` ではなく `baseLine` のように）
+	* 用途によって型を分ける（Line と FlippableLine のように）
+* 接続忘れ系:
+	* Unusedクラスの警告とかができれば…
+* 実行タイミングの誤解:
+	* モデル検査とかができれば（今回は自分のよく使っていた設計の理論的理解が足りていなかった）
+
+
+
+## 感想
+
+次からは REPL 駆動開発やモデル検査、証明を駆使してバグを撲滅して死者が出ないようにしようと思いました（過激派）。
+
+
 
 ## License
 
