@@ -186,3 +186,9 @@ extension Board: CustomDebugStringConvertible {
                """
     }
 }
+
+
+extension Board: CustomReflectable {
+    // NOTE: It is enough to use debugDescription.
+    public var customMirror: Mirror { Mirror(self, children: []) }
+}

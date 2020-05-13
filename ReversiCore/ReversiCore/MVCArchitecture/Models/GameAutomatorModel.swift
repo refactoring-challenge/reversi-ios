@@ -67,10 +67,10 @@ public class GameAutomatorModel: GameAutomatorModelProtocol {
 
             promisedSelectedCoordinate
                 .then(in: .userInitiated) { [weak self] selected in
-                guard let self = self else { return }
-                self.automatorDidChoiceObserver.send(value: selected)
-                self.automatorProgress = .sleeping
-            }
+                    guard let self = self else { return }
+                    self.automatorDidChoiceObserver.send(value: selected)
+                    self.automatorProgress = .sleeping
+                }
 
             return .accepted
         }

@@ -117,8 +117,10 @@ class GameWithAutomatorsModelTests: XCTestCase {
                 )
             )
         )
+        let passAutomator = PassAutomator(gameWithAutomatorsModel: model)
 
         try self.waitUntilGameSet(model)
+        _ = passAutomator
 
         let actual = model.gameWithAutomatorsModelStateDidChange.value.gameState
         let expected = GameState(
@@ -138,24 +140,29 @@ class GameWithAutomatorsModelTests: XCTestCase {
     }
 
 
-    private func waitUntilTurnReady(_ gameWithAutomatorsModel: GameWithAutomatorsModelProtocol, turn: Turn,
-        line: UInt = #line) throws {
+    private func waitUntilTurnReady(
+        _ gameWithAutomatorsModel: GameWithAutomatorsModelProtocol,
+        turn: Turn,
+        line: UInt = #line
+    ) throws {
         try self.waitUntilGameState(gameWithAutomatorsModel, line: line) { gameModelState -> Bool in
             switch gameModelState {
             case .completed, .automatorThinking, .awaitingReadyOrCompleted, .failed:
                 return false
-            case .ready(let gameState, _):
+            case .mustPass(on: let gameState), .mustPlace(at: _, on: let gameState):
                 return gameState.turn == turn
             }
         }
     }
 
 
-    private func waitUntilGameSet(_ gameWithAutomatorsModel: GameWithAutomatorsModelProtocol, line: UInt = #line
+    private func waitUntilGameSet(
+        _ gameWithAutomatorsModel: GameWithAutomatorsModelProtocol,
+        line: UInt = #line
     ) throws {
         try self.waitUntilGameState(gameWithAutomatorsModel, line: line) { gameModelState -> Bool in
             switch gameModelState {
-            case .ready, .automatorThinking, .awaitingReadyOrCompleted, .failed:
+            case .mustPlace, .mustPass, .automatorThinking, .awaitingReadyOrCompleted, .failed:
                 return false
             case .completed:
                 return true
@@ -164,8 +171,11 @@ class GameWithAutomatorsModelTests: XCTestCase {
     }
 
 
-    private func waitUntilGameState(_ gameWithAutomatorsModel: GameWithAutomatorsModelProtocol, line: UInt = #line,
-        _ condition: @escaping (GameWithAutomatorsModelState) -> Bool) throws {
+    private func waitUntilGameState(
+        _ gameWithAutomatorsModel: GameWithAutomatorsModelProtocol,
+        line: UInt = #line,
+        _ condition: @escaping (GameWithAutomatorsModelState) -> Bool
+    ) throws {
         let result = gameWithAutomatorsModel.gameWithAutomatorsModelStateDidChange
             .producer
             .take(during: self.lifetime)
@@ -187,4 +197,30 @@ class GameWithAutomatorsModelTests: XCTestCase {
 
 
     struct TimeoutExceeded: Error {}
+
+
+
+    private class PassAutomator {
+        private let gameWithAutomatorsModel: GameWithAutomatorsModelProtocol
+        private let (lifetime, token) = ReactiveSwift.Lifetime.make()
+
+
+        public init(gameWithAutomatorsModel: GameWithAutomatorsModelProtocol) {
+            self.gameWithAutomatorsModel = gameWithAutomatorsModel
+
+            gameWithAutomatorsModel.gameWithAutomatorsModelStateDidChange
+                .producer
+                .take(during: self.lifetime)
+                .observe(on: QueueScheduler(qos: .userInteractive))
+                .on(value: { [weak self] state in
+                    switch state {
+                    case .mustPass:
+                        self?.gameWithAutomatorsModel.pass()
+                    case .mustPlace, .automatorThinking, .awaitingReadyOrCompleted, .failed, .completed:
+                        return
+                    }
+                })
+                .start()
+        }
+    }
 }

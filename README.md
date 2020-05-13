@@ -393,10 +393,13 @@ public class BoardMVCComposer {
 
 ```swift
 public enum GameModelState {
-    // ゲームは進行中
-    case ready(GameState, Set<AvailableCandidate>)
+    // ゲームは進行中でプレイヤーは石を配置しなければならない。
+    case mustPlace(anywhereIn: Set<AvailableCandidate>, on: Board)
 
-    // ゲームは決着した
+    // ゲームは進行中でプレイヤーはパスしなければならない。
+    case mustPass(on: Board)
+
+    // ゲームは決着した。
     case completed(GameState, GameResult)
 }
 ```
@@ -404,12 +407,20 @@ public enum GameModelState {
 もし `GameModel` の公開しているメソッドである `pass()` `place(...)` `reset(...)` が呼ばれると、それが妥当な要求なら Model は内部状態を次のように変化させます：
 
 ```
-  +-------+                        +-----------+
-  | ready | ---- (pass/place) ---> | completed |
-  +-------+                        +-----------+
-      A                                  |
-      |                                  |
-      +----------- (reset) --------------+
+        +-----------+
+    +-- | mustPass  |
+    |   +-----------+
+    |       A
+ (place)    |
+    |       |     +-- (pass/place) --+
+    |    (place)  |                  |
+    |       |     |                  |
+    |   +-----------+ <--------------+  +-----------+
+    +-> | mustPlace |                   | completed |
+        +-----------+ ---- (place) ---> +-----------+
+              A                               |
+              |                               |
+              +----------- (reset) -----------+
 ```
 
 ```swift
@@ -978,7 +989,7 @@ BUG 18: Alert not appeared because it called before viewDidAppear. (at Reversi/M
 * 接続忘れ系:
 	* Unusedクラスの警告とかができれば…
 * 実行タイミングの誤解:
-	* モデル検査とかができれば（モデル検査は CSP やアクタモデルのようなよく知られたモデルの上で動くのですが、今回は自分のよく使っていた設計の理論的理解が足りておらず苦戦してタイムアウトしました）
+	* モデル検査とかができれば（モデル検査は CSP やアクタモデルのようなよく知られたモデルの上で動くのですが、今回は自分のよく使っていた設計の理論的理解が足り）
 
 
 

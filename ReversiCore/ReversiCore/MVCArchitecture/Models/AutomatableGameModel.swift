@@ -17,26 +17,29 @@ public extension AutomatableGameModelProtocol {
 
 
 public enum AutomatableGameModelState {
-    case ready(GameState, availableCandidates: Set<AvailableCandidate>)
-    case completed(GameState, result: GameResult)
-    case notReady(GameState, availableCandidates: Set<AvailableCandidate>)
+    case mustPlace(anywhereIn: NonEmptyArray<AvailableCandidate>, on: GameState)
+    case mustPass(on: GameState)
+    case completed(with: GameResult, on: GameState)
+    case notReady(lastAvailableCandidates: NonEmptyArray<AvailableCandidate>?, lastGameState: GameState)
 
 
     var gameState: GameState {
         switch self {
-        case .ready(let gameState, availableCandidates: _), .completed(let gameState, result: _),
-             .notReady(let gameState, availableCandidates: _):
+        case .mustPlace(anywhereIn: _, let gameState), .mustPass(on: let gameState), .completed(with: _, let gameState),
+             .notReady(lastAvailableCandidates: _, lastGameState: let gameState):
             return gameState
         }
     }
 
 
-    var availableCandidates: Set<AvailableCandidate> {
+    var availableCandidates: NonEmptyArray<AvailableCandidate>? {
         switch self {
-        case .ready(_, availableCandidates: let availableCandidates), .notReady(_, availableCandidates: let availableCandidates):
+        case .mustPlace(anywhereIn: let availableCandidates, on: _):
             return availableCandidates
-        case .completed:
-            return Set()
+        case .notReady(lastAvailableCandidates: let availableCandidates, lastGameState: _):
+            return availableCandidates
+        case .completed, .mustPass:
+            return nil
         }
     }
 

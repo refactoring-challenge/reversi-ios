@@ -1,8 +1,11 @@
 import UIKit
 import ReversiCore
 
-private let defaultAnimationDuration: TimeInterval = 0.25
-public var animationDuration = defaultAnimationDuration
+#if DEBUG
+public var animationDuration: TimeInterval = 0.25
+#else
+public let animationDuration: TimeInterval = 0.25
+#endif
 
 public class CellView: UIView {
     private let button: UIButton = UIButton()

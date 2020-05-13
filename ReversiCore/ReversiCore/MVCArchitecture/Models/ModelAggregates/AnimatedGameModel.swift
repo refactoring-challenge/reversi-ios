@@ -2,7 +2,7 @@ import ReactiveSwift
 
 
 
-public protocol AnimatedGameModelProtocol: GameCommandReceivable, BoardAnimationModelProtocol {
+public protocol AnimatedGameModelProtocol: BoardAnimationModelProtocol, AutomatableGameModelProtocol {
     var animatedGameStateDidChange: ReactiveSwift.Property<AnimatedGameModelState> { get }
     var animatedGameCommandDidAccept: ReactiveSwift.Signal<GameState.AcceptedCommand, Never> { get }
 }
@@ -93,25 +93,27 @@ extension AnimatedGameModel: BoardAnimationModelProtocol {
 
 
 public enum AnimatedGameModelState {
-    case ready(GameState, availableCandidates: Set<AvailableCandidate>, isAnimating: Bool)
-    case completed(GameState, result: GameResult, isAnimating: Bool)
+    case mustPlace(anywhereIn: NonEmptyArray<AvailableCandidate>, on: GameState, isAnimating: Bool)
+    case mustPass(on: GameState, isAnimating: Bool)
+    case completed(with: GameResult, on: GameState, isAnimating: Bool)
 
 
     public var gameState: GameState {
         switch self {
-        case .ready(let gameState, availableCandidates: _, isAnimating: _),
-             .completed(let gameState, result: _, isAnimating: _):
+        case .mustPlace(anywhereIn: _, on: let gameState, isAnimating: _),
+             .mustPass(on: let gameState, isAnimating: _),
+             .completed(with: _, on: let gameState, isAnimating: _):
             return gameState
         }
     }
 
 
-    public var availableCandidates: Set<AvailableCandidate> {
+    public var availableCandidates: NonEmptyArray<AvailableCandidate>? {
         switch self {
-        case .ready(_, availableCandidates: let availableCandidates, isAnimating: _):
+        case .mustPlace(anywhereIn: let availableCandidates, on: _, isAnimating: _):
             return availableCandidates
-        case .completed:
-            return Set()
+        case .mustPass, .completed:
+            return nil
         }
     }
 
@@ -122,8 +124,9 @@ public enum AnimatedGameModelState {
 
     public var isAnimating: Bool {
         switch self {
-        case .ready(_, availableCandidates: _, isAnimating: let isAnimating),
-             .completed(_, result: _, isAnimating: let isAnimating):
+        case .mustPlace(anywhereIn: _, on: _, isAnimating: let isAnimating),
+             .mustPass(on: _, isAnimating: let isAnimating),
+             .completed(with: _, on: _, isAnimating: let isAnimating):
             return isAnimating
         }
     }
@@ -131,20 +134,24 @@ public enum AnimatedGameModelState {
 
     public static func notAnimating(from gameModelState: GameModelState) -> AnimatedGameModelState {
         switch gameModelState {
-        case .ready(let gameState, let availableCandidates):
-            return .ready(gameState, availableCandidates: availableCandidates, isAnimating: false)
-        case .completed(let gameState, let gameResult):
-            return .completed(gameState, result: gameResult, isAnimating: false)
+        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState):
+            return .mustPlace(anywhereIn: availableCandidates, on: gameState, isAnimating: false)
+        case .mustPass(on: let gameState):
+            return .mustPass(on: gameState, isAnimating: false)
+        case .completed(with: let gameResult, on: let gameState):
+            return .completed(with: gameResult, on: gameState, isAnimating: false)
         }
     }
 
 
     public static func animating(from gameModelState: GameModelState) -> AnimatedGameModelState {
         switch gameModelState {
-        case .ready(let gameState, let availableCandidates):
-            return .ready(gameState, availableCandidates: availableCandidates, isAnimating: true)
-        case .completed(let gameState, let gameResult):
-            return .completed(gameState, result: gameResult, isAnimating: true)
+        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState):
+            return .mustPlace(anywhereIn: availableCandidates, on: gameState, isAnimating: true)
+        case .mustPass(on: let gameState):
+            return .mustPass(on: gameState, isAnimating: true)
+        case .completed(with: let gameResult, on: let gameState):
+            return .completed(with: gameResult, on: gameState, isAnimating: true)
         }
     }
 

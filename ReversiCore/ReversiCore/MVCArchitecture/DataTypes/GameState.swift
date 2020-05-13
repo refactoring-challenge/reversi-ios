@@ -37,7 +37,7 @@ public struct GameState {
         let nextTurn = self.turn.next
 
         var nextBoard = self.board
-        for shouldBeFlipped in selected.linesShouldFlip.toArray() {
+        selected.linesShouldFlip.forEach { shouldBeFlipped in
             nextBoard = nextBoard.unsafeReplaced(with: currentTurn.disk, on: shouldBeFlipped.line)
         }
 
@@ -143,4 +143,10 @@ extension AvailableCandidate: Hashable {}
 
 extension AvailableCandidate: CustomDebugStringConvertible {
     public var debugDescription: String { self.coordinate.debugDescription }
+}
+
+
+
+extension AvailableCandidate: CustomReflectable {
+    public var customMirror: Mirror { Mirror(reflecting: self.linesShouldFlip) }
 }

@@ -4,15 +4,9 @@ import ReversiCore
 
 
 #if DEBUG
-public let isDebug = true
-#else
-public let isDebug = false
-#endif
-
-
 /// - Example: `(lldb) po printDebugInfo()`
 public func printDebugInfo() {
-    guard let composer = debugComposer() else {
+    guard let composer = debugViewController()?.composer else {
         print("Debuggable ViewController not found")
         return
     }
@@ -32,9 +26,10 @@ public func debugFastAnimation() {
 }
 
 
-/// - Example: `(lldb) po debugFastThinking()`
-public func debugFastThinking() {
-    gameAutomatorDuration = 0.0
+/// - Example: `(lldb) po debugFastAll()`
+public func debugFastAll() {
+    debugFastAnimation()
+    debugFastThinking()
 }
 
 
@@ -52,10 +47,16 @@ public func printUserDefaults(_ userDefaults: UserDefaults = UserDefaults.standa
 
 
 public func debugModelsTracker() -> ModelTrackerProtocol? {
-    debugComposer()?.modelTracker
+    debugViewController()?.composer?.modelTracker
 }
 
 
-public func debugComposer() -> BoardMVCComposer? {
-    (UIApplication.shared.keyWindow?.rootViewController as? ViewController)?.composer
+public func debugViewController() -> ViewController? {
+    UIApplication.shared.windows
+        .flatMap { window -> [ViewController] in
+        guard let viewController = window.rootViewController as? ViewController else { return [] }
+        return [viewController]
+    }
+        .first
 }
+#endif

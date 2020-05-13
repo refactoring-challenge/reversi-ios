@@ -67,6 +67,14 @@ public struct NonEmptyArray<T> {
     }
 
 
+    public func first(where block: (T) throws -> Bool) rethrows -> T? {
+        if try block(self.first) {
+            return self.first
+        }
+        return try self.rest.first(where: block)
+    }
+
+
     public func appended(_ value: T) -> NonEmptyArray<T> {
         var newRest = self.rest
         newRest.append(value)
@@ -115,4 +123,10 @@ extension NonEmptyArray: Hashable where T: Hashable {
         hasher.combine(self.first)
         hasher.combine(self.rest)
     }
+}
+
+
+
+extension NonEmptyArray: CustomReflectable {
+    public var customMirror: Mirror { Mirror(reflecting: self.toArray()) }
 }

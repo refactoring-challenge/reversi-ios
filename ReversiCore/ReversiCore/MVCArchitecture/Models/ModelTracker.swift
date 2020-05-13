@@ -11,7 +11,7 @@ public protocol ModelTrackerProtocol: class {
 
 public class ModelTracker<T>: ModelTrackerProtocol {
     public var isEnabled: Bool
-    public private(set) var recentHistory = Buffer<T>(capacity: 100)
+    public private(set) var recentHistory = Buffer<T>(capacity: 50)
 
     private let stateDidChange: ReactiveSwift.Property<T>
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()

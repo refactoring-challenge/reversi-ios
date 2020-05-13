@@ -46,7 +46,7 @@ public class BoardMVCComposer {
                 userDefaults: userDefaults,
                 defaultValue: .bothDisabled
             ),
-            automatorStrategy: debuggableGameAutomator(selector: GameAutomator.randomSelector, duration: 2.0)
+            automatorStrategy: GameAutomator.debuggableDelayed(selector: GameAutomator.randomSelector, duration: 2.0)
         )
         self.animatedGameWithAutomatorsModel = animatedGameWithAutomatorsModel
         self.diskCountModel = DiskCountModel(observing: animatedGameWithAutomatorsModel)
@@ -59,11 +59,11 @@ public class BoardMVCComposer {
         self.modelTracker = ComposedModelTracker(
             trackers: [
                 ModelTracker(
-                    observing: animatedGameWithAutomatorsModel.gameModelStateDidChange,
+                    observing: animatedGameWithAutomatorsModel.boardAnimationStateDidChange,
                     isEnabled: isEventTracesEnabled
                 ),
                 ModelTracker(
-                    observing: animatedGameWithAutomatorsModel.boardAnimationStateDidChange,
+                    observing: animatedGameWithAutomatorsModel.availabilitiesDidChange,
                     isEnabled: isEventTracesEnabled
                 ),
                 ModelTracker(
@@ -71,7 +71,15 @@ public class BoardMVCComposer {
                     isEnabled: isEventTracesEnabled
                 ),
                 ModelTracker(
-                    observing: animatedGameWithAutomatorsModel.availabilitiesDidChange,
+                    observing: animatedGameWithAutomatorsModel.gameModelStateDidChange,
+                    isEnabled: isEventTracesEnabled
+                ),
+                ModelTracker(
+                    observing: animatedGameWithAutomatorsModel.automatableGameStateDidChange,
+                    isEnabled: isEventTracesEnabled
+                ),
+                ModelTracker(
+                    observing: animatedGameWithAutomatorsModel.gameWithAutomatorsModelStateDidChange,
                     isEnabled: isEventTracesEnabled
                 ),
             ],

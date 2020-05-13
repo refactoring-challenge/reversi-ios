@@ -10,6 +10,7 @@
 		2475E00A8B880AF9FCB06C3E /* GameCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EB9333CBE4CA58950978 /* GameCommand.swift */; };
 		2475E035A3CB909BCF028CA0 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E8492ADFD05C832A303A /* Board.swift */; };
 		2475E05736D921ED0EC7D942 /* AutoBackupGameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E8F784C03FD7AC667441 /* AutoBackupGameModel.swift */; };
+		2475E091CE3E134E76EF659C /* DebugHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E142A6D7B015A063558D /* DebugHub.swift */; };
 		2475E0B89A65175594199125 /* UserDefaultsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E53DA4AACC3D6B4F6E02 /* UserDefaultsModel.swift */; };
 		2475E1097110032C7546F27E /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EC07F37052A17AA7366E /* Buffer.swift */; };
 		2475E11933C964B33F33E542 /* GameResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EFEC4B2F667DAD06D2AB /* GameResult.swift */; };
@@ -50,6 +51,7 @@
 		2475E7B0D73DC312DEECE372 /* CoordinateSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EAA5AF4FEF83D04C9522 /* CoordinateSelector.swift */; };
 		2475E7BCEB316E3CDF7C55AA /* AnimatedGameWithAutomatorsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E54E57F61ADB77E6AA26 /* AnimatedGameWithAutomatorsModel.swift */; };
 		2475E8122EB35973908778FC /* GameModel+AutomatableGameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E23C10D49C8FBB1622DB /* GameModel+AutomatableGameModel.swift */; };
+		2475E863BA3C1741CB3CA264 /* DebugHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E142A6D7B015A063558D /* DebugHub.swift */; };
 		2475E893CB2FF44001B96888 /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E2B6FF9044DC5E40613B /* Coordinate.swift */; };
 		2475E8B16337CA7BFB01B78A /* UserDefaultsReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475EE619C964FF780ABCF01 /* UserDefaultsReader.swift */; };
 		2475E8C1807C735CAB74C909 /* BoardAnimationModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2475E20E1B7C6B777DB463FB /* BoardAnimationModelTests.swift */; };
@@ -148,6 +150,7 @@
 
 /* Begin PBXFileReference section */
 		2475E0F4848BAE0C7880C69D /* ModelTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelTracker.swift; sourceTree = "<group>"; };
+		2475E142A6D7B015A063558D /* DebugHub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugHub.swift; sourceTree = "<group>"; };
 		2475E1A3786C826B2A82559B /* UserDefaultsJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultsJSON.swift; sourceTree = "<group>"; };
 		2475E1DDF292D05EA10573D6 /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		2475E20E1B7C6B777DB463FB /* BoardAnimationModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoardAnimationModelTests.swift; sourceTree = "<group>"; };
@@ -337,6 +340,7 @@
 			isa = PBXGroup;
 			children = (
 				62B7C4FD246048BB006F58CE /* MVCArchitecture */,
+				2475E142A6D7B015A063558D /* DebugHub.swift */,
 			);
 			path = ReversiCore;
 			sourceTree = "<group>";
@@ -556,6 +560,7 @@
 				2475EFF53B4561CB1922FBC0 /* AutoBackupGameModel.swift in Sources */,
 				2475E1AF01580F52E9321070 /* AutoBackupGameAutomatorAvailabilitiesModel.swift in Sources */,
 				2475E96434BC04F1913015E4 /* Buffer.swift in Sources */,
+				2475E863BA3C1741CB3CA264 /* DebugHub.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -605,6 +610,7 @@
 				2475E05736D921ED0EC7D942 /* AutoBackupGameModel.swift in Sources */,
 				2475E5E8DC11BAB11EC9AB8E /* AutoBackupGameAutomatorAvailabilitiesModel.swift in Sources */,
 				2475E1097110032C7546F27E /* Buffer.swift in Sources */,
+				2475E091CE3E134E76EF659C /* DebugHub.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

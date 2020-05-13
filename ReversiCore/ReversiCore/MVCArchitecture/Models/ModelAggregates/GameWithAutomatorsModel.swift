@@ -83,18 +83,17 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
                 case .notReady, .completed:
                     return
 
-                case .ready(let gameState, availableCandidates: let availableCandidates):
+                case .mustPass:
+                    // NOTE: User must confirm if the automator do pass.
+                    return
+
+                case .mustPlace(anywhereIn: let availableCandidates, on: let gameState):
                     switch automationAvailabilities.availability(on: gameState) {
                     case .disabled:
                         return
 
                     case .enabled:
-                        guard let nonEmptyAvailableCandidates = NonEmptyArray(availableCandidates) else {
-                            // NOTE: User must confirm if the automator do pass.
-                            return
-                        }
-
-                        self.automatorModel.runAutomator(inThisTurn: gameState.turn, for: nonEmptyAvailableCandidates)
+                        self.automatorModel.runAutomator(inThisTurn: gameState.turn, for: availableCandidates)
                     }
                 }
             })
@@ -108,7 +107,7 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
                 guard let self = self else { return }
                 switch self.automatableGameModel.place(at: selected.coordinate) {
                 case .ignored:
-                    self.automatorDidFail.value = .placeNotAccepted
+                    self.automatorDidFail.value = .placeNotAccepted(at: selected)
                     return
                 case .accepted:
                     return
@@ -138,7 +137,7 @@ extension GameWithAutomatorsModel: GameCommandReceivable {
         case .failed:
             return .ignored
 
-        case .ready, .completed, .awaitingReadyOrCompleted, .automatorThinking:
+        case .mustPass, .mustPlace, .completed, .awaitingReadyOrCompleted, .automatorThinking:
             return self.automatableGameModel.pass()
         }
     }
@@ -150,7 +149,7 @@ extension GameWithAutomatorsModel: GameCommandReceivable {
         case .automatorThinking, .failed:
             return .ignored
 
-        case .ready, .completed, .awaitingReadyOrCompleted:
+        case .mustPlace, .mustPass, .completed, .awaitingReadyOrCompleted:
             return self.automatableGameModel.place(at: coordinate)
         }
     }
@@ -176,7 +175,7 @@ extension GameWithAutomatorsModel: GameAutomatorAvailabilitiesModelProtocol {
         case .failed:
             return
 
-        case .ready, .completed, .awaitingReadyOrCompleted:
+        case .mustPass, .mustPlace, .completed, .awaitingReadyOrCompleted:
             break
 
         case .automatorThinking(previousGameState: let prevGameState, previousAvailableCandidates: _):
@@ -194,16 +193,17 @@ extension GameWithAutomatorsModel: GameAutomatorAvailabilitiesModelProtocol {
 
 
 public enum GameWithAutomatorsModelState {
-    case ready(GameState, availableCandidates: Set<AvailableCandidate>)
-    case completed(GameState, result: GameResult)
-    case awaitingReadyOrCompleted(previousGameState: GameState, previousAvailableCandidates: Set<AvailableCandidate>)
+    case mustPlace(at: NonEmptyArray<AvailableCandidate>, on: GameState)
+    case mustPass(on: GameState)
+    case completed(with: GameResult, on: GameState)
+    case awaitingReadyOrCompleted(previousGameState: GameState, previousAvailableCandidates: NonEmptyArray<AvailableCandidate>?)
     case failed(GameState, because: FailureReason)
-    case automatorThinking(previousGameState: GameState, previousAvailableCandidates: Set<AvailableCandidate>)
+    case automatorThinking(previousGameState: GameState, previousAvailableCandidates: NonEmptyArray<AvailableCandidate>?)
 
 
     public var gameState: GameState {
         switch self {
-        case .ready(let gameState, availableCandidates: _), .completed(let gameState, result: _),
+        case .mustPlace(at: _, on: let gameState), .mustPass(on: let gameState), .completed(with: _, let gameState),
              .awaitingReadyOrCompleted(previousGameState: let gameState, previousAvailableCandidates: _),
              .automatorThinking(previousGameState: let gameState, previousAvailableCandidates: _),
              .failed(let gameState, because: _):
@@ -213,17 +213,6 @@ public enum GameWithAutomatorsModelState {
 
     public var turn: Turn { self.gameState.turn }
     public var board: Board { self.gameState.board }
-
-
-    public var playerMustPass: Bool {
-        switch self {
-        case .completed, .awaitingReadyOrCompleted, .failed:
-            return false
-        case .ready(_, availableCandidates: let availableCandidates),
-             .automatorThinking(previousGameState: _, previousAvailableCandidates: let availableCandidates):
-            return availableCandidates.isEmpty
-        }
-    }
 
 
     public static func from(
@@ -240,7 +229,7 @@ public enum GameWithAutomatorsModelState {
         case .thinking(on: _, within: let availableCandidates, cancelToken: _):
             return .automatorThinking(
                 previousGameState: automatableGameState.gameState,
-                previousAvailableCandidates: Set(availableCandidates.toArray())
+                previousAvailableCandidates: availableCandidates
             )
 
         case .sleeping:
@@ -251,7 +240,10 @@ public enum GameWithAutomatorsModelState {
                     previousAvailableCandidates: automatableGameState.availableCandidates
                 )
 
-            case .ready(let gameState, availableCandidates: let availableCandidates):
+            case .mustPass(on: let gameState):
+                return .mustPass(on: gameState)
+
+            case .mustPlace(anywhereIn: let availableCandidates, on: let gameState):
                 switch automatorAvailabilities.availability(on: gameState) {
                 case .enabled:
                     return .automatorThinking(
@@ -259,11 +251,11 @@ public enum GameWithAutomatorsModelState {
                         previousAvailableCandidates: availableCandidates
                     )
                 case .disabled:
-                    return .ready(gameState, availableCandidates: availableCandidates)
+                    return .mustPlace(at: availableCandidates, on: gameState)
                 }
 
-            case .completed(let gameState, result: let gameResult):
-                return .completed(gameState, result: gameResult)
+            case .completed(with: let gameResult, on: let gameState):
+                return .completed(with: gameResult, on: gameState)
             }
         }
     }
@@ -271,7 +263,6 @@ public enum GameWithAutomatorsModelState {
 
 
     public enum FailureReason {
-        case passNotAccepted
-        case placeNotAccepted
+        case placeNotAccepted(at: AvailableCandidate)
     }
 }

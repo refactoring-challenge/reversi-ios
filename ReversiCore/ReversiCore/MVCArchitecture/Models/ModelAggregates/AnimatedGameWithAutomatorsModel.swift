@@ -12,7 +12,6 @@ public class AnimatedGameWithAutomatorsModel: AnimatedGameWithAutomatorsModelPro
     private let animatedGameWithAutomatorsModel: GameWithAutomatorsModelProtocol
 
 
-
     public init(
         gameModel: GameModelProtocol,
         gameAutomatorAvailabilitiesModel: GameAutomatorAvailabilitiesModelProtocol,
@@ -112,5 +111,13 @@ extension AnimatedGameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
 
     public func cancel() -> GameCommandResult {
         self.animatedGameWithAutomatorsModel.cancel()
+    }
+}
+
+
+
+extension AnimatedGameWithAutomatorsModel /* : AutomatableGameModelProtocol */ {
+    public var automatableGameStateDidChange: ReactiveSwift.Property<AutomatableGameModelState> {
+        self.animatedGameModel.automatableGameStateDidChange
     }
 }

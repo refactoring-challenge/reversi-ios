@@ -20,8 +20,8 @@ public class AutoBackupGameModel: AutoStoredGameModelProtocol {
             userDefaults: userDefaults,
             reader: userDefaultsJSONReader(forKey: AutoBackupGameModel.key, defaultValue: defaultValue),
             writer: userDefaultsJSONWriter(forKey: AutoBackupGameModel.key)
-        ).asAny()
-        self.userDefaultsModel = userDefaultsModel
+        )
+        self.userDefaultsModel = userDefaultsModel.asAny()
 
         let initialGameState: GameState
         switch userDefaultsModel.userDefaultsValue {
@@ -63,12 +63,19 @@ extension AutoBackupGameModel: GameCommandReceivable {
 
 
 extension AutoBackupGameModel: GameModelProtocol {
-    public var gameModelStateDidChange: Property<GameModelState> {
+    public var gameModelStateDidChange: ReactiveSwift.Property<GameModelState> {
         self.gameModel.gameModelStateDidChange
     }
 
-    public var gameCommandDidAccepted: Signal<GameState.AcceptedCommand, Never> {
+    public var gameCommandDidAccepted: ReactiveSwift.Signal<GameState.AcceptedCommand, Never> {
         self.gameModel.gameCommandDidAccepted
     }
 }
 
+
+
+extension AutoBackupGameModel: AutomatableGameModelProtocol {
+    public var automatableGameStateDidChange: ReactiveSwift.Property<AutomatableGameModelState> {
+        self.gameModel.automatableGameStateDidChange
+    }
+}

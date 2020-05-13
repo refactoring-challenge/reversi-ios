@@ -18,9 +18,7 @@ public enum GameAutomator {
     public static let topLeftSelector: CoordinateSelector = { availableCoordinates in
         let selected = availableCoordinates
             .rest
-            .reduce(availableCoordinates.first) { minAvailable, available in
-                minCoordinate(minAvailable, available)
-            }
+            .reduce(availableCoordinates.first) { minAvailable, available in minCoordinate(minAvailable, available) }
 
         return Hydra.Promise(resolved: selected)
     }
@@ -28,6 +26,26 @@ public enum GameAutomator {
 
     public static let pendingSelector: CoordinateSelector = { _ in
         Hydra.Promise { _, _, _ in }
+    }
+
+
+    #if DEBUG
+    public static var debugDuration: TimeInterval = 0
+    #else
+    public static let debugDuration: TimeInterval = 0
+    #endif
+
+
+    public static func debuggableDelayed(
+        selector: @escaping CoordinateSelector,
+        duration: TimeInterval
+    ) -> CoordinateSelector {
+        #if DEBUG
+        GameAutomator.debugDuration = duration
+        #endif
+        return { availableCandidates in
+            GameAutomator.delayed(selector: selector, GameAutomator.debugDuration)(availableCandidates)
+        }
     }
 }
 
@@ -39,8 +57,8 @@ private func minCoordinate(_ a: AvailableCandidate, _ b: AvailableCandidate) -> 
     return aIndex == bIndex
         ? a
         : aIndex < bIndex
-            ? a
-            : b
+        ? a
+        : b
 }
 
 

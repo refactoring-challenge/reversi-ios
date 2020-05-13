@@ -5,23 +5,26 @@ import ReactiveSwift
 extension GameModelState {
     public func toAutomatableGameState() -> AutomatableGameModelState {
         switch self {
-        case .ready(let gameState, let availableCandidates):
-            return .ready(gameState, availableCandidates: availableCandidates)
-        case .completed(let gameState, let gameResult):
-            return .completed(gameState, result: gameResult)
+        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState):
+            return .mustPlace(anywhereIn: availableCandidates, on: gameState)
+        case .mustPass(on: let gameState):
+            return .mustPass(on: gameState)
+        case .completed(with: let gameResult, on: let gameState):
+            return .completed(with: gameResult, on: gameState)
         }
     }
 }
 
 
+
 extension GameCommandResult {
     public func toAutomatableGameCommandResult() -> GameCommandResult {
-       switch self {
-       case .accepted:
-           return .accepted
-       case .ignored:
-           return .ignored
-       }
+        switch self {
+        case .accepted:
+            return .accepted
+        case .ignored:
+            return .ignored
+        }
     }
 }
 

@@ -35,6 +35,14 @@ public struct FlippableLine {
     }
 
 
+    private func coordinates() -> [Coordinate] {
+        var result = [self.firstEntry.coordinate]
+        result.append(contentsOf: self.middleEntries.map { $0.coordinate }.toArray())
+        result.append(self.lastEntry.coordinate)
+        return result
+    }
+
+
 
     public struct Entry {
         public let coordinate: Coordinate
@@ -118,3 +126,17 @@ extension FlippableLine.Entry: Hashable {}
 
 
 extension FlippableLine.ValidationResult: Equatable {}
+
+
+
+extension FlippableLine: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "[\(self.coordinates().map { $0.debugDescription }.joined(separator: ", "))]"
+    }
+}
+
+
+
+extension FlippableLine: CustomReflectable {
+    public var customMirror: Mirror { Mirror(self, children: []) }
+}
