@@ -394,33 +394,39 @@ public class BoardMVCComposer {
 ```swift
 public enum GameModelState {
     // ゲームは進行中でプレイヤーは石を配置しなければならない。
-    case mustPlace(anywhereIn: Set<AvailableCandidate>, on: Board)
+    case mustPlace(anywhereIn: NonEmptyArray<AvailableCandidate>, on: Board)
 
     // ゲームは進行中でプレイヤーはパスしなければならない。
     case mustPass(on: Board)
 
     // ゲームは決着した。
-    case completed(GameState, GameResult)
+    case completed(with: GameResult, on: GameState)
 }
 ```
 
 もし `GameModel` の公開しているメソッドである `pass()` `place(...)` `reset(...)` が呼ばれると、それが妥当な要求なら Model は内部状態を次のように変化させます：
 
 ```
-        +-----------+
-    +-- | mustPass  |
-    |   +-----------+
-    |       A
- (place)    |
-    |       |     +-- (pass/place) --+
-    |    (place)  |                  |
-    |       |     |                  |
-    |   +-----------+ <--------------+  +-----------+
-    +-> | mustPlace |                   | completed |
-        +-----------+ ---- (place) ---> +-----------+
-              A                               |
-              |                               |
-              +----------- (reset) -----------+
+
+                                       (init)
+                                          |
+                                          |
+        +-------- (place) -------------+  |  +--- (pass/place/reset) --+
+        V                              |  V  |                         |
+  +----------+                      +-----------+                      | 
+  | mustPass | -- (place/reset) --> | mustPlace | <--------------------+
+  +----------+                      +-----------+
+                                       A     |
+                                       |     |
+                                    (reset)  |
+                                       |     |
+                                       |  (place)
+                                       |     |
+                                       |     V
+                                    +-----------+
+                                    | completed |
+                                    +-----------+
+
 ```
 
 ```swift
