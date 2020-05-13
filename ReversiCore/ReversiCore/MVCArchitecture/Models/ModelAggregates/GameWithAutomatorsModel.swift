@@ -70,9 +70,9 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
         // BUG8: Signal from Property does not receive the current value at first.
         ReactiveSwift.Property
             .combineLatest(
-            self.automatableGameModel.automatableGameStateDidChange,
-            self.automationAvailabilityModel.availabilitiesDidChange
-        )
+                self.automatableGameModel.automatableGameStateDidChange,
+                self.automationAvailabilityModel.availabilitiesDidChange
+            )
             .producer
             .take(during: self.lifetime)
             .observe(on: QueueScheduler(qos: .userInitiated))
