@@ -435,6 +435,7 @@ class ViewController: UIViewController
 | リポジトリ | 作者 | アーキテクチャパターン | フレームワーク | UI | 備考 |
 |:--|:--|:--|:--|:--|:--|
 | [refactoring-challenge/reversi-ios](https://github.com/refactoring-challenge/reversi-ios) | [@koher](https://github.com/koher) | Fat View Controller | - | UIKit | 本リポジトリ |
+| [hironytic/reversi-ios](https://github.com/hironytic/reversi-ios) | [@hironytic](https://github.com/hironytic) | MVVM + Redux | Combine | UIKit | ユニットテストとCIも追加しました |
 
 ## License
 
