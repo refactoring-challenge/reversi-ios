@@ -62,6 +62,12 @@ extension Coordinate: CustomDebugStringConvertible {
 
 
 
+extension Coordinate: CustomReflectable {
+    public var customMirror: Mirror { Mirror(self, children: []) }
+}
+
+
+
 public enum CoordinateX: Int, CaseIterable {
     case a = 1
     case b
