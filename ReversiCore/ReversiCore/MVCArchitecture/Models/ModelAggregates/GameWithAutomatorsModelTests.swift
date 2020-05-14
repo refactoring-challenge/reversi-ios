@@ -14,7 +14,7 @@ class GameWithAutomatorsModelTests: XCTestCase {
         self.continueAfterFailure = false
 
         let model = GameWithAutomatorsModel(
-            automatableGameModel: GameModel(startsWith: .initial),
+            automatableGameModel: GameModel(initialState: .initial),
             // NOTE: Use topLeftSelector to make deterministic.
             automatorModel: GameAutomatorModel(
                 strategy: GameAutomator.topLeftSelector
@@ -59,7 +59,7 @@ class GameWithAutomatorsModelTests: XCTestCase {
         self.continueAfterFailure = false
 
         let model = GameWithAutomatorsModel(
-            automatableGameModel: GameModel(startsWith: .initial),
+            automatableGameModel: GameModel(initialState: .initial),
             automatorModel: GameAutomatorModel(
                 // NOTE: Use topLeftSelector to make deterministic.
                 strategy: GameAutomator.topLeftSelector
@@ -105,7 +105,7 @@ class GameWithAutomatorsModelTests: XCTestCase {
         self.continueAfterFailure = false
 
         let model = GameWithAutomatorsModel(
-            automatableGameModel: GameModel(startsWith: .initial),
+            automatableGameModel: GameModel(initialState: .initial),
             automatorModel: GameAutomatorModel(
                 // NOTE: Use topLeftSelector to make deterministic.
                 strategy: GameAutomator.topLeftSelector

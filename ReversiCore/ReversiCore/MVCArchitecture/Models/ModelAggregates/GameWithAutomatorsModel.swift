@@ -49,16 +49,14 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
             .combineLatest(
                 automatableGameModel.automatableGameStateDidChange,
                 automationAvailabilityModel.availabilitiesDidChange,
-                automatorModel.automatorDidProgress,
-                automatorDidFail
+                automatorModel.automatorDidProgress
             )
-            .map {
-                let (boardAvailability, automationAvailabilities, automatorProgress, lastFailureReason) = $0
+            .map { (triple: (AutomatableGameModelState, GameAutomatorAvailabilities, GameAutomatorProgress)) in
+                let (boardAvailability, automationAvailabilities, automatorProgress) = triple
                 return GameWithAutomatorsModelState.from(
                     automatableGameState: boardAvailability,
                     automatorAvailabilities: automationAvailabilities,
-                    automatorProgress: automatorProgress,
-                    lastFailureReason: lastFailureReason
+                    automatorProgress: automatorProgress
                 )
             }
 
@@ -100,10 +98,9 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
             .start()
 
         automatorModel.automatorDidChoice
-            .producer
             .take(during: self.lifetime)
             .observe(on: QueueScheduler(qos: .userInitiated))
-            .on(value: { [weak self] selected in
+            .observeValues { [weak self] selected in
                 guard let self = self else { return }
                 switch self.automatableGameModel.place(at: selected.coordinate) {
                 case .ignored:
@@ -112,8 +109,7 @@ public class GameWithAutomatorsModel: GameWithAutomatorsModelProtocol {
                 case .accepted:
                     return
                 }
-            })
-            .start()
+            }
     }
 
 
@@ -218,13 +214,8 @@ public enum GameWithAutomatorsModelState {
     public static func from(
         automatableGameState: AutomatableGameModelState,
         automatorAvailabilities: GameAutomatorAvailabilities,
-        automatorProgress: GameAutomatorProgress,
-        lastFailureReason: FailureReason?
+        automatorProgress: GameAutomatorProgress
     ) -> GameWithAutomatorsModelState {
-        if let failureReason = lastFailureReason {
-            return .failed(automatableGameState.gameState, because: failureReason)
-        }
-
         switch automatorProgress {
         case .thinking(on: _, within: let availableCandidates, cancelToken: _):
             return .automatorThinking(

@@ -5,11 +5,11 @@ import ReactiveSwift
 extension GameModelState {
     public func toAutomatableGameState() -> AutomatableGameModelState {
         switch self {
-        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState):
+        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState, lastAcceptedCommand: _):
             return .mustPlace(anywhereIn: availableCandidates, on: gameState)
-        case .mustPass(on: let gameState):
+        case .mustPass(on: let gameState, lastAcceptedCommand: _):
             return .mustPass(on: gameState)
-        case .completed(with: let gameResult, on: let gameState):
+        case .completed(with: let gameResult, on: let gameState, lastAcceptedCommand: _):
             return .completed(with: gameResult, on: gameState)
         }
     }

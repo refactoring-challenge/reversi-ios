@@ -4,7 +4,6 @@ import ReactiveSwift
 
 public protocol AnimatedGameModelProtocol: BoardAnimationModelProtocol, AutomatableGameModelProtocol {
     var animatedGameStateDidChange: ReactiveSwift.Property<AnimatedGameModelState> { get }
-    var animatedGameCommandDidAccept: ReactiveSwift.Signal<GameState.AcceptedCommand, Never> { get }
 }
 
 
@@ -17,9 +16,6 @@ public extension AnimatedGameModelProtocol {
 
 public class AnimatedGameModel: AnimatedGameModelProtocol {
     public let animatedGameStateDidChange: ReactiveSwift.Property<AnimatedGameModelState>
-    public var animatedGameCommandDidAccept: ReactiveSwift.Signal<GameState.AcceptedCommand, Never> {
-        self.gameModel.gameCommandDidAccepted
-    }
 
     private let gameModel: GameModelProtocol
     private let boardAnimationModel: BoardAnimationModelProtocol
@@ -40,12 +36,13 @@ public class AnimatedGameModel: AnimatedGameModelProtocol {
 
 
     private func start() {
-        self.gameModel.gameCommandDidAccepted
+        self.gameModel.gameModelStateDidChange
             .producer
             .take(during: self.lifetime)
             .observe(on: QueueScheduler(qos: .userInitiated))
-            .on(value: { [weak self] accepted in
-                self?.boardAnimationModel.requestAnimation(by: accepted)
+            .on(value: { [weak self] gameModelState in
+                guard let lastAcceptedCommand = gameModelState.lastAcceptedCommand else { return }
+                self?.boardAnimationModel.requestAnimation(by: lastAcceptedCommand)
             })
             .start()
     }
@@ -134,11 +131,11 @@ public enum AnimatedGameModelState {
 
     public static func notAnimating(from gameModelState: GameModelState) -> AnimatedGameModelState {
         switch gameModelState {
-        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState):
+        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState, lastAcceptedCommand: _):
             return .mustPlace(anywhereIn: availableCandidates, on: gameState, isAnimating: false)
-        case .mustPass(on: let gameState):
+        case .mustPass(on: let gameState, lastAcceptedCommand: _):
             return .mustPass(on: gameState, isAnimating: false)
-        case .completed(with: let gameResult, on: let gameState):
+        case .completed(with: let gameResult, on: let gameState, lastAcceptedCommand: _):
             return .completed(with: gameResult, on: gameState, isAnimating: false)
         }
     }
@@ -146,11 +143,11 @@ public enum AnimatedGameModelState {
 
     public static func animating(from gameModelState: GameModelState) -> AnimatedGameModelState {
         switch gameModelState {
-        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState):
+        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState, lastAcceptedCommand: _):
             return .mustPlace(anywhereIn: availableCandidates, on: gameState, isAnimating: true)
-        case .mustPass(on: let gameState):
+        case .mustPass(on: let gameState, lastAcceptedCommand: _):
             return .mustPass(on: gameState, isAnimating: true)
-        case .completed(with: let gameResult, on: let gameState):
+        case .completed(with: let gameResult, on: let gameState, lastAcceptedCommand: _):
             return .completed(with: gameResult, on: gameState, isAnimating: true)
         }
     }

@@ -27,7 +27,7 @@ public struct GameState {
 
     public func availableCandidates() -> Set<AvailableCandidate> {
         let availableLines = self.board.availableLines(for: self.turn)
-        return AvailableCandidate.from(flippableLines: availableLines)
+        return AvailableCandidate.from(who: self.turn, flippableLines: availableLines)
     }
 
 
@@ -102,8 +102,8 @@ public struct AvailableCandidate {
 
 
     public init(
-        unsafeSelected selectedCoordinate: Coordinate,
-        willFlip linesWillFlip: NonEmptyArray<FlippableLine>
+        unsafeCoordinateToPlace selectedCoordinate: Coordinate,
+        willFlipLines linesWillFlip: NonEmptyArray<FlippableLine>
     ) {
         self.coordinate = selectedCoordinate
         self.linesShouldFlip = linesWillFlip
@@ -113,6 +113,7 @@ public struct AvailableCandidate {
     // NOTE: AvailableCoordinate ensures the coordinate is almost valid by hiding initializer.
     //       This is based on only GameState can instantiate AvailableCoordinate.
     fileprivate static func from<Lines: Sequence>(
+        who turn: Turn,
         flippableLines: Lines
     ) -> Set<AvailableCandidate> where Lines.Element == FlippableLine {
         var result: [Coordinate: NonEmptyArray<FlippableLine>] = [:]
@@ -130,7 +131,7 @@ public struct AvailableCandidate {
         return Set<AvailableCandidate>(result.map {
             let (coordinate, linesWillFlip) = $0
             // NOTE: It is safe because the linesWillFlip must have the coordinate as the end.
-            return AvailableCandidate(unsafeSelected: coordinate, willFlip: linesWillFlip)
+            return AvailableCandidate(unsafeCoordinateToPlace: coordinate, willFlipLines: linesWillFlip)
         })
     }
 }
@@ -150,3 +151,7 @@ extension AvailableCandidate: CustomDebugStringConvertible {
 extension AvailableCandidate: CustomReflectable {
     public var customMirror: Mirror { Mirror(reflecting: self.linesShouldFlip) }
 }
+
+
+
+extension GameState.AcceptedCommand: Equatable {}

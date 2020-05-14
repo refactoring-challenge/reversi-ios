@@ -30,7 +30,7 @@ public class AutoBackupGameModel: AutoStoredGameModelProtocol {
         case .success(let storedGameState):
             initialGameState = storedGameState
         }
-        self.gameModel = GameModel(initialState: .next(by: initialGameState))
+        self.gameModel = GameModel(initialState: .from(for: initialGameState, lastAcceptedCommand: nil))
 
         self.start()
     }
@@ -65,10 +65,6 @@ extension AutoBackupGameModel: GameCommandReceivable {
 extension AutoBackupGameModel: GameModelProtocol {
     public var gameModelStateDidChange: ReactiveSwift.Property<GameModelState> {
         self.gameModel.gameModelStateDidChange
-    }
-
-    public var gameCommandDidAccepted: ReactiveSwift.Signal<GameState.AcceptedCommand, Never> {
-        self.gameModel.gameCommandDidAccepted
     }
 }
 

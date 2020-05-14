@@ -55,11 +55,6 @@ extension AnimatedGameWithAutomatorsModel: GameCommandReceivable {
 
 extension AnimatedGameWithAutomatorsModel: GameModelProtocol {
     public var gameModelStateDidChange: Property<GameModelState> { self.gameModel.gameModelStateDidChange }
-
-
-    public var gameCommandDidAccepted: Signal<GameState.AcceptedCommand, Never> {
-        self.gameModel.gameCommandDidAccepted
-    }
 }
 
 

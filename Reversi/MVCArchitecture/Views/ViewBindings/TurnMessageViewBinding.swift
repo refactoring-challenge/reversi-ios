@@ -19,9 +19,10 @@ public class TurnMessageViewBinding {
             .observe(on: UIScheduler())
             .on(value: { [weak self] gameModelState in
                 switch gameModelState {
-                case .mustPlace(anywhereIn: _, on: let gameState), .mustPass(on: let gameState):
+                case .mustPlace(anywhereIn: _, on: let gameState, lastAcceptedCommand: _),
+                     .mustPass(on: let gameState, lastAcceptedCommand: _):
                     self?.turnViewHandle.apply(message: .inPlay(turn: gameState.turn))
-                case .completed(with: let gameResult, on: _):
+                case .completed(with: let gameResult, on: _, lastAcceptedCommand: _):
                     self?.turnViewHandle.apply(message: .completed(result: gameResult))
                 }
             })

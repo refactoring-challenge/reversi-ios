@@ -20,8 +20,8 @@ class BoardAnimationModelTests: XCTestCase {
             #line: TestCase(
                 start: .placing(
                     with: AvailableCandidate(
-                        unsafeSelected: Coordinate(x: .a, y: .one),
-                        willFlip: NonEmptyArray([
+                        unsafeCoordinateToPlace: Coordinate(x: .a, y: .one),
+                        willFlipLines: NonEmptyArray([
                             FlippableLine(
                                 board: Board(unsafeArray: [
                                     [target, .light, .dark, nil, nil, nil, nil, nil],
@@ -73,8 +73,8 @@ class BoardAnimationModelTests: XCTestCase {
             #line: TestCase(
                 start: .placing(
                     with: AvailableCandidate(
-                        unsafeSelected: Coordinate(x: .a, y: .one),
-                        willFlip:
+                        unsafeCoordinateToPlace: Coordinate(x: .a, y: .one),
+                        willFlipLines:
                         NonEmptyArray([
                             FlippableLine(
                                 board: Board(unsafeArray: [
@@ -144,8 +144,8 @@ class BoardAnimationModelTests: XCTestCase {
             #line: TestCase(
                 start: .placing(
                     with: AvailableCandidate(
-                        unsafeSelected: Coordinate(x: .a, y: .one),
-                        willFlip: NonEmptyArray([
+                        unsafeCoordinateToPlace: Coordinate(x: .a, y: .one),
+                        willFlipLines: NonEmptyArray([
                             FlippableLine(
                                 board: Board(unsafeArray: [
                                     [target, .light, .light, .light, .dark, nil, nil, nil],

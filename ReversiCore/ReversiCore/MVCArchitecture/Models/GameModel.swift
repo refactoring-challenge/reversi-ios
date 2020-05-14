@@ -4,7 +4,6 @@ import ReactiveSwift
 
 public protocol GameModelProtocol: AutomatableGameModelProtocol {
     var gameModelStateDidChange: ReactiveSwift.Property<GameModelState> { get }
-    var gameCommandDidAccepted: ReactiveSwift.Signal<GameState.AcceptedCommand, Never> { get }
 }
 
 
@@ -17,7 +16,6 @@ extension GameModelProtocol {
 
 public class GameModel: GameModelProtocol {
     public let gameModelStateDidChange: ReactiveSwift.Property<GameModelState>
-    public let gameCommandDidAccepted: ReactiveSwift.Signal<GameState.AcceptedCommand, Never>
 
     public private(set) var gameModelState: GameModelState {
         get { self.stateDidChangeMutable.value }
@@ -25,29 +23,20 @@ public class GameModel: GameModelProtocol {
     }
 
     private let stateDidChangeMutable: ReactiveSwift.MutableProperty<GameModelState>
-    private let commandDidAcceptedObserver: ReactiveSwift.Signal<GameState.AcceptedCommand, Never>.Observer
 
 
     public init(initialState: GameModelState) {
         let stateDidChangeMutable = ReactiveSwift.MutableProperty<GameModelState>(initialState)
         self.stateDidChangeMutable = stateDidChangeMutable
         self.gameModelStateDidChange = ReactiveSwift.Property(stateDidChangeMutable)
-
-        (self.gameCommandDidAccepted, self.commandDidAcceptedObserver) =
-            ReactiveSwift.Signal<GameState.AcceptedCommand, Never>.pipe()
-    }
-
-
-    public convenience init(startsWith gameState: GameState) {
-        self.init(initialState: .next(by: gameState))
     }
 
 
     fileprivate func transit(by accepted: GameState.AcceptedCommand) {
-        self.gameModelState = .next(by: accepted.nextGameState)
-        self.commandDidAcceptedObserver.send(value: accepted)
+        self.gameModelState = .from(for: accepted.nextGameState, lastAcceptedCommand: accepted)
     }
 }
+
 
 
 extension GameModel: GameCommandReceivable {
@@ -57,7 +46,7 @@ extension GameModel: GameCommandReceivable {
             // NOTE: Ignore illegal operations from views.
             return .ignored
 
-        case .mustPass(on: let gameState):
+        case .mustPass(on: let gameState, lastAcceptedCommand: _):
             // NOTE: It is safe if the availableCoordinates is calculated on the gameState.
             let accepted = gameState.unsafePass()
             self.transit(by: accepted)
@@ -72,7 +61,7 @@ extension GameModel: GameCommandReceivable {
             // NOTE: Ignore illegal operations from views.
             return .ignored
 
-        case .mustPlace(anywhereIn: let availableCoordinates, on: let gameState):
+        case .mustPlace(anywhereIn: let availableCoordinates, on: let gameState, lastAcceptedCommand: _):
             guard let selected = availableCoordinates.first(
                 where: { available in available.coordinate == unsafeCoordinate }) else {
                 // NOTE: Ignore illegal operations from views.
@@ -97,14 +86,27 @@ extension GameModel: GameCommandReceivable {
 
 
 public enum GameModelState {
-    case mustPlace(anywhereIn: NonEmptyArray<AvailableCandidate>, on: GameState)
-    case mustPass(on: GameState)
-    case completed(with: GameResult, on: GameState)
+    case mustPlace(
+        anywhereIn: NonEmptyArray<AvailableCandidate>,
+        on: GameState,
+        lastAcceptedCommand: GameState.AcceptedCommand?
+    )
+    case mustPass(
+        on: GameState,
+        lastAcceptedCommand: GameState.AcceptedCommand?
+    )
+    case completed(
+        with: GameResult,
+        on: GameState,
+        lastAcceptedCommand: GameState.AcceptedCommand?
+    )
 
 
     public var gameState: GameState {
         switch self {
-        case .mustPlace(anywhereIn: _, on: let gameState), .mustPass(on: let gameState), .completed(with: _, on: let gameState):
+        case .mustPlace(anywhereIn: _, on: let gameState, lastAcceptedCommand: _),
+             .mustPass(on: let gameState, lastAcceptedCommand: _),
+             .completed(with: _, on: let gameState, lastAcceptedCommand: _):
             return gameState
         }
     }
@@ -112,7 +114,7 @@ public enum GameModelState {
 
     public var availableCandidates: NonEmptyArray<AvailableCandidate>? {
         switch self {
-        case .mustPlace(anywhereIn: let availableCandidates, on: _):
+        case .mustPlace(anywhereIn: let availableCandidates, on: _, lastAcceptedCommand: _):
             return availableCandidates
         case .mustPass, .completed:
             return nil
@@ -124,18 +126,31 @@ public enum GameModelState {
     public var board: Board { self.gameState.board }
 
 
-    public static func initial() -> GameModelState { .next(by: .initial) }
+    public var lastAcceptedCommand: GameState.AcceptedCommand? {
+        switch self {
+        case .mustPass(on: _, lastAcceptedCommand: let command),
+             .mustPlace(anywhereIn: _, on: _, lastAcceptedCommand: let command),
+             .completed(with: _, on: _, lastAcceptedCommand: let command):
+            return command
+        }
+    }
 
 
-    public static func next(by gameState: GameState) -> GameModelState {
+    public static let initial = GameModelState.from(for: .initial, lastAcceptedCommand: nil)
+
+
+    public static func from(
+        for gameState: GameState,
+        lastAcceptedCommand accepted: GameState.AcceptedCommand?
+    ) -> GameModelState {
         if let gameResult = gameState.gameResult() {
-            return .completed(with: gameResult, on: gameState)
+            return .completed(with: gameResult, on: gameState, lastAcceptedCommand: accepted)
         }
         // FIXME: Memoize to prevent calling availableCoordinates because it is expensive.
         guard let nonEmptyAvailableCandidates = NonEmptyArray(gameState.availableCandidates()) else {
-            return .mustPass(on: gameState)
+            return .mustPass(on: gameState, lastAcceptedCommand: accepted)
         }
-        return .mustPlace(anywhereIn: nonEmptyAvailableCandidates, on: gameState)
+        return .mustPlace(anywhereIn: nonEmptyAvailableCandidates, on: gameState, lastAcceptedCommand: accepted)
     }
 }
 
