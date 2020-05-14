@@ -1,5 +1,6 @@
 import UIKitTestable
 import ReversiCore
+import ReactiveSwift
 
 
 
@@ -56,33 +57,15 @@ public class BoardMVCComposer {
         //
         //       (lldb) // Preparing $composer typically via UIApplication.shared.keyWindow!.rootViewController!....
         //       (lldb) po $composer.modelTracker.isEnabled = true
-        self.modelTracker = ComposedModelTracker(
-            trackers: [
-                ModelTracker(
-                    observing: animatedGameWithAutomatorsModel.boardAnimationStateDidChange,
-                    isEnabled: isEventTracesEnabled
-                ),
-                ModelTracker(
-                    observing: animatedGameWithAutomatorsModel.availabilitiesDidChange,
-                    isEnabled: isEventTracesEnabled
-                ),
-                ModelTracker(
-                    observing: animatedGameWithAutomatorsModel.automatorDidProgress,
-                    isEnabled: isEventTracesEnabled
-                ),
-                ModelTracker(
-                    observing: animatedGameWithAutomatorsModel.gameModelStateDidChange,
-                    isEnabled: isEventTracesEnabled
-                ),
-                ModelTracker(
-                    observing: animatedGameWithAutomatorsModel.automatableGameStateDidChange,
-                    isEnabled: isEventTracesEnabled
-                ),
-                ModelTracker(
-                    observing: animatedGameWithAutomatorsModel.gameWithAutomatorsModelStateDidChange,
-                    isEnabled: isEventTracesEnabled
-                ),
-            ],
+        self.modelTracker = ModelTracker(
+            observing: ReactiveSwift.Property.combineLatest(
+                animatedGameWithAutomatorsModel.boardAnimationStateDidChange,
+                animatedGameWithAutomatorsModel.availabilitiesDidChange,
+                animatedGameWithAutomatorsModel.automatorDidProgress,
+                animatedGameWithAutomatorsModel.gameModelStateDidChange,
+                animatedGameWithAutomatorsModel.automatableGameStateDidChange,
+                animatedGameWithAutomatorsModel.gameWithAutomatorsModelStateDidChange
+            ),
             isEnabled: isEventTracesEnabled
         )
 
