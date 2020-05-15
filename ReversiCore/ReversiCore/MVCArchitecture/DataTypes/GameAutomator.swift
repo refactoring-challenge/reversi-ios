@@ -10,7 +10,7 @@ public enum GameAutomator {
     }
 
 
-    public static func delayed(selector: @escaping CoordinateSelector, _ duration: TimeInterval) -> CoordinateSelector {
+    public static func delayed(selector: @escaping CoordinateSelector, duration: TimeInterval) -> CoordinateSelector {
         { availableCoordinates in selector(availableCoordinates).defer(in: .utility, duration) }
     }
 
@@ -31,22 +31,21 @@ public enum GameAutomator {
 
     #if DEBUG
     public static var debugDuration: TimeInterval = 0
-    #else
-    public static let debugDuration: TimeInterval = 0
-    #endif
 
 
+    /// - Example: `(lldb) po debugFastThinking()`
     public static func debuggableDelayed(
         selector: @escaping CoordinateSelector,
         duration: TimeInterval
     ) -> CoordinateSelector {
-        #if DEBUG
         GameAutomator.debugDuration = duration
-        #endif
         return { availableCandidates in
-            GameAutomator.delayed(selector: selector, GameAutomator.debugDuration)(availableCandidates)
+            GameAutomator.delayed(selector: selector, duration: GameAutomator.debugDuration)(availableCandidates)
         }
     }
+    #else
+    public static let debugDuration: TimeInterval = 0
+    #endif
 }
 
 

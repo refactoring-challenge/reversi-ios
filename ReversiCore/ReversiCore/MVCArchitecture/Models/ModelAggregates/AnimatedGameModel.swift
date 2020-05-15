@@ -2,7 +2,13 @@ import ReactiveSwift
 
 
 
-public protocol AnimatedGameModelProtocol: BoardAnimationModelProtocol, AutomatableGameModelProtocol {
+public protocol BoardAnimationCommandReceivable: class {
+    func markAnimationAsCompleted()
+}
+
+
+
+public protocol AnimatedGameModelProtocol: BoardAnimationCommandReceivable, AutomatableGameModelProtocol {
     var animatedGameStateDidChange: ReactiveSwift.Property<AnimatedGameModelState> { get }
 }
 
@@ -16,50 +22,74 @@ public extension AnimatedGameModelProtocol {
 
 public class AnimatedGameModel: AnimatedGameModelProtocol {
     public let animatedGameStateDidChange: ReactiveSwift.Property<AnimatedGameModelState>
+    public let boardAnimationStateDidChange: ReactiveSwift.Property<BoardAnimationState>
 
     private let gameModel: GameModelProtocol
-    private let boardAnimationModel: BoardAnimationModelProtocol
+    private let boardAnimationStateDidChangeMutable: ReactiveSwift.MutableProperty<BoardAnimationState>
+
+    public private(set) var boardAnimationState: BoardAnimationState {
+        get { self.boardAnimationStateDidChangeMutable.value }
+        set { self.boardAnimationStateDidChangeMutable.value = newValue }
+    }
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
-    public init(gameModel: GameModelProtocol, boardAnimationModel: BoardAnimationModelProtocol) {
+    public init(gameModel: GameModelProtocol) {
         self.gameModel = gameModel
-        self.boardAnimationModel = boardAnimationModel
 
-        self.animatedGameStateDidChange = ReactiveSwift.Property
-            .combineLatest(gameModel.gameModelStateDidChange, boardAnimationModel.boardAnimationStateDidChange)
-            .map(AnimatedGameModelState.from(_:))
+        let initialState: BoardAnimationState = .notAnimating(on: gameModel.gameModelState.board)
+        let boardAnimationStateDidChangeMutable = ReactiveSwift.MutableProperty(initialState)
+        self.boardAnimationStateDidChangeMutable = boardAnimationStateDidChangeMutable
+        self.boardAnimationStateDidChange = ReactiveSwift.Property(boardAnimationStateDidChangeMutable)
 
-        // BUG10: Did not apply board at BoardView because forgot notify accepted commands to boardAnimationModel.
+        self.animatedGameStateDidChange = boardAnimationStateDidChangeMutable
+            .map { boardAnimationState -> AnimatedGameModelState in
+                .from(
+                    gameModelState: gameModel.gameModelState,
+                    animationState: boardAnimationState
+                )
+            }
+
         self.start()
     }
 
 
     private func start() {
-        self.gameModel.gameModelStateDidChange
+        // BUG10: Did not apply board at BoardView because forgot notify accepted commands to boardAnimationModel.
+        gameModel.gameModelStateDidChange
             .producer
             .take(during: self.lifetime)
-            .observe(on: QueueScheduler(qos: .userInitiated))
+            .observe(on: QueueScheduler(qos: .userInteractive))
             .on(value: { [weak self] gameModelState in
-                guard let lastAcceptedCommand = gameModelState.lastAcceptedCommand else { return }
-                self?.boardAnimationModel.requestAnimation(by: lastAcceptedCommand)
+                guard let self = self else { return }
+                self.boardAnimationState = .beginAnimationTransaction(
+                    for: gameModelState,
+                    lastAnimationState: self.boardAnimationState
+                )
             })
             .start()
     }
+
+
+    public func markAnimationAsCompleted() {
+        guard let nextAnimationState = self.boardAnimationState.nextInTransaction else { return }
+        self.boardAnimationState = nextAnimationState
+    }
 }
+
 
 
 extension AnimatedGameModel: GameCommandReceivable {
     public func pass() -> GameCommandResult {
         // NOTE: Should not accept any user-initiated command that updating the board during animations except resets.
-        guard !self.boardAnimationModel.boardAnimationState.isAnimating else { return .ignored }
+        guard !self.animatedGameState.isAnimating else { return .ignored }
         return self.gameModel.pass()
     }
 
 
     public func place(at coordinate: Coordinate) -> GameCommandResult {
         // NOTE: Should not accept any user-initiated command that updating the board during animations except resets.
-        guard !self.boardAnimationModel.boardAnimationState.isAnimating else { return .ignored }
+        guard !self.animatedGameState.isAnimating else { return .ignored }
         return self.gameModel.place(at: coordinate)
     }
 
@@ -72,34 +102,17 @@ extension AnimatedGameModel: GameCommandReceivable {
 
 
 
-extension AnimatedGameModel: BoardAnimationModelProtocol {
-    public var boardAnimationState: BoardAnimationModelState { self.boardAnimationModel.boardAnimationState }
-    public var boardAnimationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState> { self.boardAnimationModel.boardAnimationStateDidChange }
-
-
-    public func requestAnimation(by accepted: GameState.AcceptedCommand) {
-        self.boardAnimationModel.requestAnimation(by: accepted)
-    }
-
-
-    public func markAnimationAsCompleted() {
-        self.boardAnimationModel.markAnimationAsCompleted()
-    }
-}
-
-
-
 public enum AnimatedGameModelState {
-    case mustPlace(anywhereIn: NonEmptyArray<AvailableCandidate>, on: GameState, isAnimating: Bool)
-    case mustPass(on: GameState, isAnimating: Bool)
-    case completed(with: GameResult, on: GameState, isAnimating: Bool)
+    case mustPlace(anywhereIn: NonEmptyArray<AvailableCandidate>, on: GameState, animationState: BoardAnimationState)
+    case mustPass(on: GameState, animationState: BoardAnimationState)
+    case completed(with: GameResult, on: GameState, animationState: BoardAnimationState)
 
 
     public var gameState: GameState {
         switch self {
-        case .mustPlace(anywhereIn: _, on: let gameState, isAnimating: _),
-             .mustPass(on: let gameState, isAnimating: _),
-             .completed(with: _, on: let gameState, isAnimating: _):
+        case .mustPlace(anywhereIn: _, on: let gameState, animationState: _),
+             .mustPass(on: let gameState, animationState: _),
+             .completed(with: _, on: let gameState, animationState: _):
             return gameState
         }
     }
@@ -107,7 +120,7 @@ public enum AnimatedGameModelState {
 
     public var availableCandidates: NonEmptyArray<AvailableCandidate>? {
         switch self {
-        case .mustPlace(anywhereIn: let availableCandidates, on: _, isAnimating: _):
+        case .mustPlace(anywhereIn: let availableCandidates, on: _, animationState: _):
             return availableCandidates
         case .mustPass, .completed:
             return nil
@@ -119,52 +132,54 @@ public enum AnimatedGameModelState {
     public var board: Board { self.gameState.board }
 
 
-    public var isAnimating: Bool {
+    public var isAnimating: Bool { self.animationState.isAnimating }
+
+
+    public var animationState: BoardAnimationState {
         switch self {
-        case .mustPlace(anywhereIn: _, on: _, isAnimating: let isAnimating),
-             .mustPass(on: _, isAnimating: let isAnimating),
-             .completed(with: _, on: _, isAnimating: let isAnimating):
-            return isAnimating
+        case .mustPlace(anywhereIn: _, on: _, animationState: let animationState),
+             .mustPass(on: _, animationState: let animationState),
+             .completed(with: _, on: _, animationState: let animationState):
+            return animationState
         }
     }
 
 
-    public static func notAnimating(from gameModelState: GameModelState) -> AnimatedGameModelState {
-        switch gameModelState {
-        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState, lastAcceptedCommand: _):
-            return .mustPlace(anywhereIn: availableCandidates, on: gameState, isAnimating: false)
-        case .mustPass(on: let gameState, lastAcceptedCommand: _):
-            return .mustPass(on: gameState, isAnimating: false)
-        case .completed(with: let gameResult, on: let gameState, lastAcceptedCommand: _):
-            return .completed(with: gameResult, on: gameState, isAnimating: false)
-        }
-    }
+    public static func beginAnimationTransaction(
+        gameModelState: GameModelState,
+        lastAnimationState: BoardAnimationState
+    ) -> AnimatedGameModelState {
+        let nextAnimationState: BoardAnimationState = .beginAnimationTransaction(
+            for: gameModelState,
+            lastAnimationState: lastAnimationState
+        )
 
-
-    public static func animating(from gameModelState: GameModelState) -> AnimatedGameModelState {
         switch gameModelState {
-        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState, lastAcceptedCommand: _):
-            return .mustPlace(anywhereIn: availableCandidates, on: gameState, isAnimating: true)
+        case .mustPlace(anywhereIn: let candidates, on: let gameState, lastAcceptedCommand: _):
+            return .mustPlace(anywhereIn: candidates, on: gameState, animationState: nextAnimationState)
+
         case .mustPass(on: let gameState, lastAcceptedCommand: _):
-            return .mustPass(on: gameState, isAnimating: true)
-        case .completed(with: let gameResult, on: let gameState, lastAcceptedCommand: _):
-            return .completed(with: gameResult, on: gameState, isAnimating: true)
+            return .mustPass(on: gameState, animationState: nextAnimationState)
+
+        case .completed(with: let result, on: let gameState, lastAcceptedCommand: _):
+            return .completed(with: result, on: gameState, animationState: nextAnimationState)
         }
     }
 
 
     public static func from(
         gameModelState: GameModelState,
-        animationState: BoardAnimationModelState
+        animationState: BoardAnimationState
     ) -> AnimatedGameModelState {
-        animationState.isAnimating
-            ? .animating(from: gameModelState)
-            : .notAnimating(from: gameModelState)
-    }
+        switch gameModelState {
+        case .mustPlace(anywhereIn: let candidates, on: let gameState, lastAcceptedCommand: _):
+            return .mustPlace(anywhereIn: candidates, on: gameState, animationState: animationState)
 
+        case .mustPass(on: let gameState, lastAcceptedCommand: _):
+            return .mustPass(on: gameState, animationState: animationState)
 
-    public static func from(_ tuple: (gameState: GameModelState, animationState: BoardAnimationModelState)
-    ) -> AnimatedGameModelState {
-        self.from(gameModelState: tuple.gameState, animationState: tuple.animationState)
+        case .completed(with: let result, on: let gameState, lastAcceptedCommand: _):
+            return .completed(with: result, on: gameState, animationState: animationState)
+        }
     }
 }

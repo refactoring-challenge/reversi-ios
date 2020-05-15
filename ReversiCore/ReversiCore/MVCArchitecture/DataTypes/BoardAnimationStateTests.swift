@@ -4,10 +4,10 @@ import ReversiCore
 
 
 
-class BoardAnimationModelTests: XCTestCase {
+class BoardAnimationStateTests: XCTestCase {
     func testNext() {
         struct TestCase {
-            let start: BoardAnimationModelState
+            let start: BoardAnimationState
             let expectedHistoryUntilNotAnimating: [Coordinate]
         }
 
@@ -20,6 +20,7 @@ class BoardAnimationModelTests: XCTestCase {
             #line: TestCase(
                 start: .placing(
                     with: AvailableCandidate(
+                        whose: .first,
                         unsafeCoordinateToPlace: Coordinate(x: .a, y: .one),
                         willFlipLines: NonEmptyArray([
                             FlippableLine(
@@ -41,7 +42,6 @@ class BoardAnimationModelTests: XCTestCase {
                             )!,
                         ])!
                     ),
-                    who: .first,
                     in: BoardAnimationTransaction(
                         begin: Board(unsafeArray: [
                             [target, .light, .dark, nil, nil, nil, nil, nil],
@@ -73,9 +73,9 @@ class BoardAnimationModelTests: XCTestCase {
             #line: TestCase(
                 start: .placing(
                     with: AvailableCandidate(
+                        whose: .first,
                         unsafeCoordinateToPlace: Coordinate(x: .a, y: .one),
-                        willFlipLines:
-                        NonEmptyArray([
+                        willFlipLines: NonEmptyArray([
                             FlippableLine(
                                 board: Board(unsafeArray: [
                                     [target, .light, .dark, nil, nil, nil, nil, nil],
@@ -110,8 +110,8 @@ class BoardAnimationModelTests: XCTestCase {
                                 )!,
                                 turn: .first
                             )!,
-                        ])!),
-                    who: .first,
+                        ])!
+                    ),
                     in: BoardAnimationTransaction(
                         begin: Board(unsafeArray: [
                             [target, .light, .dark, nil, nil, nil, nil, nil],
@@ -144,6 +144,7 @@ class BoardAnimationModelTests: XCTestCase {
             #line: TestCase(
                 start: .placing(
                     with: AvailableCandidate(
+                        whose: .first,
                         unsafeCoordinateToPlace: Coordinate(x: .a, y: .one),
                         willFlipLines: NonEmptyArray([
                             FlippableLine(
@@ -165,7 +166,6 @@ class BoardAnimationModelTests: XCTestCase {
                             )!,
                         ])!
                     ),
-                    who: .first,
                     in: BoardAnimationTransaction(
                         begin: Board(unsafeArray: [
                             [target, .light, .light, .light, .dark, nil, nil, nil],
@@ -202,7 +202,7 @@ class BoardAnimationModelTests: XCTestCase {
             let (line, testCase) = $0
 
             var actualHistoryWhileAnimating = [Coordinate]()
-            var prevState: BoardAnimationModelState? = testCase.start
+            var prevState: BoardAnimationState? = testCase.start
             while let state = prevState {
                 guard state.isAnimating else { break }
                 actualHistoryWhileAnimating.append(state.animatingCoordinate!)

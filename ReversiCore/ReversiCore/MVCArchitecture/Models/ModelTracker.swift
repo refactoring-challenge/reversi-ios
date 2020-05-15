@@ -35,41 +35,19 @@ public class ModelTracker<T>: ModelTrackerProtocol {
 
 
     public func printRecentHistory() {
-        var text = ""
-        text.write("===== \(String(reflecting: type(of: T.self))) =====\n")
+        var text = "===== \(String(reflecting: type(of: T.self))) =====\n"
 
         if self.recentHistory.isEmpty {
             text.write("No history available (probably the tracker have never been enabled?)\n")
         }
-        self.recentHistory.enumerated().forEach {
-            let (index, state) = $0
-            text.write("[\(index)]\t")
-            dump(state, to: &text)
+        else {
+            self.recentHistory.enumerated().forEach {
+                let (index, state) = $0
+                text.write("[\(index)]\t")
+                dump(state, to: &text)
+            }
         }
-        text.write("\n\n")
 
         print(text)
-    }
-}
-
-
-
-public class ComposedModelTracker: ModelTrackerProtocol {
-    public var isEnabled: Bool {
-        didSet(newValue) {
-            self.trackers.forEach { tracker in tracker.isEnabled = newValue }
-        }
-    }
-    private let trackers: [ModelTrackerProtocol]
-
-
-    public init(trackers: [ModelTrackerProtocol], isEnabled: Bool) {
-        self.trackers = trackers
-        self.isEnabled = isEnabled
-    }
-
-
-    public func printRecentHistory() {
-        self.trackers.forEach { tracker in tracker.printRecentHistory() }
     }
 }

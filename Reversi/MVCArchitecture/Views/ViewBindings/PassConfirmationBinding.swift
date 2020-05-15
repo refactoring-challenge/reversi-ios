@@ -22,7 +22,7 @@ public class PassConfirmationBinding {
             .observe(on: UIScheduler())
             .on(value: { [weak self] state in
                 switch state {
-                case .mustPlace, .completed, .awaitingReadyOrCompleted, .automatorThinking, .failed:
+                case .mustPlace, .completed, .awaiting, .automatorThinking, .failed:
                     return
                 case .mustPass:
                     // BUG18: Alert not appeared because it called before viewDidAppear.

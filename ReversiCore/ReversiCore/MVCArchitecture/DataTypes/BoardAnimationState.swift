@@ -1,7 +1,3 @@
-import ReactiveSwift
-
-
-
 // State transition diagram. Methods not explicitly described are transitions to self.
 // The initial state is .notAnimated.
 //
@@ -40,98 +36,7 @@ import ReactiveSwift
 //                                                          :                               |
 //                                                          |                               |
 //                                                          +-------------------------------+
-public protocol BoardAnimationModelProtocol: class {
-    var boardAnimationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState> { get }
-
-    func requestAnimation(by accepted: GameState.AcceptedCommand)
-
-    func markAnimationAsCompleted()
-}
-
-
-
-public extension BoardAnimationModelProtocol {
-    var boardAnimationState: BoardAnimationModelState { self.boardAnimationStateDidChange.value }
-}
-
-
-
-public class BoardAnimationModel: BoardAnimationModelProtocol {
-    private let (lifetime, token) = ReactiveSwift.Lifetime.make()
-
-    public let boardAnimationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState>
-    private let stateDidChangeMutable: ReactiveSwift.MutableProperty<BoardAnimationModelState>
-
-    public private(set) var boardAnimationState: BoardAnimationModelState {
-        get { self.stateDidChangeMutable.value }
-        set { self.stateDidChangeMutable.value = newValue }
-    }
-
-
-    public init(startsWith board: Board) {
-        let stateDidChangeMutable = ReactiveSwift.MutableProperty<BoardAnimationModelState>(.notAnimating(on: board))
-        self.stateDidChangeMutable = stateDidChangeMutable
-        self.boardAnimationStateDidChange = ReactiveSwift.Property(stateDidChangeMutable)
-    }
-
-
-    public func requestAnimation(by accepted: GameState.AcceptedCommand) {
-        switch accepted {
-        case .passed:
-            // NOTE: Do nothing.
-            return
-
-        case .placed(with: let selected, who: let turn, to: let nextGameState):
-            self.boardAnimationState = .placing(
-                with: selected,
-                who: turn,
-                // NOTE: Order stop animations and immediately sync to the board that is a result of the last transaction
-                //       before starting a new animation transaction. It make the transaction result consistent.
-                in: BoardAnimationTransaction(
-                    begin: self.boardAnimationState.boardIfTransactionIsDone,
-                    end: nextGameState.board
-                )
-            )
-
-        case .reset:
-            self.boardAnimationState = .notAnimating(on: accepted.nextGameState.board)
-        }
-    }
-
-
-    public func markAnimationAsCompleted() {
-        guard let nextState = self.boardAnimationState.nextInTransaction else { return }
-        self.boardAnimationState = nextState
-    }
-}
-
-
-
-public enum BoardAnimationRequest {
-    case shouldAnimate(disk: Disk, at: Coordinate, shouldSyncBefore: Board?)
-    case shouldSyncImmediately(board: Board)
-}
-
-
-
-public struct BoardAnimationTransaction {
-    let begin: Board
-    let end: Board
-
-
-    public init(begin: Board, end: Board) {
-        self.begin = begin
-        self.end = end
-    }
-}
-
-
-
-extension BoardAnimationTransaction: Equatable {}
-
-
-
-public enum BoardAnimationModelState {
+public enum BoardAnimationState {
     case notAnimating(on: Board)
     case placing(at: Coordinate, with: Disk, restLines: NonEmptyArray<FlippableLine>, transaction: BoardAnimationTransaction)
     case flipping(at: Coordinate, with: Disk, restCoordinates: [Coordinate], restLines: [FlippableLine], transaction: BoardAnimationTransaction)
@@ -148,6 +53,16 @@ public enum BoardAnimationModelState {
     }
 
 
+    public var isAnimating: Bool {
+        switch self {
+        case .notAnimating:
+            return false
+        case .placing, .flipping:
+            return true
+        }
+    }
+
+
     public var unfinishedTransaction: BoardAnimationTransaction? {
         switch self {
         case .notAnimating:
@@ -159,7 +74,7 @@ public enum BoardAnimationModelState {
     }
 
 
-    public var boardIfTransactionIsDone: Board {
+    public var boardAtThisAnimationEnd: Board {
         switch self {
         case .notAnimating(on: let board):
             return board
@@ -170,33 +85,8 @@ public enum BoardAnimationModelState {
     }
 
 
-    public var animationRequest: BoardAnimationRequest {
-        switch self {
-        case .notAnimating(on: let board):
-            return .shouldSyncImmediately(board: board)
-
-        case .placing(at: let coordinate, with: let disk, restLines: _, transaction: let transaction):
-            return .shouldAnimate(disk: disk, at: coordinate, shouldSyncBefore: transaction.begin)
-
-        case .flipping(at: let coordinate, with: let disk, restCoordinates: _, restLines: _, transaction: _):
-            // BUG17: Should not sync in flipping because both ends of the transaction did not match to transitional boards.
-            return .shouldAnimate(disk: disk, at: coordinate, shouldSyncBefore: nil)
-        }
-    }
-
-
-    public var isAnimating: Bool {
-        switch self {
-        case .notAnimating:
-            return false
-        case .placing, .flipping:
-            return true
-        }
-    }
-
-
     /// Next state for animation completions.
-    public var nextInTransaction: BoardAnimationModelState? {
+    public var nextInTransaction: BoardAnimationState? {
         switch self {
         case .notAnimating:
             // NOTE: Ignore invalid requests.
@@ -238,26 +128,59 @@ public enum BoardAnimationModelState {
     }
 
 
+    public static func beginAnimationTransaction(
+        for nextGameModelState: GameModelState,
+        lastAnimationState: BoardAnimationState
+    ) -> BoardAnimationState {
+        guard let lastAcceptedCommand = nextGameModelState.lastAcceptedCommand else {
+            // NOTE: This is for when the board was initialized/restored.
+            return .initial(board: nextGameModelState.board)
+        }
+        return .next(lastBoard: lastAnimationState.boardAtThisAnimationEnd, lastAcceptedCommand: lastAcceptedCommand)
+    }
+
+
+    public static func initial(board: Board) -> BoardAnimationState {
+        .notAnimating(on: board)
+    }
+
+
+    private static func next(lastBoard: Board, lastAcceptedCommand: GameState.AcceptedCommand) -> BoardAnimationState {
+        switch lastAcceptedCommand {
+        case .placed(with: let selected, to: let nextGameState):
+            return .placing(
+                with: selected,
+                in: BoardAnimationTransaction(begin: lastBoard, end: nextGameState.board)
+            )
+
+        case .passed(who: _, to: let nextGameState):
+            return .notAnimating(on: nextGameState.board)
+
+        case .reset(to: let nextGameState):
+            return .notAnimating(on: nextGameState.board)
+        }
+    }
+
+
     public static func placing(
         with selected: AvailableCandidate,
-        who turn: Turn,
         in transaction: BoardAnimationTransaction
-    ) -> BoardAnimationModelState {
+    ) -> BoardAnimationState {
         .placing(
             at: selected.coordinate,
-            with: turn.disk,
+            with: selected.turn.disk,
             restLines: selected.linesShouldFlip.sorted(by: lineShouldAnimateBefore),
             transaction: transaction
         )
     }
 
 
-    public static func flipping(
+    private static func flipping(
         lineToFlip: FlippableLine,
         disk: Disk,
         restLines: [FlippableLine],
         inTransaction transaction: BoardAnimationTransaction
-    ) -> BoardAnimationModelState {
+    ) -> BoardAnimationState {
         // NOTE: Nearest coordinate from where to place is highest animation priority (see README.md).
         let coordinatesShouldFlipEndToStart = lineToFlip.coordinatesShouldFlipStartToEnd.reversed()
         let coordinateToFlip = coordinatesShouldFlipEndToStart.first
@@ -274,7 +197,7 @@ public enum BoardAnimationModelState {
 
 
 
-extension BoardAnimationModelState: Equatable {}
+extension BoardAnimationState: Equatable {}
 
 
 

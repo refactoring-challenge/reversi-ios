@@ -2,7 +2,7 @@ import ReactiveSwift
 
 
 
-public protocol AnimatedGameWithAutomatorsModelProtocol: GameModelProtocol, BoardAnimationModelProtocol, GameWithAutomatorsModelProtocol {}
+public protocol AnimatedGameWithAutomatorsModelProtocol: GameModelProtocol, GameWithAutomatorsModelProtocol, AnimatedGameModelProtocol {}
 
 
 
@@ -19,10 +19,7 @@ public class AnimatedGameWithAutomatorsModel: AnimatedGameWithAutomatorsModelPro
     ) {
         self.gameModel = gameModel
 
-        let animatedGameModel = AnimatedGameModel(
-            gameModel: gameModel,
-            boardAnimationModel: BoardAnimationModel(startsWith: gameModel.gameModelState.board)
-        )
+        let animatedGameModel = AnimatedGameModel(gameModel: gameModel)
         self.animatedGameModel = animatedGameModel
 
         self.animatedGameWithAutomatorsModel = GameWithAutomatorsModel(
@@ -59,19 +56,17 @@ extension AnimatedGameWithAutomatorsModel: GameModelProtocol {
 
 
 
-extension AnimatedGameWithAutomatorsModel: BoardAnimationModelProtocol {
-    public var boardAnimationStateDidChange: ReactiveSwift.Property<BoardAnimationModelState> {
-        self.animatedGameModel.boardAnimationStateDidChange
-    }
-
-
-    public func requestAnimation(by accepted: GameState.AcceptedCommand) {
-        self.animatedGameModel.requestAnimation(by: accepted)
-    }
-
-
+extension AnimatedGameWithAutomatorsModel: BoardAnimationCommandReceivable {
     public func markAnimationAsCompleted() {
         self.animatedGameModel.markAnimationAsCompleted()
+    }
+}
+
+
+
+extension AnimatedGameWithAutomatorsModel: AnimatedGameModelProtocol {
+    public var animatedGameStateDidChange: ReactiveSwift.Property<AnimatedGameModelState> {
+        self.animatedGameModel.animatedGameStateDidChange
     }
 }
 

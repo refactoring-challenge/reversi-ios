@@ -5,18 +5,18 @@ import ReactiveSwift
 extension AnimatedGameModelState {
     public func toAutomatableGameState() -> AutomatableGameModelState {
         switch self {
-        case .mustPass(on: let gameState, isAnimating: let isAnimating):
-            return isAnimating
+        case .mustPass(on: let gameState, animationState: let animationState):
+            return animationState.isAnimating
                 ? .notReady(lastAvailableCandidates: nil, lastGameState: gameState)
                 : .mustPass(on: gameState)
 
-        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState, isAnimating: let isAnimating):
-            return isAnimating
+        case .mustPlace(anywhereIn: let availableCandidates, on: let gameState, animationState: let animationState):
+            return animationState.isAnimating
                 ? .notReady(lastAvailableCandidates: availableCandidates, lastGameState: gameState)
                 : .mustPlace(anywhereIn: availableCandidates, on: gameState)
 
-        case .completed(with: let gameResult, on: let gameState, isAnimating: let isAnimating):
-            return isAnimating
+        case .completed(with: let gameResult, on: let gameState, animationState: let animationState):
+            return animationState.isAnimating
                 ? .notReady(lastAvailableCandidates: availableCandidates, lastGameState: gameState)
                 : .completed(with: gameResult, on: gameState)
         }

@@ -4,17 +4,17 @@ import ReversiCore
 
 
 public class BoardAnimationController {
-    private let boardAnimationModel: BoardAnimationModelProtocol
+    private let animatedGameModel: BoardAnimationCommandReceivable
     private let boardAnimationHandle: BoardAnimationHandleProtocol
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(
         observing boardAnimationHandle: BoardAnimationHandleProtocol,
-        requestingTo boardAnimationModel: BoardAnimationModelProtocol
+        requestingTo animatedGameModel: BoardAnimationCommandReceivable
     ) {
-        self.boardAnimationModel = boardAnimationModel
         self.boardAnimationHandle = boardAnimationHandle
+        self.animatedGameModel = animatedGameModel
 
         // BUG16: Initial sync are not applied because markResetAsCompleted was sent before observing.
         boardAnimationHandle.animationDidComplete
@@ -23,7 +23,7 @@ public class BoardAnimationController {
             .observeValues { [weak self] animationRequest in
                 switch animationRequest {
                 case .shouldAnimate:
-                    self?.boardAnimationModel.markAnimationAsCompleted()
+                    self?.animatedGameModel.markAnimationAsCompleted()
 
                 case .shouldSyncImmediately:
                     return

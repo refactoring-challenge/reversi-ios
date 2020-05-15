@@ -7,13 +7,13 @@ import ReversiCore
 /// - Example: `(lldb) po printDebugInfo()`
 public func printDebugInfo() {
     guard let composer = debugViewController()?.composer else {
-        print("Debuggable ViewController not found")
+        print("Error: Debuggable ViewController not found.")
         return
     }
 
     dump([
         "gameWithAutomatorsModelState": composer.animatedGameWithAutomatorsModel.gameWithAutomatorsModelState,
-        "boardAnimationState": composer.animatedGameWithAutomatorsModel.boardAnimationState,
+        "animatedGameModelState": composer.animatedGameWithAutomatorsModel.animatedGameState,
         "availabilities": composer.animatedGameWithAutomatorsModel.availabilities,
         "automatorProgress": composer.animatedGameWithAutomatorsModel.automatorProgress,
     ])

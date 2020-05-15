@@ -147,7 +147,7 @@ class GameWithAutomatorsModelTests: XCTestCase {
     ) throws {
         try self.waitUntilGameState(gameWithAutomatorsModel, line: line) { gameModelState -> Bool in
             switch gameModelState {
-            case .completed, .automatorThinking, .awaitingReadyOrCompleted, .failed:
+            case .completed, .automatorThinking, .awaiting, .failed:
                 return false
             case .mustPass(on: let gameState), .mustPlace(at: _, on: let gameState):
                 return gameState.turn == turn
@@ -162,7 +162,7 @@ class GameWithAutomatorsModelTests: XCTestCase {
     ) throws {
         try self.waitUntilGameState(gameWithAutomatorsModel, line: line) { gameModelState -> Bool in
             switch gameModelState {
-            case .mustPlace, .mustPass, .automatorThinking, .awaitingReadyOrCompleted, .failed:
+            case .mustPlace, .mustPass, .automatorThinking, .awaiting, .failed:
                 return false
             case .completed:
                 return true
@@ -216,7 +216,7 @@ class GameWithAutomatorsModelTests: XCTestCase {
                     switch state {
                     case .mustPass:
                         self?.gameWithAutomatorsModel.pass()
-                    case .mustPlace, .automatorThinking, .awaitingReadyOrCompleted, .failed, .completed:
+                    case .mustPlace, .automatorThinking, .awaiting, .failed, .completed:
                         return
                     }
                 })

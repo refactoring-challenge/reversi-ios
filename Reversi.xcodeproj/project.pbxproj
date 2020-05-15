@@ -265,11 +265,11 @@
 				D636B3A123D43203007F370F /* ThirdPartyViews */,
 				D642BDB323A9FE4500396732 /* AppDelegate.swift */,
 				D642BDBC23A9FE4700396732 /* Assets.xcassets */,
+				2475EBB2BA7562319AFB31D3 /* DebugHub.swift */,
 				D642BDBE23A9FE4700396732 /* LaunchScreen.storyboard */,
 				6238891424681745005C45E6 /* Main.storyboard */,
 				D642BDB523A9FE4500396732 /* SceneDelegate.swift */,
 				2475E7F54398CCDBA97EC915 /* ViewController.swift */,
-				2475EBB2BA7562319AFB31D3 /* DebugHub.swift */,
 			);
 			path = Reversi;
 			sourceTree = "<group>";

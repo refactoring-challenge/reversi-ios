@@ -36,6 +36,12 @@ public class BoardMVCComposer {
         turnMessageViewHandle: TurnMessageViewHandleProtocol,
         isEventTracesEnabled: Bool = isDebug
     ) {
+        #if DEBUG
+        let automator = GameAutomator.debuggableDelayed(selector: GameAutomator.randomSelector, duration: 2.0)
+        #else
+        let automator = GameAutomator.delayed(selector: GameAutomator.randomSelector, duration: 2.0)
+        #endif
+
         // STEP-1: Constructing Models and Model Aggregates that are needed by the screen.
         //         And models should be shared across multiple screens will arrive as parameters.
         let animatedGameWithAutomatorsModel = AnimatedGameWithAutomatorsModel(
@@ -47,7 +53,7 @@ public class BoardMVCComposer {
                 userDefaults: userDefaults,
                 defaultValue: .bothDisabled
             ),
-            automatorStrategy: GameAutomator.debuggableDelayed(selector: GameAutomator.randomSelector, duration: 2.0)
+            automatorStrategy: automator
         )
         self.animatedGameWithAutomatorsModel = animatedGameWithAutomatorsModel
         self.diskCountModel = DiskCountModel(observing: animatedGameWithAutomatorsModel)
@@ -55,11 +61,10 @@ public class BoardMVCComposer {
         // NOTE: This is a Model Tracker that print event traces of Models while the tracker is enabled for
         //       better debugging experience. You can use it via LLDB.
         //
-        //       (lldb) // Preparing $composer typically via UIApplication.shared.keyWindow!.rootViewController!....
-        //       (lldb) po $composer.modelTracker.isEnabled = true
+        //       (lldb) po debugModelsHistory()
         self.modelTracker = ModelTracker(
             observing: ReactiveSwift.Property.combineLatest(
-                animatedGameWithAutomatorsModel.boardAnimationStateDidChange,
+                animatedGameWithAutomatorsModel.animatedGameStateDidChange,
                 animatedGameWithAutomatorsModel.availabilitiesDidChange,
                 animatedGameWithAutomatorsModel.automatorDidProgress,
                 animatedGameWithAutomatorsModel.gameModelStateDidChange,

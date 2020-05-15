@@ -27,7 +27,7 @@ public struct GameState {
 
     public func availableCandidates() -> Set<AvailableCandidate> {
         let availableLines = self.board.availableLines(for: self.turn)
-        return AvailableCandidate.from(who: self.turn, flippableLines: availableLines)
+        return AvailableCandidate.from(turn: self.turn, flippableLines: availableLines)
     }
 
 
@@ -41,7 +41,7 @@ public struct GameState {
             nextBoard = nextBoard.unsafeReplaced(with: currentTurn.disk, on: shouldBeFlipped.line)
         }
 
-        return .placed(with: selected, who: currentTurn, to: GameState(board: nextBoard, turn: nextTurn))
+        return .placed(with: selected, to: GameState(board: nextBoard, turn: nextTurn))
     }
 
 
@@ -61,13 +61,13 @@ public struct GameState {
 
     public enum AcceptedCommand {
         case passed(who: Turn, to: GameState)
-        case placed(with: AvailableCandidate, who: Turn, to: GameState)
+        case placed(with: AvailableCandidate, to: GameState)
         case reset(to: GameState)
 
 
         public var nextGameState: GameState {
             switch self {
-            case .passed(who: _, to: let nextGameState), .placed(with: _, who: _, to: let nextGameState),
+            case .passed(who: _, to: let nextGameState), .placed(with: _, to: let nextGameState),
                  .reset(to: let nextGameState):
                 return nextGameState
             }
@@ -97,14 +97,17 @@ extension GameState: CustomDebugStringConvertible {
 
 
 public struct AvailableCandidate {
+    public let turn: Turn
     public let coordinate: Coordinate
     public let linesShouldFlip: NonEmptyArray<FlippableLine>
 
 
     public init(
+        whose turn: Turn,
         unsafeCoordinateToPlace selectedCoordinate: Coordinate,
         willFlipLines linesWillFlip: NonEmptyArray<FlippableLine>
     ) {
+        self.turn = turn
         self.coordinate = selectedCoordinate
         self.linesShouldFlip = linesWillFlip
     }
@@ -113,7 +116,7 @@ public struct AvailableCandidate {
     // NOTE: AvailableCoordinate ensures the coordinate is almost valid by hiding initializer.
     //       This is based on only GameState can instantiate AvailableCoordinate.
     fileprivate static func from<Lines: Sequence>(
-        who turn: Turn,
+        turn: Turn,
         flippableLines: Lines
     ) -> Set<AvailableCandidate> where Lines.Element == FlippableLine {
         var result: [Coordinate: NonEmptyArray<FlippableLine>] = [:]
@@ -131,7 +134,7 @@ public struct AvailableCandidate {
         return Set<AvailableCandidate>(result.map {
             let (coordinate, linesWillFlip) = $0
             // NOTE: It is safe because the linesWillFlip must have the coordinate as the end.
-            return AvailableCandidate(unsafeCoordinateToPlace: coordinate, willFlipLines: linesWillFlip)
+            return AvailableCandidate(whose: turn, unsafeCoordinateToPlace: coordinate, willFlipLines: linesWillFlip)
         })
     }
 }

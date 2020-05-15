@@ -133,7 +133,7 @@ extension GameWithAutomatorsModel: GameCommandReceivable {
         case .failed:
             return .ignored
 
-        case .mustPass, .mustPlace, .completed, .awaitingReadyOrCompleted, .automatorThinking:
+        case .mustPass, .mustPlace, .completed, .awaiting, .automatorThinking:
             return self.automatableGameModel.pass()
         }
     }
@@ -145,7 +145,7 @@ extension GameWithAutomatorsModel: GameCommandReceivable {
         case .automatorThinking, .failed:
             return .ignored
 
-        case .mustPlace, .mustPass, .completed, .awaitingReadyOrCompleted:
+        case .mustPlace, .mustPass, .completed, .awaiting:
             return self.automatableGameModel.place(at: coordinate)
         }
     }
@@ -171,7 +171,7 @@ extension GameWithAutomatorsModel: GameAutomatorAvailabilitiesModelProtocol {
         case .failed:
             return
 
-        case .mustPass, .mustPlace, .completed, .awaitingReadyOrCompleted:
+        case .mustPass, .mustPlace, .completed, .awaiting:
             break
 
         case .automatorThinking(previousGameState: let prevGameState, previousAvailableCandidates: _):
@@ -192,7 +192,7 @@ public enum GameWithAutomatorsModelState {
     case mustPlace(at: NonEmptyArray<AvailableCandidate>, on: GameState)
     case mustPass(on: GameState)
     case completed(with: GameResult, on: GameState)
-    case awaitingReadyOrCompleted(previousGameState: GameState, previousAvailableCandidates: NonEmptyArray<AvailableCandidate>?)
+    case awaiting(previousGameState: GameState, previousAvailableCandidates: NonEmptyArray<AvailableCandidate>?)
     case failed(GameState, because: FailureReason)
     case automatorThinking(previousGameState: GameState, previousAvailableCandidates: NonEmptyArray<AvailableCandidate>?)
 
@@ -200,7 +200,7 @@ public enum GameWithAutomatorsModelState {
     public var gameState: GameState {
         switch self {
         case .mustPlace(at: _, on: let gameState), .mustPass(on: let gameState), .completed(with: _, let gameState),
-             .awaitingReadyOrCompleted(previousGameState: let gameState, previousAvailableCandidates: _),
+             .awaiting(previousGameState: let gameState, previousAvailableCandidates: _),
              .automatorThinking(previousGameState: let gameState, previousAvailableCandidates: _),
              .failed(let gameState, because: _):
             return gameState
@@ -226,7 +226,7 @@ public enum GameWithAutomatorsModelState {
         case .sleeping:
             switch automatableGameState {
             case .notReady:
-                return .awaitingReadyOrCompleted(
+                return .awaiting(
                     previousGameState: automatableGameState.gameState,
                     previousAvailableCandidates: automatableGameState.availableCandidates
                 )
