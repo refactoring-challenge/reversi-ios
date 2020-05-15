@@ -435,6 +435,7 @@ class ViewController: UIViewController
 | リポジトリ | 作者 | アーキテクチャパターン | フレームワーク | UI | 備考 |
 |:--|:--|:--|:--|:--|:--|
 | [refactoring-challenge/reversi-ios](https://github.com/refactoring-challenge/reversi-ios) | [@koher](https://github.com/koher) | Fat View Controller | - | UIKit | 本リポジトリ |
+| [marty-suzuki/reversi-ios](https://github.com/marty-suzuki/reversi-ios) | [@marty-suzuki](https://github.com/marty-suzuki) | Flux + MVVM | [RxSwift](https://github.com/ReactiveX/RxSwift) + [Unio](https://github.com/cats-oss/Unio) | UIKit | 切り出したロジックのユニットテストとViewControllerのユニットテストも実装しています |
 
 ## License
 
