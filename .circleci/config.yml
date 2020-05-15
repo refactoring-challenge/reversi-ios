@@ -1,0 +1,15 @@
+versioin: 2.0
+jobs:
+  readme-test:
+    docker:
+      - image: circleci/node:12.16.3
+    steps:
+      - checkout
+      - run:
+          name: "Install README checkers"
+          command: "npm ci"
+          working_directory: "./tools/readme-test"
+      - run:
+          name: "Test links in README.md"
+          command: "npx markdown-link-check ../../README.md"
+          working_directory: "./tools/readme-test"
