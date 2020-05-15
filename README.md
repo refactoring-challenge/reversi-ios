@@ -216,13 +216,13 @@ public struct Password {
 今回のリファクタリングでは以下がそれぞれの実例になっています：
 
 1. 値空間を削る
-    * [`Coordinate`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Coordinate.swift)
-    * [`NonEmptyArray`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/NonEmptyArray.swift)
-    * [`Board`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift)
-    * [`GameResult`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameResult.swift)
+    * [`Coordinate`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Coordinate.swift)
+    * [`NonEmptyArray`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/NonEmptyArray.swift)
+    * [`Board`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift)
+    * [`GameResult`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameResult.swift)
 2. 動的検査後にインスタンスが手に入る
-    * [`Line`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Line.swift)
-    * [`FlippableLine`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLine.swift)
+    * [`Line`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Line.swift)
+    * [`FlippableLine`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLine.swift)
 
 
 
@@ -358,28 +358,26 @@ public class BoardMVCComposer {
 
 * MVC Model に相当するもの
     * Model: 変更を外へ通知する状態機械
-        * [`GameModel`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/GameModel.swift)
-        * [`BoardAnimationModel`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModel.swift)
-        * [`UserDefaultsModel`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/UserDefaultsModel.swift)
-        * [...](https://github.com/Kuniwak/reversi-ios/tree/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models)
+        * [`GameModel`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/Models/GameModel.swift)
+        * [`UserDefaultsModel`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/Models/UserDefaultsModel.swift)
+        * [...](https://github.com/Kuniwak/reversi-ios/tree/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/Models)
     * Model Aggregates: Model を複数集めて Model 同士を接続したもの
-        * [`AutoBackupGameModel`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AutoBackupGameModel.swift) = `GameModel` + `UserDefaultsModel`
-        * [`AnimatedGameModel`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel.swift) = `GameModel` + `BoardAnimationModel`
-        * [...](https://github.com/Kuniwak/reversi-ios/tree/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates)
+        * [`AutoBackupGameModel`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AutoBackupGameModel.swift) = `GameModel` + `UserDefaultsModel`
+        * [...](https://github.com/Kuniwak/reversi-ios/tree/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates)
 * MVC View に相当するもの
     * Viewi Binding: Model の変更を View Handle へ伝達するもの（単方向データバインディング）
-        * [`BoardViewBinding`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewBindings/BoardViewBinding.swift)
-        * [`DiskCountViewBinding`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewBindings/DiskCountViewBinding.swift)
-        * [...](https://github.com/Kuniwak/reversi-ios/tree/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewBindings)
+        * [`BoardViewBinding`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/Reversi/MVCArchitecture/Views/ViewBindings/BoardViewBinding.swift)
+        * [`DiskCountViewBinding`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/Reversi/MVCArchitecture/Views/ViewBindings/DiskCountViewBinding.swift)
+        * [...](https://github.com/Kuniwak/reversi-ios/tree/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/Reversi/MVCArchitecture/Views/ViewBindings)
     * View Handle: UIView を内部にもち、View Binding から受け取った Model の状態を反映して UI イベントを外へ通知するもの
-        * [`BoardViewHandle`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewHandles/BoardViewHandle.swift)
-        * [`ResetConfirmatioinHandle`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewHandles/ResetConfirmationHandle.swift)
-        * [...](https://github.com/Kuniwak/reversi-ios/tree/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Views/ViewHandles)
+        * [`BoardViewHandle`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/Reversi/MVCArchitecture/Views/ViewHandles/BoardViewHandle.swift)
+        * [`ResetConfirmatioinHandle`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/Reversi/MVCArchitecture/Views/ViewHandles/ResetConfirmationHandle.swift)
+        * [...](https://github.com/Kuniwak/reversi-ios/tree/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/Reversi/MVCArchitecture/Views/ViewHandles)
 * MVC Controller に相当するもの
     * Controller: ViewHandle から UI イベントを受け取り Model へと転送するもの
-        * [`BoardAnimationController`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Controllers/BoardAnimationController.swift)
-        * [`ResetConfirmationController`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Controllers/ResetConfirmationController.swift)
-        * [...](https://github.com/Kuniwak/reversi-ios/tree/00964987051e643141c2e9d85030073e2e424bd3/Reversi/MVCArchitecture/Controllers)
+        * [`BoardAnimationController`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/Reversi/MVCArchitecture/Controllers/BoardAnimationController.swift)
+        * [`ResetConfirmationController`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/Reversi/MVCArchitecture/Controllers/ResetConfirmationController.swift)
+        * [...](https://github.com/Kuniwak/reversi-ios/tree/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/Reversi/MVCArchitecture/Controllers)
 
 ここでは特に重要な Model と Model Aggregates について解説します。
 
@@ -536,9 +534,9 @@ extension AutoBackupGameModel: GameModelProtocol {
 
 具体的には、ゲームロジックとオートプレイだけの確認をしたい場合に、アニメーション機能が搭載されていてるとテストの邪魔になります（テストが長くなる/テストに余計なコードが増える/テストの実行時間が増えるなど）。回避方法の一案として最初にゲームロジックとオートプレイだけを実装してテストを書き、後からここに機能を追加していく方法もありえますがいい方法ではありません。これだとあとになってのリファクタリングのときには機能が増えてしまっているためリファクタリングのためのテストの邪魔になるからです。
 
-そこで、小さな Model やその階層的な集約をつくれれば、必要な要素だけが揃った状況を狙ってテストできます（例: アニメーションを排除しつつオートプレイをテストする [`GameWithAutomatorsModelTests`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModelTests.swift)）
+そこで、小さな Model やその階層的な集約をつくれれば、必要な要素だけが揃った状況を狙ってテストできます（例: アニメーションを排除しつつオートプレイをテストする [`GameWithAutomatorsModelTests`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModelTests.swift)）
 
-補足すると、そもそも Model や Model Aggregate のテストは Rx などのイベントストリームが絡むので面倒になりがちという問題があり、もし Model から離れられるものは離した方が自動テストが楽になります（例: モデルから離れてゲームロジックだけをテストする [`GameStateTests`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameStateTests.swift) や [`BoardAnimationModelTests`](https://github.com/Kuniwak/reversi-ios/blob/00964987051e643141c2e9d85030073e2e424bd3/ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModelTests.swift)）。
+補足すると、そもそも Model や Model Aggregate のテストは Rx などのイベントストリームが絡むので面倒になりがちという問題があり、もし Model から離れられるものは離した方が自動テストが楽になります（例: モデルから離れてゲームロジックだけをテストする [`GameStateTests`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameStateTests.swift) や [`BoardAnimationStateTests`](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardAnimationStateTests.swift)）。
 
 これらをまとめると、動作確認のやりやすさためにより小さな Model/Model Aggregate が望ましく、もしそれで必要な仕様を満たせないならさらに Model Aggregate で集約していくという方針を取っているということです。しかしここには大きな落とし穴があります。
 
@@ -554,26 +552,26 @@ View Binding とは、Model/Model Aggregate の変更をイベントストリー
 
 ```swift
 public class BoardViewBinding {
-    private let boardAnimationModel: BoardAnimationModelProtocol
+    private let animatedGameModel: AnimatedGameModelProtocol
     private let viewHandle: BoardViewHandleProtocol
 
     private let (lifetime, token) = ReactiveSwift.Lifetime.make()
 
 
     public init(
-        observing boardAnimationModel: BoardAnimationModelProtocol,
+        observing animatedGameModel: AnimatedGameModelProtocol,
         updating viewHandle: BoardViewHandleProtocol
     ) {
-        self.boardAnimationModel = boardAnimationModel
+        self.animatedGameModel = animatedGameModel
         self.viewHandle = viewHandle
 
-        boardAnimationModel
-            .boardAnimationStateDidChange
+        animatedGameModel
+            .animatedGameStateDidChange
             .producer
             .take(during: self.lifetime)
             .observe(on: UIScheduler())
             .on(value: { [weak self] state in
-                self?.viewHandle.apply(by: state.animationRequest)
+                self?.viewHandle.apply(by: BoardAnimationRequest.of(animationState: state.animationState))
             })
             .start()
     }
@@ -816,21 +814,20 @@ avg: 135        max: 573        total: 1080
 #### After
 ```console
 $ ./tools/list-filestats
-      29 Reversi/AppDelegate.swift
-     130 Reversi/MVCArchitecture/BoardMVCComposer.swift
+      22 Reversi/AppDelegate.swift
+      62 Reversi/DebugHub.swift
+     126 Reversi/MVCArchitecture/BoardMVCComposer.swift
       32 Reversi/MVCArchitecture/Controllers/BoardAnimationController.swift
       25 Reversi/MVCArchitecture/Controllers/BoardController.swift
       25 Reversi/MVCArchitecture/Controllers/GameAutomatorController.swift
       26 Reversi/MVCArchitecture/Controllers/PassConfirmationController.swift
       27 Reversi/MVCArchitecture/Controllers/ResetConfirmationController.swift
-      61 Reversi/MVCArchitecture/DebugHub.swift
-      10 Reversi/MVCArchitecture/Models/DebuggableGameAutomator.swift
       29 Reversi/MVCArchitecture/Views/ViewBindings/BoardViewBinding.swift
       27 Reversi/MVCArchitecture/Views/ViewBindings/DiskCountViewBinding.swift
       17 Reversi/MVCArchitecture/Views/ViewBindings/GameAutomatorControlBinding.swift
       26 Reversi/MVCArchitecture/Views/ViewBindings/GameAutomatorProgressViewBinding.swift
-      29 Reversi/MVCArchitecture/Views/ViewBindings/PassConfirmationBinding.swift
-      29 Reversi/MVCArchitecture/Views/ViewBindings/TurnMessageViewBinding.swift
+      33 Reversi/MVCArchitecture/Views/ViewBindings/PassConfirmationBinding.swift
+      30 Reversi/MVCArchitecture/Views/ViewBindings/TurnMessageViewBinding.swift
       97 Reversi/MVCArchitecture/Views/ViewHandles/BoardViewHandle.swift
       29 Reversi/MVCArchitecture/Views/ViewHandles/DiskCountViewHandle.swift
       73 Reversi/MVCArchitecture/Views/ViewHandles/GameAutomatorControlHandle.swift
@@ -842,13 +839,18 @@ $ ./tools/list-filestats
       93 Reversi/MVCArchitecture/Views/ViewHandles/UserConfirmationViewHandle.swift
       45 Reversi/SceneDelegate.swift
      177 Reversi/ThirdPartyViews/BoardView.swift
-     141 Reversi/ThirdPartyViews/CellView.swift
+     144 Reversi/ThirdPartyViews/CellView.swift
       67 Reversi/ThirdPartyViews/DiskView.swift
       71 Reversi/ViewController.swift
-     188 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift
+      11 ReversiCore/ReversiCore/DebugHub.swift
+     194 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift
+      19 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardAnimationRequest.swift
+     232 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardAnimationState.swift
+     218 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardAnimationStateTests.swift
+      19 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardAnimationTransaction.swift
      112 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift
       29 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Buffer.swift
-     128 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Coordinate.swift
+     134 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Coordinate.swift
        5 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/CoordinateSelector.swift
       30 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/DirectedDistance.swift
       14 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Direction.swift
@@ -856,43 +858,41 @@ $ ./tools/list-filestats
       24 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/DiskCount.swift
       30 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Distance.swift
        7 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Dump.swift
-     120 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLine.swift
+     142 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLine.swift
      136 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLineTests.swift
-      49 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameAutomator.swift
+      66 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameAutomator.swift
       30 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameAutomatorAvailabilities.swift
       12 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameAutomatorAvailability.swift
       47 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameCommand.swift
        7 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameResult.swift
-     146 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameState.swift
+     160 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameState.swift
      120 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/GameStateTests.swift
       55 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Line.swift
       68 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/LineContents.swift
-     118 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/NonEmptyArray.swift
+     132 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/NonEmptyArray.swift
       44 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Turn.swift
       55 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/UserDefaultsJSON.swift
       18 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/UserDefaultsKey.swift
        4 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/UserDefaultsReadWriter.swift
        5 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/UserDefaultsReader.swift
        5 ReversiCore/ReversiCore/MVCArchitecture/DataTypes/UserDefaultsWriter.swift
-      45 ReversiCore/ReversiCore/MVCArchitecture/Models/AutomatableGameModel.swift
-     308 ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModel.swift
-     218 ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModelTests.swift
+      48 ReversiCore/ReversiCore/MVCArchitecture/Models/AutomatableGameModel.swift
       29 ReversiCore/ReversiCore/MVCArchitecture/Models/DiskCountModel.swift
       37 ReversiCore/ReversiCore/MVCArchitecture/Models/GameAutomatorAvailabilitiesModel.swift
      134 ReversiCore/ReversiCore/MVCArchitecture/Models/GameAutomatorModel.swift
       10 ReversiCore/ReversiCore/MVCArchitecture/Models/GameCommandReceivable.swift
-      33 ReversiCore/ReversiCore/MVCArchitecture/Models/GameModel+AutomatableGameModel.swift
-     155 ReversiCore/ReversiCore/MVCArchitecture/Models/GameModel.swift
-      27 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel+AutomatableGameModel.swift
-     166 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel.swift
-     116 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameWithAutomatorsModel.swift
+      36 ReversiCore/ReversiCore/MVCArchitecture/Models/GameModel+AutomatableGameModel.swift
+     171 ReversiCore/ReversiCore/MVCArchitecture/Models/GameModel.swift
+      32 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel+AutomatableGameModel.swift
+     183 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel.swift
+     113 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameWithAutomatorsModel.swift
       75 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AutoBackupGameAutomatorAvailabilitiesModel.swift
-      74 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AutoBackupGameModel.swift
-     277 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModel.swift
-     189 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModelTests.swift
-      74 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelTracker.swift
+      77 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AutoBackupGameModel.swift
+     259 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModel.swift
+     225 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModelTests.swift
+      53 ReversiCore/ReversiCore/MVCArchitecture/Models/ModelTracker.swift
       82 ReversiCore/ReversiCore/MVCArchitecture/Models/UserDefaultsModel.swift
-avg: 69.4211    max: 308        total: 5276
+avg: 68.6795    max: 259        total: 5357
 ```
 </details>
 
@@ -920,26 +920,26 @@ public struct Board {
 <details>
 <summary>バグの出現箇所一覧</summary>
 
-```
+```console
 $ ./tools/list-bugs
 BUG 1: Missing -1 for rawValue (CoordinateX and Y is 1-based) (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift:34)
 BUG 2: Missing addition for start. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Line.swift:32)
-BUG 3: I expected `x == nil` mean x == .some(.none), but it mean x == .none. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLine.swift:85)
+BUG 3: I expected `x == nil` mean x == .some(.none), but it mean x == .none. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/FlippableLine.swift:93)
 BUG 4: Misunderstood that the line.coordinates is sorted as start to end. But it was a Set. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/LineContents.swift:24)
 BUG 5: Misunderstand that the break without any labels break from lineContentsLoop. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift:138)
 BUG 6: Loop forever because using continue cause unchanged nextLineContents. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift:133)
-BUG 7: Wrongly use base lines that have constant distance for all search. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift:143)
-BUG 8: Signal from Property does not receive the current value at first. (at ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModel.swift:70)
+BUG 7: Wrongly use base lines that have constant distance for all search. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Board.swift:142)
+BUG 8: Signal from Property does not receive the current value at first. (at ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModel.swift:68)
 BUG 9: Removing .one to limit line lengths caused that users of .allCases or .init(rawValue:_) get broken. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/Distance.swift:2)
-BUG 10: Did not apply board at BoardView because forgot notify accepted commands to boardAnimationModel. (at ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel.swift:37)
+BUG 10: Did not apply board at BoardView because forgot notify accepted commands to boardAnimationModel. (at ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/AnimatedGameModel.swift:56)
 BUG 11: Forgot observing. (at Reversi/MVCArchitecture/Views/ViewHandles/GameAutomatorControlHandle.swift:32)
 BUG 12: Missing first because the code was NonEmptyArray(first: self.last, rest: self.rest.reversed()). (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/NonEmptyArray.swift:58)
 BUG 13: Unexpectedly use false instead of true. (at Reversi/MVCArchitecture/Views/ViewHandles/ResetConfirmationHandle.swift:34)
-BUG 14: Forgot binding pass confirmation. (at Reversi/MVCArchitecture/BoardMVCComposer.swift:103)
-BUG 15: This order followed the order in README.md, but the line direction is inverted. (at ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModel.swift:290)
+BUG 14: Forgot binding pass confirmation. (at Reversi/MVCArchitecture/BoardMVCComposer.swift:99)
+BUG 15: This order followed the order in README.md, but the line direction is inverted. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardAnimationState.swift:213)
 BUG 16: Initial sync are not applied because markResetAsCompleted was sent before observing. (at Reversi/MVCArchitecture/Controllers/BoardAnimationController.swift:19)
-BUG 17: Should not sync in flipping because both ends of the transaction did not match to transitional boards. (at ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModel.swift:182)
-BUG 18: Alert not appeared because it called before viewDidAppear. (at Reversi/MVCArchitecture/Views/ViewBindings/PassConfirmationBinding.swift:25)
+BUG 17: Should not sync in flipping because both ends of the transaction did not match to transitional boards. (at ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardAnimationRequest.swift:15)
+BUG 18: Alert not appeared because it called before viewDidAppear. (at Reversi/MVCArchitecture/Views/ViewBindings/PassConfirmationBinding.swift:28)
 ```
 </details>
 
@@ -949,18 +949,18 @@ BUG 18: Alert not appeared because it called before viewDidAppear. (at Reversi/M
 
 | ID | 現象 | 原因 | 発見方法 | 
 |---:|:-----|:-----|:-------|
-| 1  | 起動即クラッシュ | 盤面クラスの内部的な配列は 0-based インデックスだが、座標クラスは 1-based インデックスで out of bounds になった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
-| 2  | 石をどこにも置けない | Line に沿った盤面の石を取得した LineContents のループ条件にバグがあり開始地点の石が取得できてなかった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
-| 3  | 石をどこにも置けない | `Optional<Optional<Foo>>` な変数の `== nil` が `.some(nil)` で `false` になるとは思っていなかった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
-| 4  | 石を置けるはずの場所に置けないことがある | Line 上の座標の配列を返す API に順序があると期待していたが実際には Set だった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
-| 5  | 遅い | ループの脱出のつもりで `break` を書いたが、`swift` 分の内部だったのでループを脱出できなかった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
-| 6  | 無反応（無限ループ） | ループの終わりに条件を更新するべきだったがこれをせずに `continue` でループを再開したためずっと同じ条件でループしていた | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
-| 7  | 距離が2より大きい位置へ石を置けない | ループ内で、適切な長さの Line ではなくループ開始条件のための長さ2固定の Line を取り違えて使ってしまったため | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 1  | 起動即クラッシュ | 盤面クラスの内部的な配列は 0-based インデックスだが、座標クラスは 1-based インデックスで out of bounds になった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 2  | 石をどこにも置けない | Line に沿った盤面の石を取得した LineContents のループ条件にバグがあり開始地点の石が取得できてなかった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 3  | 石をどこにも置けない | `Optional<Optional<Foo>>` な変数の `== nil` が `.some(nil)` で `false` になるとは思っていなかった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 4  | 石を置けるはずの場所に置けないことがある | Line 上の座標の配列を返す API に順序があると期待していたが実際には Set だった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 5  | 遅い | ループの脱出のつもりで `break` を書いたが、`swift` 分の内部だったのでループを脱出できなかった | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 6  | 無反応（無限ループ） | ループの終わりに条件を更新するべきだったがこれをせずに `continue` でループを再開したためずっと同じ条件でループしていた | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 7  | 距離が2より大きい位置へ石を置けない | ループ内で、適切な長さの Line ではなくループ開始条件のための長さ2固定の Line を取り違えて使ってしまったため | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
 | 8  | 起動直後にオートプレイが有効になっていても何も起こらない | ReactiveSwift.Property の購読直後に現在の値が Signal へ流されると勘違いしていた（それは SignalProducer じゃないとできない） | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/master/ReversiCore/ReversiCore/MVCArchitecture/Models/ModelAggregates/GameWithAutomatorsModelTests.swift) |
-| 9  | 石をどこにも置けない | 欲を出して Line をより安全な型にしようと Distatnce の 1 を消して 2 始まりにしたら 1 がくることを期待していた配置可能判定が壊れた | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
+| 9  | 石をどこにも置けない | 欲を出して Line をより安全な型にしようと Distatnce の 1 を消して 2 始まりにしたら 1 がくることを期待していた配置可能判定が壊れた | [自動テスト](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardTests.swift) |
 | 10 | 1度画面に石を配置すると次はどこにも置けなくなる | アニメーション完了判定を Model へ通知する Controller が接続されておらず Model はずっとアニメーション中だと判断してユーザーの操作を無視した | 手動ポチポチ |
 | 11 | オートプレイを有効にしても何も起きない | オートプレイ切り替えの `UISegmentedControl` の UI イベント検知を View Handle で忘れた | 手動ポチポチ |
-| 12 | 長さ3以上の Line をひっくり返すアニメーションの最後だけひっくり返らない（ただし見た目だけでゲームロジックは正常） | NonEmptyArray の reversed 実装にバグがあり、末尾が先頭で重複する代わりに先頭要素が抜けてしまった | 手動ポチポチで発見、[自動テスト](https://github.com/Kuniwak/reversi-ios/blob/a219d83ef1b962789bfa52c1eca3cce61b3fb344/ReversiCore/ReversiCore/MVCArchitecture/Models/BoardAnimationModelTests.swift)で再現条件確認 |
+| 12 | 長さ3以上の Line をひっくり返すアニメーションの最後だけひっくり返らない（ただし見た目だけでゲームロジックは正常） | NonEmptyArray の reversed 実装にバグがあり、末尾が先頭で重複する代わりに先頭要素が抜けてしまった | 手動ポチポチで発見、[自動テスト](https://github.com/Kuniwak/reversi-ios/blob/3a2acd4877368c19896fc3b2d8d7ae7d69af2a35/ReversiCore/ReversiCore/MVCArchitecture/DataTypes/BoardAnimationStateTests.swift)で再現条件確認 |
 | 13 | リセットの確認モーダルで OK を押しても何も起きない | リセットの確認結果の Bool がコピペにより OK と Cancel で両方同じ値になっていた | 手動ポチポチ |
 | 14 | パス画面が表示されずパスできない | パス画面を表示させる View Binding の接続忘れ | 手動ポチポチ |
 | 15 | 元のアニメーション順序と逆の順序でアニメーションされる | README 通りの順序を設定したつもりが Line の向きの表現が README と逆だった（README は配置地点が基準、Line は対応する自分の石地点が基準だった） | 手動ポチポチ |
