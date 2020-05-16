@@ -437,6 +437,7 @@ class ViewController: UIViewController
 | [refactoring-challenge/reversi-ios](https://github.com/refactoring-challenge/reversi-ios) | [@koher](https://github.com/koher) | Fat View Controller | - | UIKit | 本リポジトリ |
 | [koher/clean-reversi-ios](https://github.com/koher/clean-reversi-ios) | [@koher](https://github.com/koher) | Clean Architecture | - | UIKit | - |
 | [koher/clean-reversi-macos](https://github.com/koher/clean-reversi-macos) | [@koher](https://github.com/koher) | Clean Architecture | - | UIKit | macOS アプリ版 |
+| [objective-audio/reversi-ios](https://github.com/objective-audio/reversi-ios) | [@objective-audio](https://github.com/objective-audio) | いきあたりばったり | - | UIKit | - |
 
 ## License
 
