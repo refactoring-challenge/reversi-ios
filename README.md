@@ -437,6 +437,7 @@ class ViewController: UIViewController
 | [refactoring-challenge/reversi-ios](https://github.com/refactoring-challenge/reversi-ios) | [@koher](https://github.com/koher) | Fat View Controller | - | UIKit | 本リポジトリ |
 | [koher/clean-reversi-ios](https://github.com/koher/clean-reversi-ios) | [@koher](https://github.com/koher) | Clean Architecture | - | UIKit | - |
 | [koher/clean-reversi-macos](https://github.com/koher/clean-reversi-macos) | [@koher](https://github.com/koher) | Clean Architecture | - | UIKit | macOS アプリ版 |
+| [koher/clean-reversi-swift](https://github.com/koher/clean-reversi-swift) | [@koher](https://github.com/koher) | Clean Architecture | - | - | 上記 2 アプリの共通部分となる Swift Package |
 | [objective-audio/reversi-ios](https://github.com/objective-audio/reversi-ios) | [@objective-audio](https://github.com/objective-audio) | いきあたりばったり | - | UIKit | - |
 | [Kuniwak/reversi-ios](https://github.com/Kuniwak/reversi-ios) | [@Kuniwak](https://github.com/Kuniwak) | Classical MVC | - | UIKit | 型つよモードでフルスクラッチ。テスト書いたら負けだと思っている → テストには勝てなかったよ |
 | [hironytic/reversi-ios](https://github.com/hironytic/reversi-ios) | [@hironytic](https://github.com/hironytic) | MVVM + Redux | Combine | UIKit | ユニットテストとCIも追加しました |
