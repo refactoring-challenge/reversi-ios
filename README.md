@@ -442,6 +442,7 @@ class ViewController: UIViewController
 | [Kuniwak/reversi-ios](https://github.com/Kuniwak/reversi-ios) | [@Kuniwak](https://github.com/Kuniwak) | Classical MVC | - | UIKit | 型つよモードでフルスクラッチ。テスト書いたら負けだと思っている → テストには勝てなかったよ |
 | [hironytic/reversi-ios](https://github.com/hironytic/reversi-ios) | [@hironytic](https://github.com/hironytic) | MVVM + Redux | Combine | UIKit | ユニットテストとCIも追加しました |
 | [marty-suzuki/reversi-ios](https://github.com/marty-suzuki/reversi-ios) | [@marty-suzuki](https://github.com/marty-suzuki) | Flux + MVVM | [RxSwift](https://github.com/ReactiveX/RxSwift) + [Unio](https://github.com/cats-oss/Unio) | UIKit | 切り出したロジックのユニットテストとViewControllerのユニットテストも実装しています |
+| [kishikawakatsumi/reversi-ios](https://github.com/kishikawakatsumi/reversi-ios/tree/refactor2) | [@kishikawakatsumi](https://github.com/kishikawakatsumi) | Cocoa MVC | [Combine](https://developer.apple.com/documentation/combine) | UIKit | 小さな変更で受け入れられやすいリファクタリング |
 
 ## License
 
