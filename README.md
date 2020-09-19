@@ -435,6 +435,7 @@ class ViewController: UIViewController
 | リポジトリ | 作者 | アーキテクチャパターン | フレームワーク | UI | 備考 |
 |:--|:--|:--|:--|:--|:--|
 | [refactoring-challenge/reversi-ios](https://github.com/refactoring-challenge/reversi-ios) | [@koher](https://github.com/koher) | Fat View Controller | - | UIKit | 本リポジトリ |
+| [koher/reversi-ios-swiftui](https://github.com/koher/reversi-ios-swiftui) | [@koher](https://github.com/koher) | Clean Architecture | - | SwiftUI | - |
 | [koher/clean-reversi-ios](https://github.com/koher/clean-reversi-ios) | [@koher](https://github.com/koher) | Clean Architecture | - | UIKit | - |
 | [koher/clean-reversi-macos](https://github.com/koher/clean-reversi-macos) | [@koher](https://github.com/koher) | Clean Architecture | - | AppKit | macOS アプリ版 |
 | [koher/clean-reversi-swift](https://github.com/koher/clean-reversi-swift) | [@koher](https://github.com/koher) | Clean Architecture | - | - | 上記 2 アプリの共通部分となる Swift Package |
