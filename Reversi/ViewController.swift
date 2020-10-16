@@ -1,6 +1,7 @@
 import UIKit
 
 class ViewController: UIViewController {
+    //SRP違反：そもそもBoard,DiskでViewがわかれてるならそれぞれでViewControllerわけたい
     @IBOutlet private var boardView: BoardView!
     
     @IBOutlet private var messageDiskView: DiskView!
@@ -52,6 +53,7 @@ class ViewController: UIViewController {
 // MARK: Reversi logics
 
 extension ViewController {
+    //SRP違反：BoardViewControllerへ
     /// `side` で指定された色のディスクが盤上に置かれている枚数を返します。
     /// - Parameter side: 数えるディスクの色です。
     /// - Returns: `side` で指定された色のディスクの、盤上の枚数です。
@@ -68,7 +70,7 @@ extension ViewController {
         
         return count
     }
-    
+    //SRP違反：BoardViewControllerへ
     /// 盤上に置かれたディスクの枚数が多い方の色を返します。
     /// 引き分けの場合は `nil` が返されます。
     /// - Returns: 盤上に置かれたディスクの枚数が多い方の色です。引き分けの場合は `nil` を返します。
@@ -81,7 +83,7 @@ extension ViewController {
             return darkCount > lightCount ? .dark : .light
         }
     }
-    
+    //SRP違反：BoardViewControllerへ
     private func flippedDiskCoordinatesByPlacingDisk(_ disk: Disk, atX x: Int, y: Int) -> [(Int, Int)] {
         let directions = [
             (x: -1, y: -1),
@@ -124,6 +126,7 @@ extension ViewController {
         return diskCoordinates
     }
     
+    //SRP違反：BoardViewControllerへ
     /// `x`, `y` で指定されたセルに、 `disk` が置けるかを調べます。
     /// ディスクを置くためには、少なくとも 1 枚のディスクをひっくり返せる必要があります。
     /// - Parameter x: セルの列です。
@@ -149,6 +152,7 @@ extension ViewController {
         return coordinates
     }
 
+    //SRP違反：BoardViewControllerへ
     /// `x`, `y` で指定されたセルに `disk` を置きます。
     /// - Parameter x: セルの列です。
     /// - Parameter y: セルの行です。
@@ -175,7 +179,9 @@ extension ViewController {
                 cleanUp()
 
                 completion?(isFinished)
+                //SRP違反：placeDiskの中からは外に出したい
                 try? self.saveGame()
+                //SRP違反：placeDiskの中からは外に出したい
                 self.updateCountLabels()
             }
         } else {
@@ -186,7 +192,9 @@ extension ViewController {
                     self.boardView.setDisk(disk, atX: x, y: y, animated: false)
                 }
                 completion?(true)
+                //SRP違反：placeDiskの中からは外に出したい
                 try? self.saveGame()
+                //SRP違反：placeDiskの中からは外に出したい
                 self.updateCountLabels()
             }
         }
@@ -259,9 +267,11 @@ extension ViewController {
         
         if validMoves(for: turn).isEmpty {
             if validMoves(for: turn.flipped).isEmpty {
+                //CQS違反っぽい
                 self.turn = nil
                 updateMessageViews()
             } else {
+                //CQS違反っぽい
                 self.turn = turn
                 updateMessageViews()
                 
@@ -276,12 +286,14 @@ extension ViewController {
                 present(alertController, animated: true)
             }
         } else {
+            //CQS違反っぽい
             self.turn = turn
             updateMessageViews()
             waitForPlayer()
         }
     }
     
+    //SRP違反：コンピューターの行動っていうなら別Classにしてよさそう？
     /// "Computer" が選択されている場合のプレイヤーの行動を決定します。
     func playTurnOfComputer() {
         guard let turn = self.turn else { preconditionFailure() }
@@ -385,6 +397,7 @@ extension ViewController {
     }
 }
 
+//SRP違反：BoardViewControllerへ
 extension ViewController: BoardViewDelegate {
     /// `boardView` の `x`, `y` で指定されるセルがタップされたときに呼ばれます。
     /// - Parameter boardView: セルをタップされた `BoardView` インスタンスです。
@@ -408,6 +421,7 @@ extension ViewController {
         (NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true).first! as NSString).appendingPathComponent("Game")
     }
     
+    //SRP違反、ViewControllerではなくRepositoryなりで別でやるべき
     /// ゲームの状態をファイルに書き出し、保存します。
     func saveGame() throws {
         var output: String = ""
@@ -431,6 +445,7 @@ extension ViewController {
         }
     }
     
+    //SRP違反、ViewControllerではなくRepositoryなりで別でやるべき
     /// ゲームの状態をファイルから読み込み、復元します。
     func loadGame() throws {
         let input = try String(contentsOfFile: path, encoding: .utf8)
@@ -496,6 +511,7 @@ extension ViewController {
 }
 
 // MARK: Additional types
+//SRP違反、ものによるけどここで定義するんじゃねぇ
 
 extension ViewController {
     enum Player: Int {
