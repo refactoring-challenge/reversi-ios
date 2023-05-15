@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     @IBOutlet private var playerActivityIndicators: [UIActivityIndicatorView]!
     
     /// どちらの色のプレイヤーのターンかを表します。ゲーム終了時は `nil` です。
+    /// 
     private var turn: Disk? = .dark
     
     private var animationCanceller: Canceller?
